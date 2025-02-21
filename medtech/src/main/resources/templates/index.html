@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gestión de Hospitales</title>
+    <script>
+        function abrirModal() {
+            document.getElementById("modal").style.display = "block";
+        }
+
+        function cerrarModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+
+        function guardarHospital() {
+            let nombre = document.getElementById("nombreHospital").value;
+            
+            fetch("/api/hospitales/crear?nombre=" + encodeURIComponent(nombre), {
+                method: "POST"
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                cerrarModal();
+                document.getElementById("nombreHospital").value = ""; // Limpiar campo
+            })
+            .catch(error => alert("Error: " + error));
+        }
+    </script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                 background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px black; }
+        .modal-content { margin: 10px; }
+        .button { padding: 10px 20px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 5px; }
+        .button.red { background: red; }
+    </style>
+</head>
+<body>
+
+    <h1>Gestión de Hospitales</h1>
+    <button class="button" onclick="abrirModal()">+</button>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2>Nuevo Hospital</h2>
+            <input type="text" id="nombreHospital" placeholder="Nombre del hospital">
+            <br><br>
+            <button class="button" onclick="guardarHospital()">Guardar</button>
+            <button class="button red" onclick="cerrarModal()">Cancelar</button>
+        </div>
+    </div>
+
+</body>
+</html>
