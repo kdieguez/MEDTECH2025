@@ -1,6 +1,6 @@
 //Archivo donde está la API REST
 
-package com.hospital.medtech.controller;
+package com.hospital.medtech.controllers;
 
 import com.hospital.medtech.service.HospitalService;
 import org.springframework.beans.factory.annotation.Autowired;

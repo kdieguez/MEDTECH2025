@@ -1,4 +1,4 @@
-package com.hospital.medtech.model;
+package com.hospital.medtech.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

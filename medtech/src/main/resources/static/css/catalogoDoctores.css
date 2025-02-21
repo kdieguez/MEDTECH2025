@@ -1,0 +1,76 @@
+/* Estilos generales */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Contenedor principal */
+.catalogo-container {
+    width: 80%;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+h1 {
+    color: #333;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+/* Tarjetas de los doctores */
+.doctor-card {
+    display: inline-block;
+    width: 250px;
+    background: white;
+    margin: 15px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.doctor-card:hover {
+    transform: scale(1.05);
+}
+
+/* Imagen de los doctores */
+.doctor-card img {
+    width: 100%;
+    border-radius: 50%;
+}
+
+/* Nombre del doctor */
+.doctor-card h2 {
+    font-size: 1.5rem;
+    color: #555;
+    margin-top: 10px;
+}
+
+/* Especialidad */
+.doctor-card p {
+    font-size: 1rem;
+    color: #777;
+}
+
+/* Botón para ver detalles */
+.btn-detalle {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s ease-in-out;
+}
+
+.btn-detalle:hover {
+    background-color: #0056b3;
+}
