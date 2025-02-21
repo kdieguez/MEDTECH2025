@@ -2,6 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Gestión de Hospitales</title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    
     <script>
         function abrirModal() {
             document.getElementById("modal").style.display = "block";
@@ -36,7 +39,7 @@
     </style>
 </head>
 <body>
-
+    <div th:replace="fragments/navbar :: navbar"></div>
     <h1>Gestión de Hospitales</h1>
     <button class="button" onclick="abrirModal()">+</button>
 
@@ -50,6 +53,6 @@
             <button class="button red" onclick="cerrarModal()">Cancelar</button>
         </div>
     </div>
-
 </body>
+<div th:replace="fragments/footer :: footer"></div>
 </html>
