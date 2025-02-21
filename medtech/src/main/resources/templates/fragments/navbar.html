@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div class="top-bar">
+        <p>Digitalizando la salud, asegurando el bienestar.</p>
+        <div class="top-right">
+            <span><i class="fas fa-phone"></i> <strong>Emergencias</strong> 1234 5678</span>
+            <span class="social-icons">
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+            </span>
+        </div>
+    </div>
+
+    <!-- Navbar Principal -->
+    <nav th:fragment="navbar">
+        <div class="navbar-container">
+            <a th:href="@{/}" class="logo">
+                <img th:src="@{/img/logo-hospital.png}" alt="Hospital MedTech">
+            </a>
+
+            <ul class="nav-links">
+                <li><a th:href="@{/hospital}">Nuestro Hospital</a></li>
+                <li><a th:href="@{/servicios}">Servicios</a></li>
+                <li><a th:href="@{/sucursales}">Sucursales</a></li>
+                <li><a th:href="@{/medicos}">Médicos</a></li>
+                <li><a th:href="@{/blogs}">Blogs</a></li>
+            </ul>
+
+            <div class="nav-contact">
+                <a th:href="@{/contacto}" class="btn-contacto">Contacto</a>
+            </div>
+        </div>
+    </nav>
+</body>
+</html>

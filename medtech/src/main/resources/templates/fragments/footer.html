@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <footer th:fragment="footer">
+        <div class="footer-container">
+            <div class="footer-section footer-logo">
+                <img th:src="@{/img/logo-hospital.png}" alt="Hospital MedTech">
+                <p>Digitalizando la salud, asegurando el bienestar.</p>
+            </div>
+
+            <div class="footer-section footer-contact">
+                <h4>Comunícate con nosotros</h4>
+                <p><i class="fas fa-phone"></i> <strong>Emergencias:</strong> 1234 5678</p>
+                <p><i class="fas fa-phone"></i> <strong>PBX:</strong> 2384 5959</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section footer-location">
+                <h4>Elige la sucursal más cercana</h4>
+                <p>Sede Central – 6A Avenida 8-71 Zona 10, Ciudad de Guatemala</p>
+                <a th:href="@{/sucursales}">Ver sucursales</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Hospital MedTech. Todos los derechos reservados.</p>
+            <div class="footer-links">
+                <a th:href="@{/terminos}">Términos y Condiciones</a> |
+                <a th:href="@{/privacidad}">Política de Privacidad</a> |
+                <a th:href="@{/sitemap}">Sitemap</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
