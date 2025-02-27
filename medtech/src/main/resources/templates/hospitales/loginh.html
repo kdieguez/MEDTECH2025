@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Iniciar Sesión en el Hospital</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body>
+
+    <div class="auth-container">
+        <h2>Iniciar Sesión en el Hospital</h2>
+
+        <form id="loginHospitalForm">
+            <label>Email:</label>
+            <input type="email" id="loginEmail" placeholder="Ingrese su correo" required>
+
+            <label>Contraseña:</label>
+            <input type="password" id="loginPassword" placeholder="Ingrese su contraseña" required>
+
+            <button type="submit">Ingresar</button>
+
+            <p id="loginError" class="error-message" style="display:none;">Usuario o contraseña incorrectos</p>
+
+            <p>¿No tienes una cuenta? <a th:href="@{/registro}">Regístrate aquí</a></p>
+            <p><a th:href="@{/forgot-password}">¿Olvidaste tu contraseña?</a></p>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("loginHospitalForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let email = document.getElementById("loginEmail").value;
+            let password = document.getElementById("loginPassword").value;
+
+            fetch("/api/usuarios/loginh", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({ correo: email, contrasena: password })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Credenciales inválidas");
+                }
+                return response.json();
+            })
+            .then(data => {
+                window.location.href = "/hospitales/homehs"; // 🔹 Redirige a la página de hospital
+            })
+            .catch(() => {
+                document.getElementById("loginError").style.display = "block";
+            });
+        });
+    </script>
+
+</body>
+</html>

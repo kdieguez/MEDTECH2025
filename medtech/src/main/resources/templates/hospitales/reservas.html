@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reserva de Citas</title>
+
+    <!-- FullCalendar (CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js"></script>
+
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" th:href="@{/css/reservas.css}">
+</head>
+<body>
+
+    <h1>Reserva de Citas</h1>
+
+    <!-- Calendario -->
+    <div id="calendar"></div>
+
+    <!-- Fondo Oscuro al Abrir Modal -->
+    <div id="modalOverlay" class="modal-overlay"></div>
+
+    <!-- Modal para Agendar Cita -->
+    <div id="modalReserva" class="modal">
+        <h2>Reservar Cita</h2>
+        <form id="formReserva">
+            <label>Nombre del Paciente:</label>
+            <input type="text" id="nombrePaciente" placeholder="Ingrese su nombre"><br><br>
+
+            <label>ID del Paciente:</label>
+            <input type="text" id="idPaciente" readonly><br><br>
+
+            <label>Fecha:</label>
+            <input type="text" id="fechaSeleccionada" readonly><br><br>
+            
+            <label>Hora:</label>
+            <select id="horaSeleccionada">
+                <option>08:00 AM</option>
+                <option>08:30 AM</option>
+                <option>09:00 AM</option>
+                <option>09:30 AM</option>
+                <option>10:00 AM</option>
+                <option>10:30 AM</option>
+                <option>11:00 AM</option>
+                <option>11:30 AM</option>
+                <option>02:00 PM</option>
+                <option>02:30 PM</option>
+                <option>03:00 PM</option>
+                <option>03:30 PM</option>
+                <option>04:00 PM</option>
+                <option>04:30 PM</option>
+            </select><br><br>
+
+            <label>Doctor/Servicio:</label>
+            <select id="doctorServicio">
+                <option value="Dr. Pérez">Dr. Pérez (Cardiólogo)</option>
+                <option value="Dra. López">Dra. López (Pediatra)</option>
+                <option value="Dr. Gómez">Dr. Gómez (Ortopedista)</option>
+                <option value="Radiología">Radiología</option>
+                <option value="Laboratorio">Laboratorio</option>
+            </select><br><br>
+
+            <label>Motivo:</label>
+            <input type="text" id="motivo"><br><br>
+            
+            <button type="button" onclick="guardarCita()">Confirmar Cita</button>
+            <button type="button" class="close-btn" onclick="cerrarModal()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Tabla de Citas Reservadas -->
+    <h2>Citas Agendadas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre del Paciente</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Doctor/Servicio</th>
+                <th>Motivo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="citasTable">
+            <!-- Aquí se insertarán las citas dinámicamente -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'es',
+                selectable: true,
+                dateClick: function (info) {
+                    abrirModal(info.dateStr);
+                }
+            });
+            calendar.render();
+
+            let usuarioAutenticado = JSON.parse(localStorage.getItem("usuarioAutenticado"));
+            if (usuarioAutenticado) {
+                document.getElementById("idPaciente").value = usuarioAutenticado.id;
+                document.getElementById("nombrePaciente").value = usuarioAutenticado.nombre;
+            }
+
+            actualizarTablaCitas();
+        });
+
+        function abrirModal(fecha) {
+            document.getElementById("fechaSeleccionada").value = fecha;
+            document.getElementById("modalReserva").style.display = "block";
+            document.getElementById("modalOverlay").style.display = "block";
+        }
+
+        function cerrarModal() {
+            document.getElementById("modalReserva").style.display = "none";
+            document.getElementById("modalOverlay").style.display = "none";
+        }
+
+        function guardarCita() {
+            let nombrePaciente = document.getElementById("nombrePaciente").value;
+            let idPaciente = document.getElementById("idPaciente").value;
+            let fecha = document.getElementById("fechaSeleccionada").value;
+            let hora = document.getElementById("horaSeleccionada").value;
+            let doctorServicio = document.getElementById("doctorServicio").value;
+            let motivo = document.getElementById("motivo").value;
+
+            if (!nombrePaciente || !fecha || !hora || !doctorServicio || !motivo) {
+                alert("Todos los campos son obligatorios.");
+                return;
+            }
+
+            let citas = JSON.parse(localStorage.getItem("citas")) || [];
+            let nuevaCita = { nombrePaciente, idPaciente, fecha, hora, doctorServicio, motivo };
+            citas.push(nuevaCita);
+            localStorage.setItem("citas", JSON.stringify(citas));
+
+            actualizarTablaCitas();
+            cerrarModal();
+        }
+
+        function actualizarTablaCitas() {
+            let citas = JSON.parse(localStorage.getItem("citas")) || [];
+            let tabla = document.getElementById("citasTable");
+            tabla.innerHTML = "";
+
+            citas.forEach((cita, index) => {
+                let nuevaFila = tabla.insertRow();
+                nuevaFila.innerHTML = `
+                    <td>${cita.nombrePaciente}</td>
+                    <td>${cita.fecha}</td>
+                    <td>${cita.hora}</td>
+                    <td>${cita.doctorServicio}</td>
+                    <td>${cita.motivo}</td>
+                    <td>
+                        <button onclick="finalizarCita(${index})">Finalizar Cita</button>
+                    </td>
+                `;
+            });
+        }
+
+        function finalizarCita(index) {
+            let citas = JSON.parse(localStorage.getItem("citas"));
+            let cita = citas[index];
+
+            // Redirigir al formulario de resultados de la consulta con ID
+            window.location.href = `/resultado-receta/${index}`;
+        }
+    </script>
+
+</body>
+</html>
