@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hospital - MedTech</title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/hospitales.css}">
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let usernameElement = document.getElementById("username");
+            let logoutButton = document.getElementById("logoutButton");
+
+            // Mensaje de carga mientras se verifica la sesión
+            usernameElement.innerText = "Verificando sesión...";
+
+            fetch("/api/usuarios/sesion", {
+                method: "GET",
+                credentials: "include" // Para enviar cookies de sesión si es necesario
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("No autenticado");
+                }
+                return response.json();
+            })
+            .then(data => {
+                usernameElement.innerText = data.nombre; // Muestra el nombre del usuario autenticado
+                logoutButton.style.display = "block"; 
+            })
+            .catch(error => {
+                console.error("Error en autenticación:", error);
+                alert("Tu sesión ha expirado o no estás autenticado. Por favor, inicia sesión de nuevo.");
+                window.location.href = "/hospitales/loginh"; // 🔹 Asegura que se redirige al login correcto
+            });
+
+            if (logoutButton) {
+                logoutButton.addEventListener("click", function() {
+                    fetch("/api/usuarios/logout", {
+                        method: "POST",
+                        credentials: "include"
+                    }).then(() => {
+                        alert("Sesión cerrada correctamente.");
+                        window.location.href = "/hospitales/loginh"; // 🔹 Redirige al login después de cerrar sesión
+                    }).catch(error => {
+                        console.error("Error al cerrar sesión:", error);
+                        alert("Hubo un problema al cerrar sesión. Inténtalo de nuevo.");
+                    });
+                });
+            }
+        });
+    </script>
+</head>    
+<body>
+
+    <!-- Navbar del módulo de Hospitales -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <h1>Bienvenido, <span id="username">Usuario</span></h1>
+    <p>Este es el portal de administración del hospital seleccionado.</p>
+
+    <ul>
+        <li><a th:href="@{/hospitales/listar}">Ver Hospitales</a></li>
+        <li><a th:href="@{/hospitales/agregar}">Agregar Nuevo Hospital</a></li>
+    </ul>
+
+    <button id="logoutButton" class="btn" style="display:none;">Cerrar Sesión</button>
+
+    <!-- Footer del módulo de Hospitales -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>
