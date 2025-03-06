@@ -8,6 +8,6 @@ public class ReservaController {
 
     @GetMapping("/hospitales/reservas")
     public String mostrarReservas() {
-        return "hospitales/reservas"; // Solo carga la vista Thymeleaf
+        return "hospitales/reservas"; // Ruta correcta dentro de templates
     }
 }

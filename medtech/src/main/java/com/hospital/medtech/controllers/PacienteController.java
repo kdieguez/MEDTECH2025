@@ -29,7 +29,7 @@ public class PacienteController {
         public String getDetalles() { return detalles; }
     }
 
-    @GetMapping("/perfil-paciente")
+    @GetMapping("/hospitales/perfil-paciente")
     public String mostrarFichaPaciente(Model model) {
         // Datos de prueba para historial de servicios del paciente
         List<HistorialServicio> historial = Arrays.asList(
@@ -37,7 +37,6 @@ public class PacienteController {
             new HistorialServicio("10/02/2024", "Examen de Sangre", "Laboratorio", "Pruebas de rutina")
         );
 
-        // Pasar datos a la vista Thymeleaf
         model.addAttribute("historialServicios", historial);
 
         return "hospitales/perfilPaciente"; // Nombre del archivo en /templates/hospitales/

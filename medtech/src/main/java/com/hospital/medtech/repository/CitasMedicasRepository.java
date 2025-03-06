@@ -10,4 +10,7 @@ import java.util.List;
 @Repository
 public interface CitasMedicasRepository extends JpaRepository<CitasMedicas, Long> {
     List<CitasMedicas> findByFechaHora(LocalDateTime fechaHora);
+    
 }
+
+

@@ -35,3 +35,4 @@ public class CitasMedicasService {
         repository.deleteById(id);
     }
 }
+
