@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import axios from 'axios';
   import Swal from 'sweetalert2';
+  import { userRol } from '../../store.js'; 
 
   let servicios = [];
   let showModal = false;
@@ -15,6 +16,11 @@
   let subNombre = "";
   let subPrecio = "";
   let subPolizas = [];
+    let currentRol;
+
+  $: userRol.subscribe(value => {
+    currentRol = value;
+  });
 
   const opcionesPolizas = ["70%", "90%"];
 
@@ -36,7 +42,6 @@
   function abrirModalCrear() {
     showModal = true;
     editarServicio = null;
-
     nombre = "";
     descripcion = "";
     imagen = "";
@@ -82,12 +87,7 @@
       return;
     }
 
-    const data = {
-      nombre,
-      descripcion,
-      imagen,
-      subcategorias
-    };
+    const data = { nombre, descripcion, imagen, subcategorias };
 
     if (editarServicio) {
       axios.put(`http://127.0.0.1:8000/servicios/${editarServicio._id}`, data)
@@ -132,11 +132,22 @@
       }
     });
   }
+
+  function togglePoliza(poliza, isChecked) {
+    if (isChecked) {
+      if (!subPolizas.includes(poliza)) {
+        subPolizas = [...subPolizas, poliza];
+      }
+    } else {
+      subPolizas = subPolizas.filter(p => p !== poliza);
+    }
+  }
 </script>
 
-<h2>Catálogo de Servicios</h2>
-<button on:click={abrirModalCrear} class="btn-crear">➕</button>
-
+<h2 class="titulo-catalogo">Catálogo de Servicios</h2>
+{#if currentRol === 'empleado' || currentRol === 'admin'}
+<button on:click={abrirModalCrear} class="btn-flotante">+</button>
+{/if}
 <div class="servicios-container">
   {#each servicios as servicio}
     <div class="servicio-card">
@@ -148,16 +159,17 @@
       <ul>
         {#each servicio.subcategorias as sub}
           <li>
-            <strong>{sub.nombre}</strong> - Q{sub.precio}
-            <br />
+            <strong>{sub.nombre}</strong> - Q{sub.precio}<br />
             <em>Cubre: {sub.polizas_cubren.join(", ")}</em>
           </li>
         {/each}
       </ul>
 
       <div class="acciones">
-        <button on:click={() => abrirModalEditar(servicio)}>✏️ Editar</button>
-        <button on:click={() => eliminarServicio(servicio._id)}>🗑️ Eliminar</button>
+      {#if currentRol === 'empleado' || currentRol === 'admin'}
+        <button on:click={() => abrirModalEditar(servicio)}>Editar</button>
+        <button on:click={() => eliminarServicio(servicio._id)}>Eliminar</button>
+        {/if}
       </div>
     </div>
   {/each}
@@ -182,104 +194,162 @@
       <input type="text" placeholder="Nombre subcategoría" bind:value={subNombre} />
       <input type="number" placeholder="Precio" bind:value={subPrecio} />
 
-      <label>Polizas que cubren:</label>
-      <select multiple bind:value={subPolizas}>
+      <h4>Polizas que cubren:</h4>
+      <div class="checkbox-container">
         {#each opcionesPolizas as poliza}
-          <option value={poliza}>{poliza}</option>
+          <label>
+            <input
+              type="checkbox"
+              checked={subPolizas.includes(poliza)}
+              on:change={(e) => togglePoliza(poliza, e.target.checked)}
+            />
+            {poliza}
+          </label>
         {/each}
-      </select>
+      </div>
 
-      <button on:click={agregarSubcategoria}>Agregar Subcategoría</button>
+      <button on:click={agregarSubcategoria} class="btn-agregar-sub">Agregar Subcategoría</button>
 
       <h4>Subcategorías Agregadas:</h4>
       <ul>
         {#each subcategorias as sub, index}
           <li>
-            <strong>{sub.nombre}</strong> - Q{sub.precio}
-            <br />
+            <strong>{sub.nombre}</strong> - Q{sub.precio}<br />
             <em>Cubre: {sub.polizas_cubren.join(", ")}</em>
-            <button on:click={() => eliminarSubcategoria(index)}>❌</button>
+            <button on:click={() => eliminarSubcategoria(index)}>Eliminar</button>
           </li>
         {/each}
       </ul>
 
       <div class="acciones">
-        <button on:click={guardarServicio}>💾 Guardar</button>
-        <button on:click={() => showModal = false}>❌ Cancelar</button>
+        <button on:click={guardarServicio}>Guardar</button>
+        <button on:click={() => showModal = false}>Cancelar</button>
       </div>
     </div>
   </div>
 {/if}
 
 <style>
-  h2 {
-    margin-bottom: 1rem;
-  }
+.titulo-catalogo {
+  position: absolute; 
+  top: 100px;    
+  left: 50%;   
+  transform: translateX(-50%);
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: #333;
+  z-index: 999;
+}
 
-  .btn-crear {
+  .btn-flotante {
+    position: fixed;
+    top: 120px;
+    right: 50px;
     background-color: #4CAF50;
     color: white;
-    padding: 10px 20px;
-    margin-bottom: 20px;
+    font-size: 24px;
+    padding: 12px 18px;
+    border-radius: 50%;
     border: none;
     cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
+    transition: transform 0.3s ease;
   }
 
-  .servicios-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+  .btn-flotante:hover {
+    transform: scale(1.1);
   }
+
+ .servicios-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 150px;
+  margin-bottom: 100px;
+}
 
   .servicio-card {
     background-color: #fff;
-    border-radius: 8px;
-    padding: 15px;
-    width: 300px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    width: 420px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .servicio-card img {
     width: 100%;
-    height: 150px;
+    height: 200px;
     object-fit: cover;
-    margin-bottom: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
   }
 
   .acciones button {
-    margin-right: 10px;
-    margin-top: 10px;
+    margin: 8px;
+    padding: 8px 16px;
+    border: none;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transition: background 0.3s;
   }
 
+  .acciones button:hover {
+    background-color: #ddd;
+  }
+
+  /* Modal */
   .modal {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0,0,0,0.5);
     display: flex; justify-content: center; align-items: center;
+    z-index: 2000;
   }
 
   .modal-content {
     background: white;
     padding: 30px;
     width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
   }
 
-  .modal-content input, select {
-    margin-bottom: 10px;
-    padding: 8px;
+  .modal-content input {
+    margin-bottom: 15px;
+    padding: 10px;
     border-radius: 4px;
     border: 1px solid #ccc;
   }
 
-  select[multiple] {
-    height: 80px;
+  .checkbox-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
   }
 
-  .modal-content button {
-    margin-top: 10px;
+  .checkbox-container label {
+    margin-bottom: 8px;
+  }
+
+  .btn-agregar-sub {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .btn-agregar-sub:hover {
+    background-color: #45a049;
   }
 
   ul {
@@ -289,5 +359,20 @@
 
   li {
     margin-bottom: 8px;
+  }
+
+  @media (max-width: 600px) {
+    .servicio-card {
+      width: 90%;
+    }
+
+    .modal-content {
+      width: 90%;
+    }
+
+    .btn-flotante {
+      top: 80px;
+      right: 20px;
+    }
   }
 </style>
