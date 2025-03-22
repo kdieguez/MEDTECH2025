@@ -1,7 +1,9 @@
 <script>
   import { createEventDispatcher } from "svelte";
 
-  export let isOpen = false; 
+  export let isOpen = false;
+  export let currentPage = "";
+
   const dispatch = createEventDispatcher();
 
   function selectSection(section) {
@@ -11,15 +13,77 @@
 
 {#if isOpen}
   <ul class="menu">
-    <li on:click={() => selectSection("Inicio")}><a>Inicio</a></li>
-    <li on:click={() => selectSection("Subhome 1")}><a>Subhome 1</a></li>
-    <li on:click={() => selectSection("Subhome 2")}><a>Subhome 2</a></li>
-    <li on:click={() => selectSection("Nuestra Historia")}><a>Nuestra Historia</a></li>
-    <li on:click={() => selectSection("Preguntas frecuentes")}><a>Preguntas frecuentes</a></li>
-    <li on:click={() => selectSection("Contacto")}><a>Contacto</a></li>
-    <li on:click={() => selectSection("Página extra 1")}><a>Página extra 1</a></li>
-    <li on:click={() => selectSection("Página extra 2")}><a>Página extra 2</a></li>
-    <li on:click={() => selectSection("Editar Páginas")}><a>Editar Páginas</a></li>
+    <li class:active={currentPage === "Inicio"}>
+      <a
+        href="/Inicio"
+        on:click|preventDefault={() => selectSection("Inicio")}
+      >
+        Inicio
+      </a>
+    </li>
+
+    <li class:active={currentPage === "Subhome 1"}>
+      <a
+        href="/Subhome_1"
+        on:click|preventDefault={() => selectSection("Subhome 1")}
+      >
+        Subhome 1
+      </a>
+    </li>
+
+    <li class:active={currentPage === "Subhome 2"}>
+      <a
+        href="/Subhome_2"
+        on:click|preventDefault={() => selectSection("Subhome 2")}
+      >
+        Subhome 2
+      </a>
+    </li>
+
+    <li class:active={currentPage === "Nuestra Historia"}>
+      <a
+        href="/Nuestra_Historia"
+        on:click|preventDefault={() => selectSection("Nuestra Historia")}
+      >
+        Nuestra Historia
+      </a>
+    </li>
+
+    <li class:active={currentPage === "Preguntas frecuentes"}>
+      <a
+        href="/Preguntas_frecuentes"
+        on:click|preventDefault={() => selectSection("Preguntas frecuentes")}
+      >
+        Preguntas frecuentes
+      </a>
+    </li>
+
+    <li class:active={currentPage === "Contacto"}>
+      <a
+        href="/Contacto"
+        on:click|preventDefault={() => selectSection("Contacto")}
+      >
+        Contacto
+      </a>
+    </li>
+
+    <li class:active={currentPage === "Página extra 1"}>
+      <a
+        href="/Página_extra_1"
+        on:click|preventDefault={() => selectSection("Página extra 1")}
+      >
+        Página extra 1
+      </a>
+    </li>
+
+    <li class:active={currentPage === "Página extra 2"}>
+      <a
+        href="/Página_extra_2"
+        on:click|preventDefault={() => selectSection("Página extra 2")}
+      >
+        Página extra 2
+      </a>
+    </li>
   </ul>
 {/if}
 
@@ -56,21 +120,17 @@
     font-size: 16px;
   }
 
+  .active {
+    background-color: #a0b9ff;
+    color: white;
+    font-size: 16px;
+  }
+
   a {
     color: black;
     text-decoration: none;
     font-family: Arial, sans-serif;
     display: block;
     padding: 10px;
-  }
-
-  @media (max-width: 480px) {
-    .menu {
-      width: 180px;
-    }
-
-    .menu li {
-      font-size: 12px;
-    }
   }
 </style>

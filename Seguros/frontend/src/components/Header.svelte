@@ -1,32 +1,38 @@
 <script>
-  import { createEventDispatcher, onMount } from 'svelte';
+import axios from 'axios';
+import { createEventDispatcher, onMount } from 'svelte';
+import { userRol } from '../store.js';
 
-  let nombreSeguro; // Valor de respaldo
-  let logoUrl = '';
+let nombreSeguro;
+let logoUrl = '';
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher();
 
-  onMount(async () => {
-    try {
-      const res = await fetch('http://127.0.0.1:8000/estructura_web/por-titulo/Header y Footer');
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      const data = await res.json();
+onMount(() => {
+  axios.get('http://localhost:8000/estructura_web/por-id/67d655a2f9a7d53085c7359d')
+    .then(res => {
+      const data = res.data;
       nombreSeguro = data.nombre_seguro;
       logoUrl = data.logo;
-    } catch (error) {
+    })
+    .catch(error => {
       console.error("Error cargando datos de Header:", error);
       nombreSeguro = 'Nombre sin cargar';
       logoUrl = 'Sin logo';
-    }
-  });
+    });
+});
 
-  function toggleMenu() {
-    dispatch('toggleMenu');
-  }
+function toggleMenu() {
+  dispatch('toggleMenu');
+}
+
+function goLogin() {
+  dispatch('goLogin');
+}
+
+function logout() {
+  dispatch('logout');
+}
 </script>
 
 <header class="header">
@@ -37,14 +43,22 @@
     <h1 class="nombre-seguro">{nombreSeguro}</h1>
   </div>
 
-  <div class="menu-icon" on:click={toggleMenu} role="button" tabindex="0">
-    ☰
+  <div class="acciones-container">
+    {#if $userRol === "no_role" || !$userRol}
+      <button class="btn-login" on:click={goLogin}>Login</button>
+    {:else}
+      <button class="btn-logout" on:click={logout}>Logout</button>
+    {/if}
+
+    <div class="menu-icon" on:click={toggleMenu} role="button" tabindex="0">
+      ☰
+    </div>
   </div>
 </header>
 
 <style>
   .header {
-    background-color: #fffd59;
+    background-color: #ffd000;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -74,11 +88,44 @@
     font-family: 'Arial', sans-serif;
   }
 
+  .acciones-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn-login, .btn-logout {
+    background-color: transparent;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-login:hover, .btn-logout:hover {
+    background-color: black;
+    color: white;
+  }
+
   .menu-icon {
     font-size: 25px;
     cursor: pointer;
-    padding: 8px 60px;
+    padding-right: 70px;
+    padding-left: 40px;
     color: black;
     border-radius: 5px;
+  }
+
+  @media (max-width: 600px) {
+    .btn-login, .btn-logout {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .menu-icon {
+      font-size: 20px;
+    }
   }
 </style>

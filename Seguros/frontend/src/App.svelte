@@ -1,35 +1,106 @@
 <script>
+  import { onMount, onDestroy } from "svelte";
+  import { userRol, accessToken } from './store.js';
+  import axios from 'axios';
+
   import Header from "./components/Header.svelte";
   import Navbar from "./components/Navbar.svelte";
   import Footer from "./components/Footer.svelte";
 
-  import Home from "./routes/Estructura/Home.svelte";
-  import Subhome1 from "./routes/Estructura/Subhome1.svelte";
-  import Subhome2 from "./routes/Estructura/Subhome2.svelte";
-  import NuestraHistoria from "./routes/Estructura/NuestraHistoria.svelte";
-  import PreguntasFrecuentes from "./routes/Estructura/PreguntasFrecuentes.svelte";
-  import Contacto from "./routes/Estructura/Contacto.svelte";
-  import PaginaExtra1 from "./routes/Estructura/PaginaExtra1.svelte";
-  import PaginaExtra2 from "./routes/Estructura/PaginaExtra2.svelte";
-  import EditarPaginas from "./routes/Modificar/EditarPaginas.svelte";
+  import Home from "./routes/Publico/Home.svelte";
+  import Subhome1 from "./routes/Publico/Subhome1.svelte";
+  import Subhome2 from "./routes/Publico/Subhome2.svelte";
+  import NuestraHistoria from "./routes/Publico/NuestraHistoria.svelte";
+  import PreguntasFrecuentes from "./routes/Publico/PreguntasFrecuentes.svelte";
+  import Contacto from "./routes/Publico/Contacto.svelte";
+  import PaginaExtra1 from "./routes/Publico/PaginaExtra1.svelte";
+  import PaginaExtra2 from "./routes/Publico/PaginaExtra2.svelte";
+
+  import EditarPaginas from "./routes/Empleado/EditarPaginas.svelte";
+  import Registro from './routes/Publico/Registro.svelte';
+  import Login from './routes/Publico/Login.svelte';
+  import AdministrarUsuarios from './routes/Admin/AdministrarUsuarios.svelte';
 
   let currentPage = "Inicio";
   let menuOpen = false;
+  let mostrarMenuAdmin = false;
+
+  onMount(() => {
+    handlePopState();
+
+    const savedToken = localStorage.getItem('accessToken');
+    const savedRol = localStorage.getItem('userRol');
+
+    if (savedToken) {
+      accessToken.set(savedToken);
+    }
+
+    if (savedRol) {
+      userRol.set(savedRol);
+    }
+
+    window.addEventListener("popstate", handlePopState);
+  });
+
+  onDestroy(() => {
+    window.removeEventListener("popstate", handlePopState);
+  });
+
+  function handlePopState() {
+    let path = window.location.pathname.slice(1);
+    if (!path) {
+      currentPage = "Inicio";
+      return;
+    }
+    currentPage = path.replace(/_/g, " ");
+  }
 
   function changePage(page) {
     currentPage = page;
-    menuOpen = false; 
+    menuOpen = false;
+    mostrarMenuAdmin = false;
     window.history.pushState({}, "", "/" + page.replace(/\s+/g, "_"));
   }
 
   function toggleMenu() {
-    menuOpen = !menuOpen; 
+    menuOpen = !menuOpen;
+  }
+
+  function logout() {
+    accessToken.set(null);
+    userRol.set("no_role");
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('userRol');
+    changePage("Inicio");
+  }
+
+  function toggleAdminMenu() {
+    mostrarMenuAdmin = !mostrarMenuAdmin;
+  }
+
+  function irAAdministrarUsuarios() {
+    changePage('Administrar Usuarios');
+  }
+
+  function irAEditarPaginas() {
+    changePage('Editar Páginas');
   }
 </script>
 
 <div class="container">
-  <Header on:toggleMenu={toggleMenu} />
-  <Navbar isOpen={menuOpen} on:navigate={(e) => changePage(e.detail)} />
+  <Header
+    on:toggleMenu={toggleMenu}
+    on:goLogin={() => changePage('Login')}
+    on:logout={logout}
+    userRol={$userRol}
+  />
+
+  <Navbar
+    isOpen={menuOpen}
+    currentPage={currentPage}
+    on:navigate={(e) => changePage(e.detail)}
+  />
+
   <main class="content">
     {#if currentPage === "Inicio"}
       <Home />
@@ -47,10 +118,48 @@
       <PaginaExtra1 />
     {:else if currentPage === "Página extra 2"}
       <PaginaExtra2 />
+    {:else if currentPage === "Login"}
+      <Login 
+        on:goRegistro={() => changePage('Registro')}
+        on:loginSuccess={() => changePage('Inicio')} />
+    {:else if currentPage === "Registro"}
+      <Registro on:goLogin={() => changePage('Login')} />
     {:else if currentPage === "Editar Páginas"}
-      <EditarPaginas />
+      {#if $userRol === 'admin' || $userRol === 'empleado'}
+        <EditarPaginas />
+      {:else}
+        <p>Acceso denegado. Solo administradores o editores pueden editar páginas.</p>
+      {/if}
+    {:else if currentPage === "Administrar Usuarios"}
+      {#if $userRol === 'admin'}
+        <AdministrarUsuarios />
+      {:else}
+        <p>Acceso denegado. Solo administradores o editores pueden administrar usuarios.</p>
+      {/if}
     {/if}
   </main>
+
+  {#if $userRol === 'admin' || $userRol === 'empleado'}
+    <div 
+      class="tuerquita-flotante" 
+      on:click={toggleAdminMenu} 
+      title="Configuración"
+    >
+      ⚙️
+    </div>
+
+    {#if mostrarMenuAdmin}
+      <div class="menu-admin-flotante">
+          {#if $userRol === 'admin'}
+          <button on:click={irAAdministrarUsuarios}>Administrar Usuarios</button>
+          <button on:click={irAEditarPaginas}>Editar Páginas</button>
+          {:else if $userRol === 'empleado'}
+          <button on:click={irAEditarPaginas}>Editar Páginas</button>
+          {/if}
+        
+      </div>
+    {/if}
+  {/if}
 
   <Footer />
 </div>
@@ -64,10 +173,68 @@
 
   .content {
     flex: 1;
-    margin-top: 80px; 
+    margin-top: 80px;
     padding: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .tuerquita-flotante {
+    position: fixed;
+    bottom: 100px;
+    right: 40px;
+    font-size: 32px;
+    cursor: pointer;
+    color: #333;
+    z-index: 9999;
+    transition: transform 0.3s ease;
+  }
+
+  .tuerquita-flotante:hover {
+    transform: scale(1.2);
+  }
+
+  .menu-admin-flotante {
+    position: fixed;
+    bottom: 140px;
+    right: 40px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+    min-width: 200px;
+  }
+
+  .menu-admin-flotante button {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .menu-admin-flotante button:hover {
+    background-color: #f5f5f5;
+  }
+
+  @media (max-width: 600px) {
+    .tuerquita-flotante {
+      bottom: 80px;
+      right: 20px;
+      font-size: 28px;
+    }
+
+    .menu-admin-flotante {
+      bottom: 120px;
+      right: 20px;
+      min-width: 160px;
+    }
   }
 </style>

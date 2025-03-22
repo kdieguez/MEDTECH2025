@@ -1,22 +1,19 @@
 <script>
   import { onMount } from 'svelte';
+  import axios from 'axios';
 
-  let footerTexto;
+  let footerTexto = '';
 
-  onMount(async () => {
-    try {
-      const res = await fetch('http://127.0.0.1:8000/estructura_web/por-titulo/Header y Footer');
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      const data = await res.json();
-      footerTexto = data.footer;
-    } catch (error) {
-      console.error("Error cargando datos del Footer:", error);
-      footerTexto = 'Información de footer sin cargar';
-    }
+  onMount(() => {
+    axios.get('http://127.0.0.1:8000/estructura_web/por-id/67d655a2f9a7d53085c7359d')
+      .then(res => {
+        const data = res.data;
+        footerTexto = data.footer;
+      })
+      .catch(error => {
+        console.error("Error cargando datos del Footer:", error);
+        footerTexto = 'Información de footer sin cargar';
+      });
   });
 </script>
 
@@ -34,6 +31,6 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    border-top: 10px solid #fffd59; 
+    border-top: 10px solid #ffd000; 
   }
 </style>
