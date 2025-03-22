@@ -13,7 +13,7 @@
   import PreguntasFrecuentes from "./routes/Publico/PreguntasFrecuentes.svelte";
   import Contacto from "./routes/Publico/Contacto.svelte";
   import CatalogoServicios from "./routes/Publico/CatalogoServicios.svelte";
-  import PaginaExtra2 from "./routes/Publico/PaginaExtra2.svelte";
+  import CatalogoHospitales from "./routes/Publico/CatalogoHospitales.svelte";
 
   import EditarPaginas from "./routes/Empleado/EditarPaginas.svelte";
   import Registro from './routes/Publico/Registro.svelte';
@@ -118,8 +118,8 @@
       <Contacto />
     {:else if currentPage === "Catálogo Servicios"}
       <CatalogoServicios />
-    {:else if currentPage === "Página extra 2"}
-      <PaginaExtra2 />
+    {:else if currentPage === "Catálogo Hospitales"}
+      <CatalogoHospitales />
     {:else if currentPage === "Login"}
       <Login 
         on:goRegistro={() => changePage('Registro')}

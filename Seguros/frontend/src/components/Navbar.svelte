@@ -78,12 +78,12 @@
       </a>
     </li>
 
-    <li class:active={currentPage === "Página extra 2"}>
+    <li class:active={currentPage === "Catálogo Hospitales"}>
       <a
-        href="/Página_extra_2"
-        on:click|preventDefault={() => selectSection("Página extra 2")}
+        href="/Catalogo_Hospitales"
+        on:click|preventDefault={() => selectSection("Catálogo Hospitales")}
       >
-        Página extra 2
+        Catálogo Hospitales
       </a>
     </li>
 
