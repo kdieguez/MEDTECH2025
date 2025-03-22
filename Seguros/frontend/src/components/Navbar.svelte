@@ -1,5 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
+  import { userRol } from '../store.js';
+
 
   export let isOpen = false;
   export let currentPage = "";
@@ -82,6 +84,15 @@
         on:click|preventDefault={() => selectSection("Página extra 2")}
       >
         Página extra 2
+      </a>
+    </li>
+
+     <li class:active={currentPage === "Editar Perfil"}>
+      <a
+        href="/EditarPerfil"
+        on:click|preventDefault={() => selectSection("Editar Perfil")}
+      >
+        Editar Perfil
       </a>
     </li>
   </ul>

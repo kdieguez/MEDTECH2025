@@ -1,9 +1,8 @@
-from fastapi import APIRouter, HTTPException, Request, UploadFile, Form
+from fastapi import APIRouter, HTTPException, Request, Form
 from database import obtener_coleccion
 from bson import ObjectId
 from services.envio_correos import enviar_email_activacion
 import uuid
-import os
 
 router = APIRouter(
     prefix="/usuarios",
@@ -12,21 +11,17 @@ router = APIRouter(
 
 usuarios_coll = obtener_coleccion("usuarios")
 
+# LISTAR USUARIOS (Admin)
 @router.get("/listar")
 async def listar_usuarios():
-    """
-    Obtiene la lista de usuarios registrados (oculta contraseñas hasheadas).
-    """
     usuarios = list(usuarios_coll.find({}, {"contrasena_hashed": 0}))
     for usuario in usuarios:
         usuario["_id"] = str(usuario["_id"])
     return {"usuarios": usuarios}
 
+# ACTUALIZAR ESTADO (Admin)
 @router.put("/actualizar-estado/{usuario_id}")
 async def actualizar_estado_usuario(usuario_id: str, request: Request):
-    """
-    Activa o desactiva usuarios.
-    """
     data = await request.json()
     nuevo_estado = data.get("estado")
 
@@ -43,11 +38,9 @@ async def actualizar_estado_usuario(usuario_id: str, request: Request):
 
     return {"message": "Estado del usuario actualizado correctamente"}
 
+# ASIGNAR ROL (Admin)
 @router.put("/asignar-rol/{usuario_id}")
 async def asignar_rol(usuario_id: str, request: Request):
-    """
-    Asigna un rol a un usuario.
-    """
     data = await request.json()
     nuevo_rol = data.get("rol")
 
@@ -64,12 +57,9 @@ async def asignar_rol(usuario_id: str, request: Request):
 
     return {"message": "Rol asignado correctamente"}
 
+# EDITAR USUARIO COMPLETO (Admin)
 @router.put("/editar/{usuario_id}")
 async def editar_usuario(usuario_id: str, request: Request):
-    """
-    Edita la información completa de un usuario.
-    Si el estado cambia a activo, se envía un correo de activación.
-    """
     data = await request.json()
 
     nombre = data.get("nombre")
@@ -111,11 +101,9 @@ async def editar_usuario(usuario_id: str, request: Request):
 
     return {"message": "Usuario editado correctamente"}
 
+# OBTENER PERFIL DEL USUARIO
 @router.get("/perfil/{correo}")
 async def obtener_perfil(correo: str):
-    """
-    Verifica si el usuario ya completó su perfil obligatorio.
-    """
     usuario = usuarios_coll.find_one({"correo": correo})
 
     if not usuario:
@@ -133,22 +121,25 @@ async def obtener_perfil(correo: str):
         "perfilCompleto": perfilCompleto,
         "usuario": {
             "nombre": usuario.get("nombre"),
-            "correo": usuario.get("correo")
+            "apellido": usuario.get("apellido"),
+            "correo": usuario.get("correo"),
+            "fecha_nacimiento": usuario.get("fecha_nacimiento"),
+            "dpi": usuario.get("dpi"),
+            "fotografia": usuario.get("fotografia"),
+            "num_afiliacion": usuario.get("num_afiliacion"),
+            "num_carnet": usuario.get("num_carnet")
         }
     }
 
-@router.post("/perfil")
+# COMPLETAR PERFIL
+
+@router.post("/perfil/completar")
 async def completar_perfil(
     correo: str = Form(...),
     fechaNacimiento: str = Form(...),
     dpi: str = Form(...),
     fotoUrl: str = Form(...)
 ):
-    """
-    Completa el perfil del usuario:
-    - Guarda fecha nacimiento, dpi, fotografía (URL)
-    - Genera automáticamente número de afiliación y número de carné
-    """
     usuario = usuarios_coll.find_one({"correo": correo})
 
     if not usuario:
@@ -171,10 +162,90 @@ async def completar_perfil(
     )
 
     if update_result.modified_count == 0:
-        raise HTTPException(status_code=500, detail="No se pudo actualizar el perfil")
+        raise HTTPException(status_code=500, detail="No se pudo completar el perfil")
 
     return {
         "message": "Perfil completado correctamente",
         "num_afiliacion": numeroAfiliacion,
         "num_carnet": numeroCarnet
+    }
+
+# EDITAR PERFIL
+from fastapi import APIRouter, HTTPException, Request, UploadFile, Form
+from database import obtener_coleccion
+from bson import ObjectId
+from services.envio_correos import enviar_email_activacion
+import uuid
+import os
+
+router = APIRouter(
+    prefix="/usuarios",
+    tags=["Usuarios"]
+)
+
+usuarios_coll = obtener_coleccion("usuarios")
+
+# OBTENER PERFIL DEL USUARIO (completo)
+@router.get("/perfil/{correo}")
+async def obtener_perfil(correo: str):
+    usuario = usuarios_coll.find_one({"correo": correo})
+
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    perfilCompleto = all([
+        usuario.get("fecha_nacimiento"),
+        usuario.get("dpi"),
+        usuario.get("fotografia"),
+        usuario.get("num_afiliacion"),
+        usuario.get("num_carnet")
+    ])
+
+    return {
+        "perfilCompleto": perfilCompleto,
+        "usuario": {
+            "nombre": usuario.get("nombre"),
+            "apellido": usuario.get("apellido"),   # ✅ se incluye el apellido
+            "correo": usuario.get("correo"),
+            "fecha_nacimiento": usuario.get("fecha_nacimiento"),
+            "dpi": usuario.get("dpi"),
+            "fotografia": usuario.get("fotografia"),
+            "num_afiliacion": usuario.get("num_afiliacion"),
+            "num_carnet": usuario.get("num_carnet")
+        }
+    }
+
+# EDITAR PERFIL
+@router.post("/perfil/editar")
+async def editar_perfil(
+    correo: str = Form(...),
+    nombre: str = Form(...),
+    apellido: str = Form(...),
+    fechaNacimiento: str = Form(...),
+    dpi: str = Form(...),
+    fotoUrl: str = Form(...)
+):
+    usuario = usuarios_coll.find_one({"correo": correo})
+
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    update_result = usuarios_coll.update_one(
+        {"correo": correo},
+        {
+            "$set": {
+                "nombre": nombre,
+                "apellido": apellido,
+                "fecha_nacimiento": fechaNacimiento,
+                "dpi": dpi,
+                "fotografia": fotoUrl
+            }
+        }
+    )
+
+    if update_result.modified_count == 0:
+        raise HTTPException(status_code=500, detail="No se pudo actualizar el perfil")
+
+    return {
+        "message": "Perfil actualizado correctamente"
     }

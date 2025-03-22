@@ -19,6 +19,7 @@
   import Registro from './routes/Publico/Registro.svelte';
   import Login from './routes/Publico/Login.svelte';
   import CompletarPerfil from "./routes/Publico/CompletarPerfil.svelte";
+  import EditarPerfil from './routes/Publico/EditarPerfil.svelte';
   import AdministrarUsuarios from './routes/Admin/AdministrarUsuarios.svelte';
   
 
@@ -140,6 +141,8 @@
       {/if}
     {:else if currentPage === "Completar Perfil"}
       <CompletarPerfil />
+      {:else if currentPage === "Editar Perfil"}
+      <EditarPerfil />
     {/if}
   </main>
 
