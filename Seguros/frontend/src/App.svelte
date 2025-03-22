@@ -12,7 +12,7 @@
   import NuestraHistoria from "./routes/Publico/NuestraHistoria.svelte";
   import PreguntasFrecuentes from "./routes/Publico/PreguntasFrecuentes.svelte";
   import Contacto from "./routes/Publico/Contacto.svelte";
-  import PaginaExtra1 from "./routes/Publico/PaginaExtra1.svelte";
+  import CatalogoServicios from "./routes/Publico/CatalogoServicios.svelte";
   import PaginaExtra2 from "./routes/Publico/PaginaExtra2.svelte";
 
   import EditarPaginas from "./routes/Empleado/EditarPaginas.svelte";
@@ -20,6 +20,7 @@
   import Login from './routes/Publico/Login.svelte';
   import CompletarPerfil from "./routes/Publico/CompletarPerfil.svelte";
   import AdministrarUsuarios from './routes/Admin/AdministrarUsuarios.svelte';
+  
 
   let currentPage = "Inicio";
   let menuOpen = false;
@@ -114,8 +115,8 @@
       <PreguntasFrecuentes />
     {:else if currentPage === "Contacto"}
       <Contacto />
-    {:else if currentPage === "Página extra 1"}
-      <PaginaExtra1 />
+    {:else if currentPage === "Catálogo Servicios"}
+      <CatalogoServicios />
     {:else if currentPage === "Página extra 2"}
       <PaginaExtra2 />
     {:else if currentPage === "Login"}
