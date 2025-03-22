@@ -9,21 +9,24 @@
 
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
+        <!-- Declaración de entidades -->
         <class>com.medtech.hospitales.models.Usuario</class>
+        <class>com.medtech.hospitales.models.CitaMedica</class>
+        <class>com.medtech.hospitales.models.InfoDoctor</class>
+        <class>com.medtech.hospitales.models.EspecialidadXDoctor</class>
 
         <properties>
-            <!-- conexión -->
+            <!-- Conexión a Oracle -->
             <property name="jakarta.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:oracle:thin:@localhost:1521/XEPDB1"/>
             <property name="jakarta.persistence.jdbc.user" value="HOSPITAL_BASE"/>
             <property name="jakarta.persistence.jdbc.password" value="Hospital"/>
 
+            <!-- Configuración de Hibernate -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect"/>
-
             <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
-
 
         </properties>
 

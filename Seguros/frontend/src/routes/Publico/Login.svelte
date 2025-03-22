@@ -34,7 +34,7 @@
       localStorage.setItem('userCorreo', correo);
       localStorage.setItem('userEstado', data.estado);
 
-      dispatch('loginSuccess');
+      verificarPerfil();
     })
     .catch(error => {
       console.error(error);
@@ -45,6 +45,23 @@
         mensaje = 'Error en la conexión con el servidor.';
       }
     });
+  }
+
+  function verificarPerfil() {
+    axios.get(`http://127.0.0.1:8000/usuarios/perfil/${correo}`)
+      .then(response => {
+        const { perfilCompleto } = response.data;
+
+        if (!perfilCompleto) {
+          dispatch('goCompletarPerfil');
+        } else {
+          dispatch('loginSuccess');
+        }
+      })
+      .catch(error => {
+        console.error('Error al verificar el perfil:', error);
+        dispatch('loginSuccess');
+      });
   }
 
   function irARegistro() {

@@ -1,7 +1,6 @@
 <script>
   import { onMount, onDestroy } from "svelte";
   import { userRol, accessToken } from './store.js';
-  import axios from 'axios';
 
   import Header from "./components/Header.svelte";
   import Navbar from "./components/Navbar.svelte";
@@ -19,6 +18,7 @@
   import EditarPaginas from "./routes/Empleado/EditarPaginas.svelte";
   import Registro from './routes/Publico/Registro.svelte';
   import Login from './routes/Publico/Login.svelte';
+  import CompletarPerfil from "./routes/Publico/CompletarPerfil.svelte";
   import AdministrarUsuarios from './routes/Admin/AdministrarUsuarios.svelte';
 
   let currentPage = "Inicio";
@@ -121,7 +121,8 @@
     {:else if currentPage === "Login"}
       <Login 
         on:goRegistro={() => changePage('Registro')}
-        on:loginSuccess={() => changePage('Inicio')} />
+        on:loginSuccess={() => changePage('Inicio')}
+        on:goCompletarPerfil={() => changePage('Completar Perfil')} />
     {:else if currentPage === "Registro"}
       <Registro on:goLogin={() => changePage('Login')} />
     {:else if currentPage === "Editar Páginas"}
@@ -136,6 +137,8 @@
       {:else}
         <p>Acceso denegado. Solo administradores o editores pueden administrar usuarios.</p>
       {/if}
+    {:else if currentPage === "Completar Perfil"}
+      <CompletarPerfil />
     {/if}
   </main>
 

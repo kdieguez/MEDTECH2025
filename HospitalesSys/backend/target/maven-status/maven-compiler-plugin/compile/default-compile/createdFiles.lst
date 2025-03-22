@@ -1,5 +1,10 @@
+com\medtech\hospitales\services\CitasService.class
 com\medtech\hospitales\models\Usuario.class
+com\medtech\hospitales\dtos\DoctorDTO.class
+com\medtech\hospitales\controllers\InfoDoctorController.class
 com\medtech\hospitales\services\UsuarioService.class
 com\medtech\hospitales\utils\JPAUtil.class
 com\medtech\hospitales\controllers\UsuarioController.class
 com\medtech\hospitales\App.class
+com\medtech\hospitales\models\CitaMedica.class
+com\medtech\hospitales\controllers\CitasController.class

@@ -1,0 +1,143 @@
+/* Contenedor principal */
+.agenda-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px;
+  background: #d4defc; /* Fondo Hospitales */
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+/* Título */
+.agenda-container h2 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* Selector de doctor */
+.doctor-select {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.doctor-select label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.doctor-select select {
+  padding: 10px;
+  font-size: 1rem;
+  width: 60%;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Calendario */
+.fc {
+  font-family: 'Arial', sans-serif;
+}
+
+.fc-toolbar-title {
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.fc-button {
+  background-color: #e2d4fc; /* color Hospitales */
+  border: none;
+  color: #333;
+  padding: 8px 14px;
+  border-radius: 6px;
+}
+
+.fc-button:hover {
+  background-color: #cbbdf9;
+}
+
+/* Modal */
+.overlay-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-cita {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 16px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+  z-index: 1001;
+}
+
+.modal-cita h3 {
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+  color: #333;
+  text-align: center;
+}
+
+/* Campos del modal */
+.modal-cita label {
+  display: block;
+  font-weight: bold;
+  margin-top: 15px;
+  text-align: left;
+}
+
+.modal-cita input,
+.modal-cita select,
+.modal-cita textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.modal-cita textarea {
+  resize: vertical;
+}
+
+/* Botones del modal */
+.modal-cita button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-cita button:first-of-type {
+  background-color: #d4defc; /* Hospitales color */
+  color: #333;
+  border: none;
+}
+
+.modal-cita button:first-of-type:hover {
+  background-color: #b0c2f2;
+}
+
+.modal-cita button:last-of-type {
+  background-color: #ffb3b3;
+  color: #333;
+  border: none;
+}
+
+.modal-cita button:last-of-type:hover {
+  background-color: #ff9999;
+}

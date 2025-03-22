@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, UploadFile, Form
 from database import obtener_coleccion
 from bson import ObjectId
 from services.envio_correos import enviar_email_activacion
+import uuid
+import os
 
 router = APIRouter(
     prefix="/usuarios",
@@ -13,7 +15,7 @@ usuarios_coll = obtener_coleccion("usuarios")
 @router.get("/listar")
 async def listar_usuarios():
     """
-    Endpoint para obtener la lista de usuarios registrados.
+    Obtiene la lista de usuarios registrados (oculta contraseñas hasheadas).
     """
     usuarios = list(usuarios_coll.find({}, {"contrasena_hashed": 0}))
     for usuario in usuarios:
@@ -23,7 +25,7 @@ async def listar_usuarios():
 @router.put("/actualizar-estado/{usuario_id}")
 async def actualizar_estado_usuario(usuario_id: str, request: Request):
     """
-    Endpoint para activar/desactivar usuarios.
+    Activa o desactiva usuarios.
     """
     data = await request.json()
     nuevo_estado = data.get("estado")
@@ -44,7 +46,7 @@ async def actualizar_estado_usuario(usuario_id: str, request: Request):
 @router.put("/asignar-rol/{usuario_id}")
 async def asignar_rol(usuario_id: str, request: Request):
     """
-    Endpoint para asignar un rol a un usuario.
+    Asigna un rol a un usuario.
     """
     data = await request.json()
     nuevo_rol = data.get("rol")
@@ -65,7 +67,7 @@ async def asignar_rol(usuario_id: str, request: Request):
 @router.put("/editar/{usuario_id}")
 async def editar_usuario(usuario_id: str, request: Request):
     """
-    Endpoint para editar la información completa de un usuario.
+    Edita la información completa de un usuario.
     Si el estado cambia a activo, se envía un correo de activación.
     """
     data = await request.json()
@@ -108,3 +110,71 @@ async def editar_usuario(usuario_id: str, request: Request):
         enviar_email_activacion(correo, nombre)
 
     return {"message": "Usuario editado correctamente"}
+
+@router.get("/perfil/{correo}")
+async def obtener_perfil(correo: str):
+    """
+    Verifica si el usuario ya completó su perfil obligatorio.
+    """
+    usuario = usuarios_coll.find_one({"correo": correo})
+
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    perfilCompleto = all([
+        usuario.get("fecha_nacimiento"),
+        usuario.get("dpi"),
+        usuario.get("fotografia"),
+        usuario.get("num_afiliacion"),
+        usuario.get("num_carnet")
+    ])
+
+    return {
+        "perfilCompleto": perfilCompleto,
+        "usuario": {
+            "nombre": usuario.get("nombre"),
+            "correo": usuario.get("correo")
+        }
+    }
+
+@router.post("/perfil")
+async def completar_perfil(
+    correo: str = Form(...),
+    fechaNacimiento: str = Form(...),
+    dpi: str = Form(...),
+    fotoUrl: str = Form(...)
+):
+    """
+    Completa el perfil del usuario:
+    - Guarda fecha nacimiento, dpi, fotografía (URL)
+    - Genera automáticamente número de afiliación y número de carné
+    """
+    usuario = usuarios_coll.find_one({"correo": correo})
+
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    numeroAfiliacion = f"AFI-{uuid.uuid4().hex[:8]}"
+    numeroCarnet = f"C-{uuid.uuid4().hex[:8]}"
+
+    update_result = usuarios_coll.update_one(
+        {"correo": correo},
+        {
+            "$set": {
+                "fecha_nacimiento": fechaNacimiento,
+                "dpi": dpi,
+                "fotografia": fotoUrl,
+                "num_afiliacion": numeroAfiliacion,
+                "num_carnet": numeroCarnet
+            }
+        }
+    )
+
+    if update_result.modified_count == 0:
+        raise HTTPException(status_code=500, detail="No se pudo actualizar el perfil")
+
+    return {
+        "message": "Perfil completado correctamente",
+        "num_afiliacion": numeroAfiliacion,
+        "num_carnet": numeroCarnet
+    }

@@ -3,6 +3,8 @@ package com.medtech.hospitales;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import com.medtech.hospitales.controllers.UsuarioController;
+import com.medtech.hospitales.controllers.CitasController;
+import com.medtech.hospitales.controllers.InfoDoctorController;
 
 public class App {
 
@@ -18,12 +20,14 @@ public class App {
 
         app.options("/*", App::handlePreflight);
 
-        UsuarioController.addRoutes(app);
+       UsuarioController.addRoutes(app);
+        CitasController.addRoutes(app);
+        InfoDoctorController.addRoutes(app);
+
 
         app.start(7000);
 
         System.out.println("Servidor corriendo en: http://localhost:7000");
-
     }
 
     private static void handlePreflight(Context ctx) {
