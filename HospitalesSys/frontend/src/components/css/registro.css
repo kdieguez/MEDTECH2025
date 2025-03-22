@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to right, #d4defc, #e2d4fc);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.registro-container {
+  width: 100%;
+  max-width: 800px; 
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  padding: 30px 50px;
+  transition: transform 0.3s ease;
+}
+
+.registro-container:hover {
+  transform: translateY(-5px);
+}
+
+.registro-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 800;
+  font-size: 26px; 
+}
+
+.registro-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.registro-container label {
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.registro-container input[type="text"],
+.registro-container input[type="email"],
+.registro-container input[type="password"] {
+  padding: 16px 14px; 
+  margin-bottom: 15px;
+  border: 2px solid #aaa;
+  border-radius: 12px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  width: 100%;
+}
+
+.registro-container input[type="text"]::placeholder,
+.registro-container input[type="email"]::placeholder,
+.registro-container input[type="password"]::placeholder {
+  color: #aaa;
+  font-weight: 500;
+}
+
+.registro-container input[type="text"]:focus,
+.registro-container input[type="email"]:focus,
+.registro-container input[type="password"]:focus {
+  border-color: #a593fc;
+  box-shadow: 0 0 8px rgba(165, 147, 252, 0.4);
+  outline: none;
+}
+
+.registro-container button[type="submit"] {
+  background-color: #a593fc;
+  color: #fff;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 800;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(165, 147, 252, 0.3);
+  transition: background-color 0.3s, box-shadow 0.3s;
+  margin-top: 10px;
+}
+
+.registro-container button[type="submit"]:hover {
+  background-color: #8b76f7;
+  box-shadow: 0 8px 16px rgba(139, 118, 247, 0.4);
+}
+
+.registro-container a {
+  display: block;
+  text-align: center;
+  margin-top: 18px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  transition: color 0.3s;
+}
+
+.registro-container a:hover {
+  color: #000;
+}
+
+.mensaje {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: 700;
+  color: #4caf50;
+  font-size: 14px;
+}
+
+.error {
+  color: #ff4d4f;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+@media (max-width: 500px) {
+  .registro-container {
+    max-width: 90%;
+    padding: 30px 20px;
+  }
+}
