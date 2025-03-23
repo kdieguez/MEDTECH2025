@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, Request, Form
+from fastapi import APIRouter, HTTPException, Request, Form, UploadFile
 from database import obtener_coleccion
 from bson import ObjectId
 from services.envio_correos import enviar_email_activacion
 import uuid
+import os
 
 router = APIRouter(
     prefix="/usuarios",
@@ -133,7 +134,7 @@ async def obtener_perfil(correo: str):
 
 # COMPLETAR PERFIL
 
-@router.post("/perfil/completar")
+@router.post("/perfil/completar") #cambiar
 async def completar_perfil(
     correo: str = Form(...),
     fechaNacimiento: str = Form(...),
@@ -169,21 +170,6 @@ async def completar_perfil(
         "num_afiliacion": numeroAfiliacion,
         "num_carnet": numeroCarnet
     }
-
-# EDITAR PERFIL
-from fastapi import APIRouter, HTTPException, Request, UploadFile, Form
-from database import obtener_coleccion
-from bson import ObjectId
-from services.envio_correos import enviar_email_activacion
-import uuid
-import os
-
-router = APIRouter(
-    prefix="/usuarios",
-    tags=["Usuarios"]
-)
-
-usuarios_coll = obtener_coleccion("usuarios")
 
 # OBTENER PERFIL DEL USUARIO (completo)
 @router.get("/perfil/{correo}")
