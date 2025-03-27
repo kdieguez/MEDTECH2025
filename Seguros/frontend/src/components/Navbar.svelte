@@ -87,12 +87,12 @@
       </a>
     </li>
 
-     <li class:active={currentPage === "Editar Perfil"}>
+     <li class:active={currentPage === "Cobros"}>
       <a
-        href="/EditarPerfil"
-        on:click|preventDefault={() => selectSection("Editar Perfil")}
+        href="/Cobros"
+        on:click|preventDefault={() => selectSection("Cobros")}
       >
-        Editar Perfil
+        Cobros
       </a>
     </li>
   </ul>

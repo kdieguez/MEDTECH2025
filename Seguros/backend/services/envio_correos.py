@@ -104,3 +104,26 @@ def enviar_email_activacion(destinatario, nombre_usuario):
     """)
 
     _enviar_email(msg)
+
+def enviar_email_bienvenida_con_password(destinatario, nombre_usuario, password):
+    nombre_seguro = obtener_nombre_seguro()
+
+    msg = EmailMessage()
+    msg["Subject"] = f"¡Bienvenido a {nombre_seguro}!"
+    msg["From"] = EMAIL_FROM
+    msg["To"] = destinatario
+
+    msg.set_content(f"""
+    Hola {nombre_usuario},
+
+    ¡Bienvenido a {nombre_seguro}!
+
+    Tu registro ha sido exitoso. Tu contraseña temporal es: {password}
+
+    Espera a que un administrador active tu cuenta. Luego podrás ingresar al sistema.
+
+    Saludos,
+    El equipo de {nombre_seguro}
+    """)
+
+    _enviar_email(msg)

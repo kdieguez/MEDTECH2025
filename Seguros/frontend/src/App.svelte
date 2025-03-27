@@ -14,6 +14,9 @@
   import Contacto from "./routes/Publico/Contacto.svelte";
   import CatalogoServicios from "./routes/Publico/CatalogoServicios.svelte";
   import CatalogoHospitales from "./routes/Publico/CatalogoHospitales.svelte";
+  import Ventas from './routes/Publico/Ventas.svelte';
+  import Cobros from './routes/Publico/Cobros.svelte';
+
 
   import EditarPaginas from "./routes/Empleado/EditarPaginas.svelte";
   import Registro from './routes/Publico/Registro.svelte';
@@ -143,6 +146,18 @@
       <CompletarPerfil />
       {:else if currentPage === "Editar Perfil"}
       <EditarPerfil />
+      {:else if currentPage === "Ventas"}
+    {#if $userRol === 'admin'}
+      <Ventas />
+    {:else}
+    <p>Acceso denegado. Solo los administradores pueden acceder al módulo de ventas.</p>
+  {/if}
+     {:else if currentPage === "Cobros"}
+      {#if $userRol === 'admin' || $userRol === 'empleado'}
+        <Cobros />
+      {:else}
+        <p>Acceso denegado. Solo administradores o empleados pueden acceder al módulo de cobros.</p>
+      {/if}
     {/if}
   </main>
 

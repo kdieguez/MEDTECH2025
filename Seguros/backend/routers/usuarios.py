@@ -191,7 +191,7 @@ async def obtener_perfil(correo: str):
         "perfilCompleto": perfilCompleto,
         "usuario": {
             "nombre": usuario.get("nombre"),
-            "apellido": usuario.get("apellido"),   # ✅ se incluye el apellido
+            "apellido": usuario.get("apellido"),
             "correo": usuario.get("correo"),
             "fecha_nacimiento": usuario.get("fecha_nacimiento"),
             "dpi": usuario.get("dpi"),
