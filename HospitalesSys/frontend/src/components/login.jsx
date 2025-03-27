@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom'; // 👈 importante
+import { Link, useNavigate } from 'react-router-dom'; 
 import './css/registro.css';
 
 const Login = () => {
@@ -10,7 +10,7 @@ const Login = () => {
   });
 
   const [mensaje, setMensaje] = useState('');
-  const navigate = useNavigate(); // 👈 para redireccionar
+  const navigate = useNavigate(); 
 
   const handleChange = (e) => {
     setFormData({
@@ -27,10 +27,8 @@ const Login = () => {
         const usuario = res.data;
         setMensaje(`Bienvenido, ${usuario.usuario}`);
 
-        // ✅ Guardar usuario en localStorage
         localStorage.setItem('usuario', JSON.stringify(usuario));
 
-        // ✅ Redirigir al home después de 1 segundo
         setTimeout(() => {
           navigate('/home'); // o window.location.href = "/home";
         }, 1000);
