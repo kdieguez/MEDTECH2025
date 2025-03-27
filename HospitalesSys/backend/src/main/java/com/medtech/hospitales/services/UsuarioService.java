@@ -7,9 +7,12 @@ import jakarta.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.medtech.hospitales.utils.JPAUtil;
+
 public class UsuarioService {
 
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("HospitalesPU");
+    private EntityManager em = JPAUtil.getEntityManager();
 
     public List<Usuario> obtenerUsuarios() {
         EntityManager em = emf.createEntityManager();
@@ -101,4 +104,18 @@ public class UsuarioService {
             System.err.println("Error al enviar correos: " + e.getMessage());
         }
     }
+    public Usuario login(String username, String password) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT u FROM Usuario u WHERE u.usuario = :user AND u.contrasena = :pass", Usuario.class)
+                     .setParameter("user", username)
+                     .setParameter("pass", password)
+                     .getResultStream()
+                     .findFirst()
+                     .orElse(null);
+        } finally {
+            em.close();
+        }
+    }   
+    
 }

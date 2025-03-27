@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import './css/registro.css'; // reutilizamos estilos
+import { Link, useNavigate } from 'react-router-dom'; // 👈 importante
+import './css/registro.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +10,7 @@ const Login = () => {
   });
 
   const [mensaje, setMensaje] = useState('');
+  const navigate = useNavigate(); // 👈 para redireccionar
 
   const handleChange = (e) => {
     setFormData({
@@ -23,15 +24,20 @@ const Login = () => {
 
     axios.post('http://localhost:7000/login', formData)
       .then((res) => {
-        setMensaje(`Bienvenido, ${res.data.usuario}`);
-        // Aquí podrías guardar token, redirigir, etc.
+        const usuario = res.data;
+        setMensaje(`Bienvenido, ${usuario.usuario}`);
+
+        // ✅ Guardar usuario en localStorage
+        localStorage.setItem('usuario', JSON.stringify(usuario));
+
+        // ✅ Redirigir al home después de 1 segundo
+        setTimeout(() => {
+          navigate('/home'); // o window.location.href = "/home";
+        }, 1000);
       })
-      .catch((error) => {
-        if (error.response) {
-          setMensaje(error.response.data);
-        } else {
-          setMensaje("Error de conexión.");
-        }
+      .catch((err) => {
+        const msg = err.response?.data?.details || "Error al iniciar sesión";
+        setMensaje(String(msg));
       });
   };
 
@@ -40,7 +46,7 @@ const Login = () => {
       <h2>Iniciar Sesión</h2>
 
       <form onSubmit={handleSubmit}>
-        <label htmlFor="usuario">Usuario</label>
+        <label>Usuario</label>
         <input
           type="text"
           name="usuario"
@@ -49,7 +55,7 @@ const Login = () => {
           required
         />
 
-        <label htmlFor="contrasena">Contraseña</label>
+        <label>Contraseña</label>
         <input
           type="password"
           name="contrasena"

@@ -3,6 +3,7 @@ C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\models\Rol.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\models\CitaMedica.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\utils\JPAUtil.java
+C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\dtos\LoginRequest.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\models\Usuario.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\services\UsuarioService.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\controllers\InfoDoctorController.java

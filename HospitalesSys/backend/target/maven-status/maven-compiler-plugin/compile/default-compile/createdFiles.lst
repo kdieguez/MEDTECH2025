@@ -1,3 +1,4 @@
+com\medtech\hospitales\dtos\LoginRequest.class
 com\medtech\hospitales\utils\CorreoUtils.class
 com\medtech\hospitales\models\Usuario.class
 com\medtech\hospitales\controllers\InfoDoctorController.class
@@ -9,6 +10,7 @@ com\medtech\hospitales\utils\CorreoUtils$1.class
 com\medtech\hospitales\services\CitasService.class
 com\medtech\hospitales\services\HeaderFooterService.class
 com\medtech\hospitales\controllers\HeaderFooterController.class
+com\medtech\hospitales\controllers\UsuarioController$ErrorResponse.class
 com\medtech\hospitales\dtos\DoctorDTO.class
 com\medtech\hospitales\controllers\UsuarioController.class
 com\medtech\hospitales\App.class

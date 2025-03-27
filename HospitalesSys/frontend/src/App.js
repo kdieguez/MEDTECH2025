@@ -7,7 +7,7 @@ import Login from './components/login';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
-import EditarHeaderFooter from './components/EditarHF';
+import EditarHeaderFooter from './components/EditarHeaderFooter';
 
 
 function App() {
