@@ -15,3 +15,4 @@ com\medtech\hospitales\App.class
 com\medtech\hospitales\services\RolService.class
 com\medtech\hospitales\models\CitaMedica.class
 com\medtech\hospitales\controllers\CitasController.class
+com\medtech\hospitales\dao\HeaderFooterDAO.class

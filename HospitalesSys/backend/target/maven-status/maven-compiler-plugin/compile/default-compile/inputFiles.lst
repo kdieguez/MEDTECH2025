@@ -11,6 +11,7 @@ C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\App.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\controllers\CitasController.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\controllers\UsuarioController.java
+C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\dao\HeaderFooterDAO.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\dtos\DoctorDTO.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\services\CitasService.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\utils\CorreoUtils.java

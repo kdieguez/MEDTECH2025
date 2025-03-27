@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './css/Header.css'
 
 const Header = () => {
   const [data, setData] = useState({});
@@ -10,8 +11,10 @@ const Header = () => {
 
   return (
     <header className="header">
-      <img src={data['Logo']} alt="Logo" style={{ height: '60px' }} />
-      <h1>{data['Titulo']}</h1>
+      <div className="logo-titulo">
+        <img src={data['Logo']} alt="Logo" style={{ height: '100px' }} />
+        <h1  className="titulo">{data['Titulo']}</h1>
+      </div>
     </header>
   );
 };

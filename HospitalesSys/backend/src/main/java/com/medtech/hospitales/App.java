@@ -5,6 +5,10 @@ import io.javalin.http.Context;
 import com.medtech.hospitales.controllers.UsuarioController;
 import com.medtech.hospitales.controllers.CitasController;
 import com.medtech.hospitales.controllers.InfoDoctorController;
+import com.medtech.hospitales.controllers.HeaderFooterController;
+import com.medtech.hospitales.dao.HeaderFooterDAO;
+import com.medtech.hospitales.services.HeaderFooterService;
+import com.medtech.hospitales.utils.JPAUtil;
 
 public class App {
 
@@ -20,10 +24,13 @@ public class App {
 
         app.options("/*", App::handlePreflight);
 
-       UsuarioController.addRoutes(app);
+        UsuarioController.addRoutes(app);
         CitasController.addRoutes(app);
         InfoDoctorController.addRoutes(app);
 
+        HeaderFooterDAO headerFooterDAO = new HeaderFooterDAO(JPAUtil.getEntityManager());
+        HeaderFooterService headerFooterService = new HeaderFooterService(headerFooterDAO);
+        HeaderFooterController.register(app, headerFooterService);
 
         app.start(7000);
 

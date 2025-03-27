@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './css/Footer.css'
 
 const Footer = () => {
   const [data, setData] = useState({});
