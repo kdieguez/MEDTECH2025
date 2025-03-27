@@ -1,6 +1,7 @@
 package com.medtech.hospitales.models;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "USUARIOS")
@@ -26,11 +27,14 @@ public class Usuario {
     @Column(name = "CONTRASENA", nullable = false)
     private String password;
 
-    @Column(name = "ID_ROL", nullable = false)
-    private int idRol;
+    @Column(name = "ID_ROL", nullable = true)
+    private Integer idRol;
 
     @Column(name = "ACTIVO", nullable = false)
-    private int habilitado;
+    private Integer habilitado = 0; 
+
+    @Column(name = "FECHACREACION")
+    private LocalDateTime fechaCreacion;
 
     // Getters y setters
     public Long getId() { return id; }
@@ -52,8 +56,12 @@ public class Usuario {
     public void setPassword(String password) { this.password = password; }
 
     public int getIdRol() { return idRol; }
-    public void setIdRol(int idRol) { this.idRol = idRol; }
+    public void setIdRol(Integer idRol) { this.idRol = idRol; } 
 
-    public int getHabilitado() { return habilitado; }
-    public void setHabilitado(int habilitado) { this.habilitado = habilitado; }
+
+    public Integer getHabilitado() { return habilitado; }
+    public void setHabilitado(Integer habilitado) { this.habilitado = habilitado; }
+
+    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 }

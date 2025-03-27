@@ -1,0 +1,71 @@
+.editar-container {
+    max-width: 800px;
+    margin: 40px auto;
+    background-color: #fdfdfd;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .editar-container h2 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    color: #333;
+    border-left: 6px solid #7a90e4;
+    padding-left: 12px;
+  }
+  
+  .editar-seccion {
+    margin-bottom: 40px;
+  }
+  
+  .campo {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  .campo label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  
+  .campo input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: border 0.3s ease;
+  }
+  
+  .campo input:focus {
+    border: 1px solid #7a90e4;
+    outline: none;
+  }
+  
+  button {
+    width: fit-content;
+    padding: 8px 16px;
+    background-color: #7a90e4;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #5e72c0;
+  }
+  
+  .mensaje {
+    font-weight: 600;
+    color: green;
+    text-align: center;
+    margin-top: 10px;
+  }
+  

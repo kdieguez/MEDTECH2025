@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './css/registro.css';
 
@@ -8,7 +9,8 @@ const Registro = () => {
     apellido: '',
     usuario: '',
     correo: '',
-    contrasena: ''
+    contrasena: '',
+    contrasenaConfirmada: ''
   });
 
   const [mensaje, setMensaje] = useState('');
@@ -20,46 +22,41 @@ const Registro = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (formData.contrasena !== formData.contrasenaConfirmada) {
+      setMensaje("Las contraseñas no coinciden.");
+      return;
+    }
 
     const usuarioPayload = {
       nombre: formData.nombre,
       apellido: formData.apellido,
       usuario: formData.usuario,
       email: formData.correo,
-      password: formData.contrasena,
-      idRol: 4,
-      habilitado: 1
+      password: formData.contrasena
     };
 
-    try {
-      const response = await fetch('http://localhost:7000/usuarios', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(usuarioPayload)
-    });
-
-      if (response.ok) {
+    axios.post('http://localhost:7000/usuarios', usuarioPayload)
+      .then(() => {
         setMensaje('Usuario registrado correctamente.');
         setFormData({
           nombre: '',
           apellido: '',
           usuario: '',
           correo: '',
-          contrasena: ''
+          contrasena: '',
+          contrasenaConfirmada: ''
         });
-      } else if (response.status === 409) {
-        setMensaje('El correo o usuario ya existe.');
-      } else {
-        setMensaje('Error al registrar el usuario.');
-      }
-    } catch (error) {
-      console.error('Error al conectar con el backend:', error);
-      setMensaje('Error de conexión con el servidor.');
-    }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 409) {
+          setMensaje('El correo o usuario ya existe.');
+        } else {
+          setMensaje('Error al registrar el usuario.');
+        }
+      });
   };
 
   return (
@@ -72,7 +69,6 @@ const Registro = () => {
           type="text"
           id="nombre"
           name="nombre"
-          placeholder="Nombre completo"
           value={formData.nombre}
           onChange={handleChange}
           required
@@ -83,7 +79,6 @@ const Registro = () => {
           type="text"
           id="apellido"
           name="apellido"
-          placeholder="Apellido completo"
           value={formData.apellido}
           onChange={handleChange}
           required
@@ -94,7 +89,6 @@ const Registro = () => {
           type="text"
           id="usuario"
           name="usuario"
-          placeholder="Nombre de usuario"
           value={formData.usuario}
           onChange={handleChange}
           required
@@ -105,7 +99,6 @@ const Registro = () => {
           type="email"
           id="correo"
           name="correo"
-          placeholder="correo@dominio.com"
           value={formData.correo}
           onChange={handleChange}
           required
@@ -116,8 +109,17 @@ const Registro = () => {
           type="password"
           id="contrasena"
           name="contrasena"
-          placeholder="Contraseña segura"
           value={formData.contrasena}
+          onChange={handleChange}
+          required
+        />
+
+        <label htmlFor="contrasenaConfirmada">Confirmar contraseña</label>
+        <input
+          type="password"
+          id="contrasenaConfirmada"
+          name="contrasenaConfirmada"
+          value={formData.contrasenaConfirmada}
           onChange={handleChange}
           required
         />

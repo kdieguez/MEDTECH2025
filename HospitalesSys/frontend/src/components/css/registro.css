@@ -6,40 +6,48 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+}
+
+main {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 60px 20px;
+  min-height: calc(100vh - 180px); /* Ajusta esto si tu header + footer cambian de altura */
 }
 
+/* CONTENEDOR BLANCO DEL FORMULARIO */
 .registro-container {
   width: 100%;
-  max-width: 800px; 
+  max-width: 600px;
   background-color: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-  padding: 30px 50px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  padding: 40px 50px;
   transition: transform 0.3s ease;
 }
 
 .registro-container:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
 }
 
+/* TÍTULO */
 .registro-container h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   color: #333;
   font-weight: 800;
-  font-size: 26px; 
+  font-size: 28px;
 }
 
+/* FORMULARIO */
 .registro-container form {
   display: flex;
   flex-direction: column;
 }
 
 .registro-container label {
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   color: #333;
   font-size: 14px;
   font-weight: 700;
@@ -48,36 +56,34 @@ body {
 .registro-container input[type="text"],
 .registro-container input[type="email"],
 .registro-container input[type="password"] {
-  padding: 16px 14px; 
-  margin-bottom: 15px;
-  border: 2px solid #aaa;
+  padding: 14px 12px;
+  margin-bottom: 18px;
+  border: 2px solid #ccc;
   border-radius: 12px;
   transition: border-color 0.3s, box-shadow 0.3s;
   font-size: 15px;
   font-weight: 600;
   color: #333;
   width: 100%;
+  background-color: #fdfdfd;
 }
 
-.registro-container input[type="text"]::placeholder,
-.registro-container input[type="email"]::placeholder,
-.registro-container input[type="password"]::placeholder {
+.registro-container input::placeholder {
   color: #aaa;
   font-weight: 500;
 }
 
-.registro-container input[type="text"]:focus,
-.registro-container input[type="email"]:focus,
-.registro-container input[type="password"]:focus {
+.registro-container input:focus {
   border-color: #a593fc;
-  box-shadow: 0 0 8px rgba(165, 147, 252, 0.4);
+  box-shadow: 0 0 8px rgba(165, 147, 252, 0.3);
   outline: none;
 }
 
+/* BOTÓN */
 .registro-container button[type="submit"] {
   background-color: #a593fc;
   color: #fff;
-  padding: 16px;
+  padding: 14px;
   font-size: 16px;
   font-weight: 800;
   border: none;
@@ -93,10 +99,11 @@ body {
   box-shadow: 0 8px 16px rgba(139, 118, 247, 0.4);
 }
 
+/* ENLACE */
 .registro-container a {
   display: block;
   text-align: center;
-  margin-top: 18px;
+  margin-top: 20px;
   color: #333;
   text-decoration: none;
   font-size: 14px;
@@ -105,9 +112,10 @@ body {
 }
 
 .registro-container a:hover {
-  color: #000;
+  color: #6a5acd;
 }
 
+/* MENSAJES */
 .mensaje {
   text-align: center;
   margin-top: 15px;
@@ -124,9 +132,10 @@ body {
   font-weight: 700;
 }
 
-@media (max-width: 500px) {
+/* RESPONSIVE */
+@media (max-width: 600px) {
   .registro-container {
-    max-width: 90%;
+    max-width: 95%;
     padding: 30px 20px;
   }
 }

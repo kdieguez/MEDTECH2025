@@ -2,6 +2,7 @@ package com.medtech.hospitales.controllers;
 
 import com.medtech.hospitales.models.Usuario;
 import com.medtech.hospitales.services.UsuarioService;
+import com.medtech.hospitales.services.RolService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -37,10 +38,20 @@ public class UsuarioController {
     }
 
     public void crearUsuario(Context ctx) {
-        Usuario usuario = ctx.bodyAsClass(Usuario.class);
-        usuarioService.crearUsuario(usuario);
-        ctx.status(201).result("Usuario creado exitosamente");
+        try {
+            Usuario usuario = ctx.bodyAsClass(Usuario.class);
+    
+            // El rol se deja null por defecto
+            usuario.setIdRol(null);
+    
+            usuarioService.crearUsuario(usuario);
+            ctx.status(201).result("Usuario creado exitosamente sin rol");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ctx.status(500).result("Error del servidor: " + e.getMessage());
+        }
     }
+      
 
     public void actualizarUsuario(Context ctx) {
         Long id = Long.valueOf(ctx.pathParam("id"));
