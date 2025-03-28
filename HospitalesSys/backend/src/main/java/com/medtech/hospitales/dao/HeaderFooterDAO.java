@@ -13,7 +13,10 @@ public class HeaderFooterDAO {
     }
 
     public List<HeaderFooter> findAll() {
-        return em.createQuery("SELECT h FROM HeaderFooter h", HeaderFooter.class).getResultList();
+        em.getTransaction().begin();
+        List<HeaderFooter> result = em.createQuery("SELECT h FROM HeaderFooter h", HeaderFooter.class).getResultList();
+        em.getTransaction().commit();
+        return result;
     }
 
     public void update(HeaderFooter hf) {

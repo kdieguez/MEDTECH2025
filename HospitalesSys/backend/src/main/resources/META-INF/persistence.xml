@@ -14,6 +14,7 @@
         <class>com.medtech.hospitales.models.CitaMedica</class>
         <class>com.medtech.hospitales.models.InfoDoctor</class>
         <class>com.medtech.hospitales.models.EspecialidadXDoctor</class>
+        <class>com.medtech.hospitales.models.HeaderFooter</class>
 
         <properties>
             <!-- Conexión a Oracle -->

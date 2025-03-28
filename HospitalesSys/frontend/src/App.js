@@ -15,8 +15,6 @@ function App() {
 
   return (
     <Router>
-      <Header usuario={usuarioLogueado} setUsuario={setUsuarioLogueado}/>
-      <Navbar/>
       <main>
         <Routes>
           <Route path="/registro" element={<Registro />} />
@@ -25,7 +23,6 @@ function App() {
           <Route path="/editarHF" element={<EditarHeaderFooter/>}/>
         </Routes>
       </main>
-      <Footer/>
     </Router>
   );
 }
