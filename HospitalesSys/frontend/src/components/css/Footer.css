@@ -1,10 +1,14 @@
 .footer {
-  width: 100%;
-  background:  #e2d4fc;
-  text-align: center;
-  padding: 15px;
-  font-weight: 600;
+  background-color: #e2d4fc;
   color: #333;
-  margin-top: auto;
-  border-top: 1px solid #ccc;
+  padding: 20px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  font-size: 14px;
+  border-top: 2px solid #ccc;
+}
+
+.footer-item {
+  margin: 5px 15px;
 }

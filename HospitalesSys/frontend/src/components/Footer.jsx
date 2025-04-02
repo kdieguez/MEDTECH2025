@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './css/Footer.css'
+import './css/Footer.css';
 
 const Footer = () => {
-  const [data, setData] = useState({});
+  const [footerItems, setFooterItems] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/header-footer').then(res => setData(res.data));
+    axios.get("http://localhost:7000/headerfooter")
+      .then(res => {
+        const soloFooter = res.data.filter(item =>
+          item.titulo !== "Logo" && item.titulo !== "Titulo"
+        );
+        console.log("Footer data filtrada:", soloFooter);
+        setFooterItems(soloFooter);
+      })
+      .catch(err => {
+        console.error("Error al cargar el footer:", err.message);
+      });
   }, []);
 
   return (
     <footer className="footer">
-      <p><strong>Teléfono ambulancia:</strong> {data['Número de ambulancia principal']}</p>
-      <p><strong>Correo:</strong> {data['Correo electrónico']}</p>
-      <p><strong>Horario:</strong> {data['Horario']}</p>
+      {footerItems.map(item => (
+        <div key={item.id} className="footer-item">
+          <strong>{item.titulo}:</strong> {item.contenido}
+        </div>
+      ))}
     </footer>
   );
 };

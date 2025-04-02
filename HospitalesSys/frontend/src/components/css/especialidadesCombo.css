@@ -1,0 +1,17 @@
+select, input, button {
+    padding: 8px;
+    margin: 4px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  button {
+    background-color: #6f42c1;
+    color: white;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #5a34a0;
+  }
+  

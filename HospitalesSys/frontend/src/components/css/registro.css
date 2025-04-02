@@ -13,10 +13,9 @@ main {
   justify-content: center;
   align-items: center;
   padding: 60px 20px;
-  min-height: calc(100vh - 180px); /* Ajusta esto si tu header + footer cambian de altura */
+  min-height: calc(100vh - 180px);
 }
 
-/* CONTENEDOR BLANCO DEL FORMULARIO */
 .registro-container {
   width: 100%;
   max-width: 600px;
@@ -99,7 +98,6 @@ main {
   box-shadow: 0 8px 16px rgba(139, 118, 247, 0.4);
 }
 
-/* ENLACE */
 .registro-container a {
   display: block;
   text-align: center;
@@ -115,7 +113,6 @@ main {
   color: #6a5acd;
 }
 
-/* MENSAJES */
 .mensaje {
   text-align: center;
   margin-top: 15px;
@@ -132,7 +129,6 @@ main {
   font-weight: 700;
 }
 
-/* RESPONSIVE */
 @media (max-width: 600px) {
   .registro-container {
     max-width: 95%;

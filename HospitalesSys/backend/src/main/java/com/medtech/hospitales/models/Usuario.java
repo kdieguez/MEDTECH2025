@@ -36,7 +36,6 @@ public class Usuario {
     @Column(name = "FECHACREACION")
     private LocalDateTime fechaCreacion;
 
-    // Getters y setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -55,7 +54,7 @@ public class Usuario {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public int getIdRol() { return idRol; }
+    public Integer getIdRol() { return idRol; }
     public void setIdRol(Integer idRol) { this.idRol = idRol; } 
 
 

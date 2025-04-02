@@ -1,0 +1,52 @@
+.formulario-doctor {
+    max-width: 800px;
+    margin: auto;
+    padding: 2rem;
+    background-color: #f9f9ff;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .formulario-doctor h2,
+  .formulario-doctor h3 {
+    color: #673ab7;
+    margin-bottom: 1rem;
+  }
+  
+  .formulario-doctor label {
+    display: block;
+    font-weight: bold;
+    margin-top: 1rem;
+  }
+  
+  .formulario-doctor input,
+  .formulario-doctor select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.3rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .especialidad-bloque {
+    background-color: #f0f0ff;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+  
+  button {
+    background-color: #673ab7;
+    color: white;
+    padding: 0.5rem 1rem;
+    margin: 0.3rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #512da8;
+  }
+  

@@ -1,15 +1,28 @@
 package com.medtech.hospitales.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class LoginRequest {
-    private String usuario;
+
+    @JsonProperty("identificador")
+    private String identificador;
+
+    @JsonProperty("contrasena")
     private String contrasena;
 
-    public String getUsuario() {
-        return usuario;
+    public LoginRequest() {}
+
+    public LoginRequest(String identificador, String contrasena) {
+        this.identificador = identificador;
+        this.contrasena = contrasena;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public String getIdentificador() {
+        return identificador;
+    }
+
+    public void setIdentificador(String identificador) {
+        this.identificador = identificador;
     }
 
     public String getContrasena() {

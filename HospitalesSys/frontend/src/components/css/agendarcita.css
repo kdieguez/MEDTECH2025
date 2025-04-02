@@ -1,4 +1,3 @@
-/* Contenedor principal */
 .agenda-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -9,14 +8,12 @@
   text-align: center;
 }
 
-/* Título */
 .agenda-container h2 {
   font-size: 2.5rem;
   color: #333;
   margin-bottom: 30px;
 }
 
-/* Selector de doctor */
 .doctor-select {
   margin-bottom: 20px;
   text-align: left;
@@ -35,7 +32,6 @@
   border: 1px solid #ccc;
 }
 
-/* Calendario */
 .fc {
   font-family: 'Arial', sans-serif;
 }
@@ -46,7 +42,7 @@
 }
 
 .fc-button {
-  background-color: #e2d4fc; /* color Hospitales */
+  background-color: #e2d4fc;
   border: none;
   color: #333;
   padding: 8px 14px;
@@ -57,7 +53,6 @@
   background-color: #cbbdf9;
 }
 
-/* Modal */
 .overlay-modal {
   position: fixed;
   top: 0;
@@ -89,7 +84,6 @@
   text-align: center;
 }
 
-/* Campos del modal */
 .modal-cita label {
   display: block;
   font-weight: bold;
@@ -111,7 +105,6 @@
   resize: vertical;
 }
 
-/* Botones del modal */
 .modal-cita button {
   width: 100%;
   padding: 12px;
@@ -123,7 +116,7 @@
 }
 
 .modal-cita button:first-of-type {
-  background-color: #d4defc; /* Hospitales color */
+  background-color: #d4defc; 
   color: #333;
   border: none;
 }

@@ -11,7 +11,6 @@ public class CitasService {
 
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("HospitalesPU");
 
-    // Listar todas las citas
     public List<CitaMedica> listarTodas() {
         EntityManager em = emf.createEntityManager();
         List<CitaMedica> citas = em.createQuery("SELECT c FROM CitaMedica c", CitaMedica.class).getResultList();
@@ -19,14 +18,12 @@ public class CitasService {
         return citas;
     }
 
-    // Consultar disponibilidad de horarios
     public List<String> obtenerHorariosDisponibles(LocalDate fecha, Long doctorId) {
         EntityManager em = emf.createEntityManager();
 
         LocalDateTime inicioDia = fecha.atStartOfDay();
         LocalDateTime finDia = fecha.atTime(23, 59, 59);
 
-        // Citas de ese día para ese doctor
         List<CitaMedica> citasExistentes = em.createQuery(
                 "SELECT c FROM CitaMedica c WHERE c.fechaHora BETWEEN :inicioDia AND :finDia AND c.idDoctor = :doctorId",
                 CitaMedica.class)
@@ -61,9 +58,8 @@ public class CitasService {
         try {
             tx.begin();
 
-            // Armamos el LocalDateTime desde fecha + hora (que vienen como string)
-            String fechaStr = cita.getFecha(); // Nueva propiedad temporal en DTO
-            String horaStr = cita.getHora();   // Nueva propiedad temporal en DTO
+            String fechaStr = cita.getFecha(); 
+            String horaStr = cita.getHora(); 
 
             LocalDateTime fechaHora = LocalDateTime.parse(fechaStr + "T" + horaStr);
             cita.setFechaHora(fechaHora);

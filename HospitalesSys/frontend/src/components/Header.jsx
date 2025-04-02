@@ -1,39 +1,50 @@
 import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './css/Header.css';
 
-const Header = () => {
-  const [data, setData] = useState({});
-  const [usuario, setUsuario] = useState(null);
+const Header = ({ usuarioLogueado, setUsuario }) => {
+  const [logo, setLogo] = useState('');
+  const [titulo, setTitulo] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/api/header-footer')
-      .then(res => setData(res.data));
-
-    // Obtener usuario desde localStorage
-    const user = localStorage.getItem("usuario");
-    if (user) {
-      setUsuario(JSON.parse(user));
-    }
+    axios.get('http://localhost:7000/headerfooter')
+      .then(res => {
+        const logoData = res.data.find(item => item.titulo === 'Logo');
+        const tituloData = res.data.find(item => item.titulo === 'Titulo');
+        if (logoData) setLogo(logoData.contenido);
+        if (tituloData) setTitulo(tituloData.contenido);
+      })
+      .catch(err => console.error('Error al cargar header:', err));
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("usuario");
-    window.location.href = "/"; // o redirige a login
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    setUsuario(null);
+    navigate('/login');
   };
 
   return (
     <header className="header">
-      <div className="logo-titulo">
-        <img className="logo" src={data["Logo"]} alt="Logo" />
-        <h1 className="titulo">{data["Titulo"]}</h1>
+      <div className="header-left">
+        {logo && <img src={logo} alt="Logo" className="logo" />}
+        <h1 className="titulo">{titulo}</h1>
       </div>
-        {usuario && (
+
+      <div className="header-right">
+        {usuarioLogueado ? (
           <>
-            <span className="header-link">Hola, {usuario.nombre}</span>
+            <span className="nombre-usuario">Hola, {usuarioLogueado.nombre}</span>
             <button className="logout-btn" onClick={handleLogout}>Cerrar sesión</button>
           </>
+        ) : (
+          <Link to="/login">
+            <button className="login-btn">Login</button>
+          </Link>
         )}
+      </div>
     </header>
   );
 };

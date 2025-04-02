@@ -6,8 +6,8 @@ import java.util.*;
 
 public class CorreoUtils {
 
-    private static final String REMITENTE = "kds2games@gmail.com"; // Cambia esto
-    private static final String CLAVE = "ncsa noau lkcd gics";             // Cambia esto también
+    private static final String REMITENTE = "kds2games@gmail.com";
+    private static final String CLAVE = "ncsa noau lkcd gics";    
 
     private static Session iniciarSesionCorreo() {
         Properties props = new Properties();

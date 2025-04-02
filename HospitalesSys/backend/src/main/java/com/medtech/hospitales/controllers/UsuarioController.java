@@ -2,7 +2,6 @@ package com.medtech.hospitales.controllers;
 
 import com.medtech.hospitales.models.Usuario;
 import com.medtech.hospitales.services.UsuarioService;
-import com.medtech.hospitales.dtos.LoginRequest; // importa tu DTO
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -19,8 +18,7 @@ public class UsuarioController {
         app.get("/usuarios/{id}", controller::obtenerUsuarioPorId);
         app.post("/usuarios", controller::crearUsuario);
         app.put("/usuarios/{id}", controller::actualizarUsuario);
-        app.delete("/usuarios/{id}", controller::eliminarUsuario);
-        app.post("/login", controller::login);
+        app.delete("/usuarios/{id}", controller::eliminarUsuario);;
     }
 
     public void obtenerUsuarios(Context ctx) {
@@ -62,26 +60,6 @@ public class UsuarioController {
         usuarioService.eliminarUsuario(id);
         ctx.result("Usuario eliminado");
     }
-
-public void login(Context ctx) {
-    try {
-        LoginRequest credentials = ctx.bodyAsClass(LoginRequest.class);
-        Usuario usuario = usuarioService.login(
-            credentials.getUsuario(), 
-            credentials.getContrasena()
-        );
-
-        if (usuario != null) {
-            ctx.json(usuario);
-        } else {
-            ctx.status(401).json(new ErrorResponse("Credenciales inválidas"));
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        ctx.status(500).json(new ErrorResponse("Error en el servidor"));
-    }
-}
-
 
     private record ErrorResponse(String details) {}
 }
