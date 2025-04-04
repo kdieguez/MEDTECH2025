@@ -60,7 +60,6 @@ const AgendarCita = () => {
       return;
     }
 
-    // Busca el doctor seleccionado
     const doctorSeleccionado = doctores.find(doc => doc.id === parseInt(doctorId));
 
     if (!doctorSeleccionado) {

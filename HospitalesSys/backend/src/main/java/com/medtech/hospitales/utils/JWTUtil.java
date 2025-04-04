@@ -12,7 +12,7 @@ public class JWTUtil {
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final long EXPIRATION_TIME = 1000 * 60 * 60; 
 
-    public static String generateToken(Long idUsuario, String rol, Integer cargo, String nombre, String correo) {
+    public static String generateToken(Long idUsuario, Integer rol, Integer cargo, String nombre, String correo) {
         return Jwts.builder()
                 .claim("id", idUsuario)
                 .claim("rol", rol)

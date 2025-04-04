@@ -1,0 +1,45 @@
+.formulario-servicio {
+  padding: 2rem;
+  max-width: 700px;
+  margin: auto;
+}
+
+.formulario-servicio label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.formulario-servicio input,
+.formulario-servicio textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.subcategoria-bloque {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 5px;
+  background-color: #fafafa;
+}
+
+.doctor-lista {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-guardar {
+  margin-top: 2rem;
+  padding: 0.8rem 1.5rem;
+  background-color: #6a1b9a;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

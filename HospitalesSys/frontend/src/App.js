@@ -11,6 +11,9 @@ import EditarHeaderFooter from './components/EditarHeaderFooter';
 import FormularioDoctor from './components/FormularioDoctor';
 import DetalleDoctor from './components/DetalleDoctor';
 import CatalogoDoctores from './components/CatalogoDoctores';
+import CatalogoServicios from './components/CatalogoServicios';
+import FormularioServicio from './components/FormularioServicio';
+import DetalleServicio from './components/DetalleServicios';
 
 
 function App() {
@@ -29,6 +32,9 @@ function App() {
           <Route path="/formularioDoctor" element={<FormularioDoctor/>}/>
           <Route path="/catalogoDoctores" element={<CatalogoDoctores/>}/>
           <Route path="/doctor/:id" element={<DetalleDoctor/>}/>
+          <Route path="/catalogoServicios" element={<CatalogoServicios/>}/>
+          <Route path="/formularioServicios" element={<FormularioServicio/>}/>
+          <Route path="/servicio/:id" element={<DetalleServicio/>}/>
 
         </Routes>
       </main>
