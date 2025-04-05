@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import jakarta.persistence.EntityManager;
 
 public class App {
 
@@ -33,13 +34,21 @@ public class App {
 
         app.options("/*", App::handlePreflight);
 
-        DoctorController doctorController = new DoctorController(JPAUtil.getEntityManager());
+        EntityManager em = JPAUtil.getEntityManager();
+
+        DoctorController doctorController = new DoctorController(em);
         app.post("/doctores/perfil", doctorController.registrarPerfilDoctor());
         app.get("/doctores/verificar-perfil/{id}", doctorController.verificarPerfilDoctor);
         app.get("/doctores", doctorController.listarDoctores);
         app.get("/doctores/{id}", doctorController.detalleDoctor);
+        app.get("/info-doctores", doctorController.listarDoctoresInfo);
 
-        EspecialidadController especialidadController = new EspecialidadController(JPAUtil.getEntityManager());
+        ServicioHospitalarioController servicioController = new ServicioHospitalarioController(em);
+        app.post("/servicios", servicioController.registrarServicio);
+        app.get("/servicios", servicioController.listarServicios);
+        app.get("/servicios/{id}", servicioController.detalleServicio);
+
+        EspecialidadController especialidadController = new EspecialidadController(em);
         app.get("/especialidades", especialidadController.obtenerEspecialidades);
         app.post("/especialidades", especialidadController.agregarEspecialidad);
 
@@ -49,7 +58,7 @@ public class App {
         UsuarioController.addRoutes(app);
         CitasController.addRoutes(app);
 
-        HeaderFooterDAO headerFooterDAO = new HeaderFooterDAO(JPAUtil.getEntityManager());
+        HeaderFooterDAO headerFooterDAO = new HeaderFooterDAO(em);
         HeaderFooterService headerFooterService = new HeaderFooterService(headerFooterDAO);
         HeaderFooterController.register(app, headerFooterService);
 

@@ -15,12 +15,12 @@ public class LoginController {
     public Handler login = ctx -> {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-                        String rawBody = ctx.body();
+            String rawBody = ctx.body();
             ObjectMapper objectMapper = new ObjectMapper();
             LoginRequest body = objectMapper.readValue(rawBody, LoginRequest.class);
 
             List<Usuario> usuarios = em.createQuery(
-                    "SELECT u FROM Usuario u WHERE u.email = :identificador OR u.usuario = :identificador", //Identificador es usuario o correo
+                    "SELECT u FROM Usuario u WHERE u.email = :identificador OR u.usuario = :identificador",
                     Usuario.class
             )
             .setParameter("identificador", body.getIdentificador())
@@ -30,7 +30,7 @@ public class LoginController {
                 ctx.status(401).result("Correo o usuario no encontrado");
                 return;
             }
-            
+
             Usuario user = usuarios.get(0);
 
             if (!user.getPassword().equals(body.getContrasena())) {
@@ -72,13 +72,14 @@ public class LoginController {
 
             String token = JWTUtil.generateToken(
                     user.getId(),
-                    String.valueOf(user.getIdRol()),
+                    user.getIdRol(),
                     idCargo,
                     user.getNombre(),
                     user.getEmail()
             );
 
             ctx.json(new LoginResponse(token, mostrarFormularioDoctor));
+
         } catch (Exception e) {
             e.printStackTrace();
             ctx.status(500).result("Error en el servidor: " + e.getMessage());
@@ -96,5 +97,4 @@ public class LoginController {
             this.mostrarFormularioDoctor = mostrarFormularioDoctor;
         }
     }
-    
 }

@@ -9,7 +9,7 @@ const Navbar = () => {
       <Link to="/ch">CH</Link>
       <Link to="/sh">SH</Link>
       <Link to="/catalogoDoctores">Catálogo Doctores</Link>
-      <Link to="/contacto">Contacto</Link>
+      <Link to="/catalogoServicios">Catálogo Servicios</Link>
     </nav>
   );
 };

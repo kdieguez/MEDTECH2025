@@ -64,7 +64,7 @@ public class Usuario {
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
-    // Para debug y logs
+    // debug y logs
     @Override
     public String toString() {
         return "Usuario{" +

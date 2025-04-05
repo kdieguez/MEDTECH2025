@@ -1,0 +1,15 @@
+.detalle-servicio {
+  padding: 2rem;
+}
+
+.detalle-servicio ul {
+  list-style: none;
+  padding: 0;
+}
+
+.detalle-servicio li {
+  background-color: #f1f1f1;
+  margin-bottom: 0.8rem;
+  padding: 0.8rem;
+  border-radius: 6px;
+}

@@ -21,7 +21,7 @@ const FormularioDoctor = () => {
       if (!token) throw new Error("Falta token");
 
       const decoded = jwtDecode(token);
-      if (decoded.rol !== "2" || decoded.cargo !== 1) throw new Error("Acceso no autorizado");
+      if (decoded.rol != 2 || decoded.cargo != 1) throw new Error("Acceso no autorizado");
 
       setIdUsuario(decoded.id);
     } catch (err) {

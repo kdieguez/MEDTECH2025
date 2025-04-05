@@ -2,12 +2,12 @@ package com.medtech.hospitales.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medtech.hospitales.dtos.DoctorRegistroDTO;
+import com.medtech.hospitales.dtos.ErrorDTO;
 import com.medtech.hospitales.models.*;
 import com.medtech.hospitales.services.DoctorService;
-import com.medtech.hospitales.utils.JPAUtil;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManager;
-import com.medtech.hospitales.dtos.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +15,10 @@ public class DoctorController {
 
     private final DoctorService doctorService;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private EntityManager entityManager = null;
 
     public DoctorController(EntityManager entityManager) {
+        this.entityManager = entityManager;
         this.doctorService = new DoctorService(entityManager);
     }
 
@@ -35,17 +37,16 @@ public class DoctorController {
     public Handler verificarPerfilDoctor = ctx -> {
         Long idUsuario = Long.parseLong(ctx.pathParam("id"));
 
-        Long count = JPAUtil.getEntityManager()
-            .createQuery("SELECT COUNT(d) FROM InfoDoctor d WHERE d.usuario.id = :id", Long.class)
-            .setParameter("id", idUsuario)
-            .getSingleResult();
+        Long count = entityManager
+                .createQuery("SELECT COUNT(d) FROM InfoDoctor d WHERE d.usuario.id = :id", Long.class)
+                .setParameter("id", idUsuario)
+                .getSingleResult();
 
         ctx.json(count > 0);
     };
 
     public Handler listarDoctores = ctx -> {
-        EntityManager em = JPAUtil.getEntityManager();
-        List<Object[]> resultados = em.createQuery("""
+        List<Object[]> resultados = entityManager.createQuery("""
             SELECT u.id, u.nombre, u.apellido, d.fotografia
             FROM Usuario u JOIN InfoDoctor d ON u.id = d.usuario.id
         """, Object[].class).getResultList();
@@ -59,65 +60,65 @@ public class DoctorController {
         }).collect(Collectors.toList());
 
         ctx.json(doctores);
-        em.close();
     };
 
-public Handler detalleDoctor = ctx -> {
-    EntityManager em = JPAUtil.getEntityManager();
-    try {
-        Long id = Long.parseLong(ctx.pathParam("id"));
+    public Handler detalleDoctor = ctx -> {
+        try {
+            Long id = Long.parseLong(ctx.pathParam("id"));
 
-        Usuario usuario = em.find(Usuario.class, id);
-        if (usuario == null) {
-            ctx.status(404).json("Usuario no encontrado con ID: " + id);
-            return;
+            Usuario usuario = entityManager.find(Usuario.class, id);
+            if (usuario == null) {
+                ctx.status(404).json("Usuario no encontrado con ID: " + id);
+                return;
+            }
+
+            InfoDoctor infoDoctor = entityManager.createQuery(
+                    "FROM InfoDoctor d WHERE d.usuario.id = :id", InfoDoctor.class)
+                    .setParameter("id", id)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+
+            if (infoDoctor == null) {
+                ctx.status(404).json("InfoDoctor no encontrada con ID de usuario: " + id);
+                return;
+            }
+
+            List<TelefonoDoctor> telefonos = entityManager.createQuery(
+                    "FROM TelefonoDoctor t WHERE t.infoDoctor.usuario.id = :id", TelefonoDoctor.class)
+                    .setParameter("id", id)
+                    .getResultList();
+
+            List<EspecialidadDoctor> especialidades = entityManager.createQuery(
+                    "FROM EspecialidadDoctor e WHERE e.infoDoctor.usuario.id = :id", EspecialidadDoctor.class)
+                    .setParameter("id", id)
+                    .getResultList();
+
+            DoctorDetalleDTO dto = new DoctorDetalleDTO(
+                    usuario.getId(),
+                    usuario.getNombre(),
+                    usuario.getApellido(),
+                    usuario.getEmail(),
+                    infoDoctor.getNumColegiado(),
+                    infoDoctor.getFotografia(),
+                    telefonos,
+                    especialidades,
+                    List.of()
+            );
+
+            ctx.json(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ctx.status(500).json(new ErrorDTO("Error interno: " + e.getMessage()));
         }
+    };
 
-        InfoDoctor infoDoctor = em.createQuery(
-            "FROM InfoDoctor d WHERE d.usuario.id = :id", InfoDoctor.class)
-            .setParameter("id", id)
-            .getResultStream()
-            .findFirst()
-            .orElse(null);
-
-        if (infoDoctor == null) {
-            ctx.status(404).json("InfoDoctor no encontrada con ID de usuario: " + id);
-            return;
-        }
-
-        List<TelefonoDoctor> telefonos = em.createQuery(
-            "FROM TelefonoDoctor t WHERE t.infoDoctor.usuario.id = :id", TelefonoDoctor.class)
-            .setParameter("id", id)
-            .getResultList();
-
-        List<EspecialidadDoctor> especialidades = em.createQuery(
-            "FROM EspecialidadDoctor e WHERE e.infoDoctor.usuario.id = :id", EspecialidadDoctor.class)
-            .setParameter("id", id)
-            .getResultList();
-
-        List<Object> pacientesList = List.of();
-
-        DoctorDetalleDTO dto = new DoctorDetalleDTO(
-            usuario.getId(),
-            usuario.getNombre(),
-            usuario.getApellido(),
-            usuario.getEmail(),
-            infoDoctor.getNumColegiado(),
-            infoDoctor.getFotografia(),
-            telefonos,
-            especialidades,
-            pacientesList
-        );
-
-        ctx.json(dto);
-    } catch (Exception e) {
-        e.printStackTrace();
-        ctx.status(500).json(new ErrorDTO("Error interno: " + e.getMessage()));
-    }
-     finally {
-        em.close();
-    }
-};
+    public Handler listarDoctoresInfo = ctx -> {
+        List<InfoDoctor> doctores = entityManager
+                .createQuery("SELECT d FROM InfoDoctor d", InfoDoctor.class)
+                .getResultList();
+        ctx.json(doctores);
+    };
 
     public static class DoctorResumen {
         public Long id;

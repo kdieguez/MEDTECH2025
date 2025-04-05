@@ -48,7 +48,7 @@ public class UsuarioController {
     public void crearUsuario(Context ctx) {
         try {
             Usuario usuario = ctx.bodyAsClass(Usuario.class);
-            usuario.setIdRol(null); // se asigna después por el admin
+            usuario.setIdRol(null);
             usuarioService.crearUsuario(usuario);
             ctx.status(201).json(Map.of("mensaje", "Usuario creado exitosamente"));
         } catch (Exception e) {
@@ -109,7 +109,7 @@ public class UsuarioController {
         Long id = Long.valueOf(ctx.pathParam("id"));
         try {
             Usuario datos = ctx.bodyAsClass(Usuario.class);
-            usuarioService.actualizarUsuario(id, datos); // asignar rol si viene desde el frontend
+            usuarioService.actualizarUsuario(id, datos);
             usuarioService.activarUsuario(id);
             ctx.result("Usuario activado y notificado");
         } catch (Exception e) {

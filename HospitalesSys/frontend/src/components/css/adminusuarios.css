@@ -63,7 +63,6 @@ th {
   font-weight: bold;
 }
 
-/* Botones de acción */
 td button {
   margin-right: 0.5rem;
   padding: 0.4rem 0.7rem;
@@ -78,7 +77,7 @@ td button:hover {
 }
 
 button.editar {
-  background-color: #00bcd4; /* Celeste */
+  background-color: #00bcd4;
   color: white;
 }
 
@@ -114,7 +113,6 @@ button.desactivar {
   cursor: not-allowed;
 }
 
-/* Modal */
 .modal {
   position: fixed;
   top: 0;
