@@ -31,11 +31,12 @@ public class Usuario {
     private Integer idRol;
 
     @Column(name = "ACTIVO", nullable = false)
-    private Integer habilitado = 0; 
+    private Integer habilitado = 0;
 
     @Column(name = "FECHACREACION")
     private LocalDateTime fechaCreacion;
 
+    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -55,12 +56,25 @@ public class Usuario {
     public void setPassword(String password) { this.password = password; }
 
     public Integer getIdRol() { return idRol; }
-    public void setIdRol(Integer idRol) { this.idRol = idRol; } 
-
+    public void setIdRol(Integer idRol) { this.idRol = idRol; }
 
     public Integer getHabilitado() { return habilitado; }
     public void setHabilitado(Integer habilitado) { this.habilitado = habilitado; }
 
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+
+    // Para debug y logs
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", usuario='" + usuario + '\'' +
+                ", email='" + email + '\'' +
+                ", idRol=" + idRol +
+                ", habilitado=" + habilitado +
+                '}';
+    }
 }
