@@ -46,21 +46,22 @@ public class DoctorController {
     };
 
     public Handler listarDoctores = ctx -> {
-        List<Object[]> resultados = entityManager.createQuery("""
-            SELECT u.id, u.nombre, u.apellido, d.fotografia
-            FROM Usuario u JOIN InfoDoctor d ON u.id = d.usuario.id
-        """, Object[].class).getResultList();
-
-        List<Object> doctores = resultados.stream().map(r -> {
-            Long id = (Long) r[0];
-            String nombre = (String) r[1];
-            String apellido = (String) r[2];
-            String foto = (String) r[3];
-            return new DoctorResumen(id, nombre, apellido, foto);
-        }).collect(Collectors.toList());
-
-        ctx.json(doctores);
+        List<InfoDoctor> doctores = entityManager
+            .createQuery("SELECT d FROM InfoDoctor d", InfoDoctor.class)
+            .getResultList();
+    
+        List<DoctorResumen> resumenes = doctores.stream().map(d -> 
+            new DoctorResumen(
+                d.getId(),
+                d.getUsuario().getNombre(),
+                d.getUsuario().getApellido(),
+                d.getFotografia()
+            )
+        ).collect(Collectors.toList());
+    
+        ctx.json(resumenes);
     };
+    
 
     public Handler detalleDoctor = ctx -> {
         try {

@@ -70,4 +70,52 @@ public class ServicioHospitalarioService {
     public ServicioHospitalario buscarServicioPorId(Long id) {
         return entityManager.find(ServicioHospitalario.class, id);
     }
+
+public void actualizarServicio(Long id, ServicioRegistroDTO dto) {
+    EntityTransaction tx = entityManager.getTransaction();
+
+    try {
+        tx.begin();
+
+        ServicioHospitalario servicio = entityManager.find(ServicioHospitalario.class, id);
+        if (servicio == null) {
+            throw new IllegalArgumentException("Servicio con ID " + id + " no encontrado");
+        }
+
+        servicio.setNombre(dto.getNombre());
+        servicio.setDescripcion(dto.getDescripcion());
+
+        servicio.getSubcategorias().clear();
+        entityManager.flush();
+
+        for (SubcategoriaDTO subDTO : dto.getSubcategorias()) {
+            SubcategoriaServicio sub = new SubcategoriaServicio();
+            sub.setNombre(subDTO.getNombre());
+            sub.setDescripcion(subDTO.getDescripcion());
+            sub.setPrecio(subDTO.getPrecio());
+            sub.setServicio(servicio);
+            servicio.getSubcategorias().add(sub);
+        }
+
+        servicio.getDoctores().clear();
+        List<InfoDoctor> doctores = new ArrayList<>();
+
+        for (Long idDoctor : dto.getIdDoctores()) {
+            InfoDoctor doctor = entityManager.find(InfoDoctor.class, idDoctor);
+            if (doctor == null) {
+                throw new IllegalArgumentException("Doctor con ID " + idDoctor + " no encontrado");
+            }
+            doctores.add(doctor);
+        }   
+
+        servicio.setDoctores(doctores);
+
+        tx.commit();
+    } catch (Exception e) {
+        if (tx.isActive()) tx.rollback();
+        throw new RuntimeException("Error al actualizar servicio hospitalario: " + e.getMessage(), e);
+    }
+}
+ 
+    
 }

@@ -45,4 +45,16 @@ public class ServicioHospitalarioController {
 
         ctx.json(servicio);
     };
+    // PUT /servicios/{id}
+    public Handler actualizarServicio = ctx -> {
+        try {
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            ServicioRegistroDTO dto = mapper.readValue(ctx.body(), ServicioRegistroDTO.class);
+            servicioService.actualizarServicio(id, dto);
+            ctx.status(200).result("Servicio actualizado exitosamente.");
+        } catch (Exception e) {
+            ctx.status(400).result("Error al actualizar servicio: " + e.getMessage());
+        }
+    }; 
+
 }

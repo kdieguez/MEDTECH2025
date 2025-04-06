@@ -47,6 +47,8 @@ public class App {
         app.post("/servicios", servicioController.registrarServicio);
         app.get("/servicios", servicioController.listarServicios);
         app.get("/servicios/{id}", servicioController.detalleServicio);
+        app.put("/servicios/{id}", servicioController.actualizarServicio);
+
 
         EspecialidadController especialidadController = new EspecialidadController(em);
         app.get("/especialidades", especialidadController.obtenerEspecialidades);
