@@ -2,12 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './css/adminusuarios.css';
 
-const rolMap = {
-  1: 'Admin',
-  2: 'Empleado',
-  3: 'Paciente'
-};
-
 const AdminUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [pagina, setPagina] = useState(1);
@@ -21,6 +15,8 @@ const AdminUsuarios = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [usuarioEditar, setUsuarioEditar] = useState(null);
+  const [rolesDisponibles, setRolesDisponibles] = useState([]);
+  const [cargosDisponibles, setCargosDisponibles] = useState([]);
 
   const fetchUsuarios = async () => {
     try {
@@ -41,8 +37,20 @@ const AdminUsuarios = () => {
     }
   };
 
+  const fetchRolesYCargos = async () => {
+    try {
+      const roles = await axios.get('http://localhost:7000/roles');
+      setRolesDisponibles(roles.data);
+      const cargos = await axios.get('http://localhost:7000/cargos');
+      setCargosDisponibles(cargos.data);
+    } catch (error) {
+      console.error("Error al cargar roles o cargos:", error);
+    }
+  };
+
   useEffect(() => {
     fetchUsuarios();
+    fetchRolesYCargos();
   }, [pagina]);
 
   const handleFiltroChange = (e) => {
@@ -70,8 +78,11 @@ const AdminUsuarios = () => {
       const datos = {
         ...usuarioEditar,
         idRol: usuarioEditar.idRol === '' ? null : usuarioEditar.idRol,
-        habilitado: parseInt(usuarioEditar.habilitado)
+        habilitado: parseInt(usuarioEditar.habilitado),
+        idCargo: usuarioEditar.idRol === 2 ? usuarioEditar.idCargo : null
       };
+
+      console.log('Datos que se enviarán al backend:', datos);
       await axios.put(`http://localhost:7000/usuarios/${usuarioEditar.id}`, datos);
       cerrarModal();
       fetchUsuarios();
@@ -100,6 +111,11 @@ const AdminUsuarios = () => {
     }
   };
 
+  const obtenerNombreRol = (idRol) => {
+    const rol = rolesDisponibles.find(r => r.id === idRol);
+    return rol ? rol.nombreRol : 'Sin rol';
+  };
+
   return (
     <div className="admin-usuarios">
       <h2>Administración de Usuarios</h2>
@@ -119,13 +135,13 @@ const AdminUsuarios = () => {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(usuarios) && usuarios.length > 0 ? (
+          {usuarios.length > 0 ? (
             usuarios.map(usuario => (
               <tr key={usuario.id}>
                 <td>{usuario.id}</td>
                 <td>{usuario.nombre} {usuario.apellido}</td>
                 <td>{usuario.email}</td>
-                <td>{rolMap[usuario.idRol] ?? 'Sin rol'}</td>
+                <td>{obtenerNombreRol(usuario.idRol)}</td>
                 <td>{usuario.habilitado === 1 ? 'Activo' : 'Inactivo'}</td>
                 <td>
                   <button className="editar" onClick={() => abrirModalEditar(usuario)}>Editar</button>
@@ -157,18 +173,37 @@ const AdminUsuarios = () => {
             <input value={usuarioEditar.apellido} onChange={e => setUsuarioEditar({ ...usuarioEditar, apellido: e.target.value })} placeholder="Apellido" />
             <input value={usuarioEditar.email} onChange={e => setUsuarioEditar({ ...usuarioEditar, email: e.target.value })} placeholder="Correo" />
             <input value={usuarioEditar.usuario} onChange={e => setUsuarioEditar({ ...usuarioEditar, usuario: e.target.value })} placeholder="Nombre de usuario" />
-            <input
+
+            <select
               value={usuarioEditar.idRol ?? ''}
-              onChange={e => setUsuarioEditar({
-                ...usuarioEditar,
-                idRol: e.target.value ? parseInt(e.target.value) : null
-              })}
-              placeholder="Rol (1-3)"
-            />
+              onChange={e => {
+                const idRol = e.target.value ? parseInt(e.target.value) : null;
+                setUsuarioEditar(prev => ({ ...prev, idRol, idCargo: idRol === 2 ? prev.idCargo : null }));
+              }}
+            >
+              <option value="">Selecciona un rol</option>
+              {rolesDisponibles.map(rol => (
+                <option key={rol.id} value={rol.id}>{rol.nombreRol}</option>
+              ))}
+            </select>
+
+            {usuarioEditar.idRol === 2 && (
+              <select
+                value={usuarioEditar.idCargo ?? ''}
+                onChange={e => setUsuarioEditar({ ...usuarioEditar, idCargo: parseInt(e.target.value) })}
+              >
+                <option value="">Selecciona un cargo</option>
+                {cargosDisponibles.map(c => (
+                  <option key={c.id} value={c.id}>{c.nombre}</option>
+                ))}
+              </select>
+            )}
+
             <select value={usuarioEditar.habilitado} onChange={e => setUsuarioEditar({ ...usuarioEditar, habilitado: e.target.value })}>
               <option value="1">Activo</option>
               <option value="0">Inactivo</option>
             </select>
+
             <div className="modal-buttons">
               <button onClick={guardarCambios}>Guardar</button>
               <button onClick={cerrarModal}>Cancelar</button>

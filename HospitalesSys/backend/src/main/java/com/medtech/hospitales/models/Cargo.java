@@ -3,7 +3,7 @@ package com.medtech.hospitales.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "CARGOS")
+@Table(name = "CARGO_EMPLEADO")
 public class Cargo {
 
     @Id

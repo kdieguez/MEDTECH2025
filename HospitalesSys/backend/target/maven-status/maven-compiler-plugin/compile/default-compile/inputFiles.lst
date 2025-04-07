@@ -1,6 +1,7 @@
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\dtos\EspecialidadDTO.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\controllers\LoginController.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\controllers\EspecialidadController.java
+C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\dtos\UsuarioConCargo.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\services\ServicioHospitalarioService.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\models\Cargo.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\services\HeaderFooterService.java
@@ -27,6 +28,7 @@ C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\utils\CustomJsonMapper.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\utils\JPAUtil.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\models\ServicioHospitalario.java
+C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\controllers\CargoController.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\controllers\ServicioHospitalarioController.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\models\UsuarioCargo.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\models\EspecialidadDoctor.java
@@ -34,6 +36,7 @@ C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\controllers\CitasController.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\models\Especialidad.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\models\TelefonoDoctor.java
+C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\controllers\RolController.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\dtos\SubcategoriaDTO.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\dao\HeaderFooterDAO.java
 C:\Users\danie\Documents\GitHub\MEDTECH2025\HospitalesSys\backend\src\main\java\com\medtech\hospitales\utils\CorreoUtils.java

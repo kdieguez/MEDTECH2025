@@ -1,10 +1,13 @@
 package com.medtech.hospitales.services;
 
+import com.medtech.hospitales.models.Cargo;
+import com.medtech.hospitales.models.UsuarioCargo;
 import com.medtech.hospitales.models.Usuario;
 import com.medtech.hospitales.utils.CorreoUtils;
 import com.medtech.hospitales.utils.JPAUtil;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.*;
+import com.medtech.hospitales.dtos.UsuarioConCargo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,49 +53,77 @@ public class UsuarioService {
         }
     }
 
-    public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            Usuario usuarioExistente = em.find(Usuario.class, id);
-            if (usuarioExistente != null) {
-                em.getTransaction().begin();
+public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
+    EntityManager em = emf.createEntityManager();
+    try {
+        Usuario usuarioExistente = em.find(Usuario.class, id);
+        if (usuarioExistente != null) {
+            em.getTransaction().begin();
 
-                System.out.println("Actualizando usuario ID: " + id);
-                System.out.println("Datos recibidos: " + usuarioActualizado);
+            System.out.println("Actualizando usuario ID: " + id);
+            System.out.println("Datos recibidos: " + usuarioActualizado);
 
-                if (usuarioActualizado.getNombre() != null)
-                    usuarioExistente.setNombre(usuarioActualizado.getNombre());
+            if (usuarioActualizado.getNombre() != null)
+                usuarioExistente.setNombre(usuarioActualizado.getNombre());
 
-                if (usuarioActualizado.getApellido() != null)
-                    usuarioExistente.setApellido(usuarioActualizado.getApellido());
+            if (usuarioActualizado.getApellido() != null)
+                usuarioExistente.setApellido(usuarioActualizado.getApellido());
 
-                if (usuarioActualizado.getEmail() != null)
-                    usuarioExistente.setEmail(usuarioActualizado.getEmail());
+            if (usuarioActualizado.getEmail() != null)
+                usuarioExistente.setEmail(usuarioActualizado.getEmail());
 
-                if (usuarioActualizado.getUsuario() != null)
-                    usuarioExistente.setUsuario(usuarioActualizado.getUsuario());
+            if (usuarioActualizado.getUsuario() != null)
+                usuarioExistente.setUsuario(usuarioActualizado.getUsuario());
 
-                if (usuarioActualizado.getIdRol() != null)
-                    usuarioExistente.setIdRol(usuarioActualizado.getIdRol());
+            if (usuarioActualizado.getIdRol() != null)
+                usuarioExistente.setIdRol(usuarioActualizado.getIdRol());
 
-                if (usuarioActualizado.getHabilitado() != null)
-                    usuarioExistente.setHabilitado(usuarioActualizado.getHabilitado());
+            if (usuarioActualizado.getHabilitado() != null)
+                usuarioExistente.setHabilitado(usuarioActualizado.getHabilitado());
 
-                em.merge(usuarioExistente);
-                em.getTransaction().commit();
-            } else {
-                System.err.println("Usuario no encontrado con ID: " + id);
+            em.merge(usuarioExistente);
+
+            // Verifica si es un UsuarioConCargo (para rol Empleado)
+            if (usuarioActualizado.getIdRol() != null && usuarioActualizado.getIdRol() == 2
+                    && usuarioActualizado instanceof UsuarioConCargo usuarioConCargo) {
+
+                // Buscar si ya existe relación con algún cargo
+                UsuarioCargo usuarioCargoExistente = em.createQuery(
+                        "SELECT uc FROM UsuarioCargo uc WHERE uc.usuario.id = :id", UsuarioCargo.class)
+                        .setParameter("id", id)
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+
+                // Buscar el cargo indicado
+                Cargo cargo = em.find(Cargo.class, usuarioConCargo.getIdCargo());
+
+                if (cargo != null) {
+                    if (usuarioCargoExistente == null) {
+                        usuarioCargoExistente = new UsuarioCargo();
+                        usuarioCargoExistente.setUsuario(usuarioExistente);
+                    }
+                    usuarioCargoExistente.setCargo(cargo);
+                    em.merge(usuarioCargoExistente);
+                } else {
+                    System.out.println("No se encontró el cargo con ID: " + usuarioConCargo.getIdCargo());
+                }
             }
-        } catch (Exception e) {
-            System.err.println("Error al actualizar el usuario: " + e.getMessage());
-            e.printStackTrace();
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-        } finally {
-            em.close();
+
+            em.getTransaction().commit();
+        } else {
+            System.err.println("Usuario no encontrado con ID: " + id);
         }
+    } catch (Exception e) {
+        System.err.println("Error al actualizar el usuario: " + e.getMessage());
+        e.printStackTrace();
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+    } finally {
+        em.close();
     }
+}
 
     public void eliminarUsuario(Long id) {
         EntityManager em = emf.createEntityManager();

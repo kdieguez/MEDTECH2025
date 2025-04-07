@@ -49,7 +49,6 @@ public class App {
         app.get("/servicios/{id}", servicioController.detalleServicio);
         app.put("/servicios/{id}", servicioController.actualizarServicio);
 
-
         EspecialidadController especialidadController = new EspecialidadController(em);
         app.get("/especialidades", especialidadController.obtenerEspecialidades);
         app.post("/especialidades", especialidadController.agregarEspecialidad);
@@ -59,6 +58,9 @@ public class App {
 
         UsuarioController.addRoutes(app);
         CitasController.addRoutes(app);
+        RolController.addRoutes(app);
+        CargoController.addRoutes(app);
+
 
         HeaderFooterDAO headerFooterDAO = new HeaderFooterDAO(em);
         HeaderFooterService headerFooterService = new HeaderFooterService(headerFooterDAO);

@@ -1,9 +1,14 @@
 package com.medtech.hospitales.controllers;
 
+import com.medtech.hospitales.models.Cargo;
+import com.medtech.hospitales.models.Rol;
 import com.medtech.hospitales.models.Usuario;
 import com.medtech.hospitales.services.UsuarioService;
+import com.medtech.hospitales.utils.JPAUtil;
+
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -28,6 +33,7 @@ public class UsuarioController {
         app.get("/admin/usuarios/paginados", controller::obtenerUsuariosPaginados);
         app.put("/admin/usuarios/{id}/activar", controller::activarUsuario);
         app.put("/admin/usuarios/{id}/desactivar", controller::desactivarUsuario);
+
     }
 
     public void obtenerUsuarios(Context ctx) {
@@ -130,4 +136,18 @@ public class UsuarioController {
     }
 
     private record ErrorResponse(String details) {}
+    public void obtenerRoles(Context ctx) {
+    EntityManager em = JPAUtil.getEntityManager();
+    List<Rol> roles = em.createQuery("SELECT r FROM Rol r", Rol.class).getResultList();
+    ctx.json(roles);
+    em.close();
+    }
+
+    public void obtenerCargos(Context ctx) {
+        EntityManager em = JPAUtil.getEntityManager();
+        List<Cargo> cargos = em.createQuery("SELECT c FROM Cargo c", Cargo.class).getResultList();
+        ctx.json(cargos);
+        em.close();
+    }
+
 }

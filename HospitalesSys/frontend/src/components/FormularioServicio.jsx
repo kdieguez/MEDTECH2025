@@ -81,6 +81,10 @@ const FormularioServicio = () => {
   };
 
   const enviar = () => {
+    if (doctoresSeleccionados.length === 0) {
+      alert("Debes seleccionar al menos un doctor.");
+      return;
+    }
     const data = {
       nombre,
       descripcion,
