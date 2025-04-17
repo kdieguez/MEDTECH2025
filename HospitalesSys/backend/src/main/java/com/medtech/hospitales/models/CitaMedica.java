@@ -4,56 +4,42 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "CITAS_MEDICAS", schema = "HOSPITAL_BASE")
+@Table(name = "CITAS_MEDICAS")
 public class CitaMedica {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cita_seq")
+    @SequenceGenerator(name = "cita_seq", sequenceName = "CITAS_MEDICAS_SEQ", allocationSize = 1)
     @Column(name = "ID_CITA")
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PACIENTE")
+    private PerfilPaciente paciente;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_INFO_DOCTOR")
+    private InfoDoctor infoDoctor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_SUBCATEGORIA")
+    private SubcategoriaServicio subcategoria;
 
     @Column(name = "FECHAHORA", nullable = false)
     private LocalDateTime fechaHora;
 
-    @Column(name = "ID_PACIENTE", nullable = false)
-    private Long idPaciente;
-
-    @Column(name = "ID_PERFIL_DOCTOR", nullable = false)
-    private Long idDoctor;
-
-    @Column(name = "ID_SUBCATEGORIA", nullable = false)
-    private Long idSubcategoria;
-
-    @Column(name = "MOTIVO", nullable = false)
-    private String motivo;
-
-    @Transient
-    private String fecha;
-    @Transient
-    private String hora;
-
-    // Getters y setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
+    public PerfilPaciente getPaciente() { return paciente; }
+    public void setPaciente(PerfilPaciente paciente) { this.paciente = paciente; }
+
+    public InfoDoctor getInfoDoctor() { return infoDoctor; }
+    public void setInfoDoctor(InfoDoctor infoDoctor) { this.infoDoctor = infoDoctor; }
+
+    public SubcategoriaServicio getSubcategoria() { return subcategoria; }
+    public void setSubcategoria(SubcategoriaServicio subcategoria) { this.subcategoria = subcategoria; }
+
     public LocalDateTime getFechaHora() { return fechaHora; }
     public void setFechaHora(LocalDateTime fechaHora) { this.fechaHora = fechaHora; }
-
-    public Long getIdPaciente() { return idPaciente; }
-    public void setIdPaciente(Long idPaciente) { this.idPaciente = idPaciente; }
-
-    public Long getIdDoctor() { return idDoctor; }
-    public void setIdDoctor(Long idDoctor) { this.idDoctor = idDoctor; }
-
-    public Long getIdSubcategoria() { return idSubcategoria; }
-    public void setIdSubcategoria(Long idSubcategoria) { this.idSubcategoria = idSubcategoria; }
-
-    public String getMotivo() { return motivo; }
-    public void setMotivo(String motivo) { this.motivo = motivo; }
-
-    public String getFecha() { return fecha; }
-    public void setFecha(String fecha) { this.fecha = fecha; }
-
-    public String getHora() { return hora; }
-    public void setHora(String hora) { this.hora = hora; }
 }

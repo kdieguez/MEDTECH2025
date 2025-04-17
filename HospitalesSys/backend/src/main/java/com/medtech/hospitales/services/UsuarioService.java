@@ -7,10 +7,11 @@ import com.medtech.hospitales.utils.CorreoUtils;
 import com.medtech.hospitales.utils.JPAUtil;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.*;
+
+import com.medtech.hospitales.dtos.PacienteDTO;
 import com.medtech.hospitales.dtos.UsuarioConCargo;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class UsuarioService {
@@ -38,7 +39,7 @@ public class UsuarioService {
     public void crearUsuario(Usuario usuario) {
         EntityManager em = emf.createEntityManager();
         try {
-            usuario.setFechaCreacion(LocalDateTime.now());
+            usuario.setFechaCreacion(new java.sql.Timestamp(System.currentTimeMillis()));
             em.getTransaction().begin();
             em.persist(usuario);
             em.getTransaction().commit();
@@ -265,4 +266,19 @@ public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
             em.close();
         }
     }
+
+    public List<PacienteDTO> obtenerPacientesConPerfilDTO() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery(
+                "SELECT new com.medtech.hospitales.dtos.PacienteDTO(" +
+                "p.id, u.nombre, u.apellido, p.documentoIdentificacion) " +
+                "FROM PerfilPaciente p JOIN p.usuario u WHERE u.habilitado = 1",
+                PacienteDTO.class
+            ).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+    
 }

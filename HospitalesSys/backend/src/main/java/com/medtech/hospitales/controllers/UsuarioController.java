@@ -1,5 +1,6 @@
 package com.medtech.hospitales.controllers;
 
+import com.medtech.hospitales.dtos.PacienteDTO;
 import com.medtech.hospitales.models.Cargo;
 import com.medtech.hospitales.models.Rol;
 import com.medtech.hospitales.models.Usuario;
@@ -28,12 +29,12 @@ public class UsuarioController {
         app.put("/usuarios/{id}", controller::actualizarUsuario);
         app.delete("/usuarios/{id}", controller::eliminarUsuario);
 
-        // ADMINISTRACIÓN
+        app.get("/pacientes", controller::obtenerPacientesHabilitados);
+
         app.get("/admin/usuarios/filtrar", controller::filtrarUsuarios);
         app.get("/admin/usuarios/paginados", controller::obtenerUsuariosPaginados);
         app.put("/admin/usuarios/{id}/activar", controller::activarUsuario);
         app.put("/admin/usuarios/{id}/desactivar", controller::desactivarUsuario);
-
     }
 
     public void obtenerUsuarios(Context ctx) {
@@ -67,8 +68,6 @@ public class UsuarioController {
         Long id = Long.valueOf(ctx.pathParam("id"));
         try {
             Usuario usuario = ctx.bodyAsClass(Usuario.class);
-            System.out.println("==> Actualizando usuario con ID: " + id);
-            System.out.println("==> Datos recibidos: " + usuario);
             usuarioService.actualizarUsuario(id, usuario);
             ctx.status(200).json(Map.of("mensaje", "Usuario actualizado correctamente"));
         } catch (Exception e) {
@@ -135,12 +134,23 @@ public class UsuarioController {
         }
     }
 
+    public void obtenerPacientesHabilitados(Context ctx) {
+        try {
+            List<PacienteDTO> pacientes = usuarioService.obtenerPacientesConPerfilDTO();
+            ctx.json(pacientes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ctx.status(500).json(Map.of("error", e.getMessage()));
+        }
+    }   
+    
     private record ErrorResponse(String details) {}
+
     public void obtenerRoles(Context ctx) {
-    EntityManager em = JPAUtil.getEntityManager();
-    List<Rol> roles = em.createQuery("SELECT r FROM Rol r", Rol.class).getResultList();
-    ctx.json(roles);
-    em.close();
+        EntityManager em = JPAUtil.getEntityManager();
+        List<Rol> roles = em.createQuery("SELECT r FROM Rol r", Rol.class).getResultList();
+        ctx.json(roles);
+        em.close();
     }
 
     public void obtenerCargos(Context ctx) {
@@ -149,5 +159,4 @@ public class UsuarioController {
         ctx.json(cargos);
         em.close();
     }
-
 }

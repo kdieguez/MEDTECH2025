@@ -50,17 +50,28 @@ public class DoctorController {
             .createQuery("SELECT d FROM InfoDoctor d", InfoDoctor.class)
             .getResultList();
     
-        List<DoctorResumen> resumenes = doctores.stream().map(d -> 
-            new DoctorResumen(
-                d.getId(),
-                d.getUsuario().getNombre(),
-                d.getUsuario().getApellido(),
-                d.getFotografia()
-            )
-        ).collect(Collectors.toList());
+            List<DoctorResumen> resumenes = doctores.stream()
+            .map(d -> {
+                Usuario u = d.getUsuario();
+                if (u == null) return null;
+        
+                try {
+                    return new DoctorResumen(
+                        d.getId(),
+                        u.getNombre(),
+                        u.getApellido(),
+                        d.getFotografia()
+                    );
+                } catch (Exception e) {
+                    return null;
+                }
+            })
+            .filter(dto -> dto != null)
+            .collect(Collectors.toList());        
     
         ctx.json(resumenes);
     };
+    
     
 
     public Handler detalleDoctor = ctx -> {
@@ -162,4 +173,29 @@ public class DoctorController {
             this.pacientes = pacientes;
         }
     }
+    
+    public Handler doctoresPorServicio = ctx -> {
+        Long idServicio = Long.parseLong(ctx.pathParam("id"));
+    
+        List<ServicioXDoctor> relaciones = entityManager.createQuery(
+            "SELECT s FROM ServicioXDoctor s WHERE s.servicio.id = :id",
+            ServicioXDoctor.class
+        )
+        .setParameter("id", idServicio)
+        .getResultList();
+    
+        List<DoctorResumen> doctores = relaciones.stream()
+            .map(rel -> rel.getDoctor())
+            .filter(d -> d.getUsuario() != null)
+            .map(d -> new DoctorResumen(
+                d.getId(),
+                d.getUsuario().getNombre(),
+                d.getUsuario().getApellido(),
+                d.getFotografia()
+            ))
+            .collect(Collectors.toList());
+    
+        ctx.json(doctores);
+    };    
+    
 }

@@ -22,7 +22,7 @@ public class InfoDoctor {
     @Column(name = "NUMCOLEGIADO")
     private String numColegiado;
 
-    @OneToOne
+    @ManyToOne(fetch =FetchType.EAGER)
     @JoinColumn(name = "ID_USUARIO")
     private Usuario usuario;
 

@@ -10,6 +10,7 @@ const Navbar = () => {
       <Link to="/sh">SH</Link>
       <Link to="/catalogoDoctores">Catálogo Doctores</Link>
       <Link to="/catalogoServicios">Catálogo Servicios</Link>
+      <Link to="/agendarCita">Agendar Cita</Link>
     </nav>
   );
 };

@@ -1,14 +1,15 @@
 package com.medtech.hospitales.models;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "USUARIOS")
 public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuario_seq")
+    @SequenceGenerator(name = "usuario_seq", sequenceName = "USUARIOS_SEQ", allocationSize = 1)
     @Column(name = "ID_USUARIO")
     private Long id;
 
@@ -34,9 +35,8 @@ public class Usuario {
     private Integer habilitado = 0;
 
     @Column(name = "FECHACREACION")
-    private LocalDateTime fechaCreacion;
+    private Timestamp fechaCreacion;
 
-    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -61,10 +61,9 @@ public class Usuario {
     public Integer getHabilitado() { return habilitado; }
     public void setHabilitado(Integer habilitado) { this.habilitado = habilitado; }
 
-    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+    public Timestamp getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(Timestamp fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
-    // debug y logs
     @Override
     public String toString() {
         return "Usuario{" +

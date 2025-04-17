@@ -1,6 +1,5 @@
 package com.medtech.hospitales.services;
 
-import com.medtech.hospitales.models.Rol;
 import jakarta.persistence.*;
 
 public class RolService {

@@ -25,7 +25,6 @@ public class SubcategoriaServicio {
     @Column(name = "PRECIO")
     private Double precio;
 
-    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

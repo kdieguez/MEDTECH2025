@@ -11,10 +11,20 @@
 
         <!-- Declaración de entidades -->
         <class>com.medtech.hospitales.models.Usuario</class>
-        <class>com.medtech.hospitales.models.CitaMedica</class>
         <class>com.medtech.hospitales.models.InfoDoctor</class>
-        <class>com.medtech.hospitales.models.EspecialidadXDoctor</class>
+        <class>com.medtech.hospitales.models.EspecialidadDoctor</class>
         <class>com.medtech.hospitales.models.HeaderFooter</class>
+        <class>com.medtech.hospitales.models.Cargo</class>
+        <class>com.medtech.hospitales.models.CitaMedica</class>
+        <class>com.medtech.hospitales.models.Especialidad</class>
+        <class>com.medtech.hospitales.models.Rol</class>
+        <class>com.medtech.hospitales.models.ServicioHospitalario</class>
+        <class>com.medtech.hospitales.models.ServicioXDoctor</class>
+        <class>com.medtech.hospitales.models.ServicioXDoctorId</class>
+        <class>com.medtech.hospitales.models.SubcategoriaServicio</class>
+        <class>com.medtech.hospitales.models.TelefonoDoctor</class>
+        <class>com.medtech.hospitales.models.UsuarioCargo</class>
+        <class>com.medtech.hospitales.models.PerfilPaciente</class>
 
         <properties>
             <!-- Conexión a Oracle -->

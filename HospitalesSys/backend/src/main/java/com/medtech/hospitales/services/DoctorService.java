@@ -1,7 +1,6 @@
 package com.medtech.hospitales.services;
 
 import com.medtech.hospitales.dtos.DoctorRegistroDTO;
-import com.medtech.hospitales.dtos.EspecialidadDTO;
 import com.medtech.hospitales.models.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
@@ -57,7 +56,7 @@ public class DoctorService {
                                     .getResultList();
 
                             if (!existentes.isEmpty()) {
-                                especialidad = existentes.get(0); // Ya existe
+                                especialidad = existentes.get(0);
                             } else {
                                 especialidad = new Especialidad();
                                 especialidad.setNombre(especialidadDTO.getNombreNueva());

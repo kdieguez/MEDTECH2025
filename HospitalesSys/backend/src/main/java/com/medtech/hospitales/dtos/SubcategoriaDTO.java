@@ -1,18 +1,27 @@
 package com.medtech.hospitales.dtos;
 
 public class SubcategoriaDTO {
+    private Long id;
     private String nombre;
     private String descripcion;
     private Double precio;
 
     public SubcategoriaDTO() {}
 
-    public SubcategoriaDTO(String nombre, String descripcion, Double precio) {
+    public SubcategoriaDTO(Long id, String nombre, String descripcion, Double precio) {
+        this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
     }
+    public Long getId(){
+        return id;
+    }
 
+    public void setId(Long id){
+        this.id = id;
+    }
+    
     public String getNombre() {
         return nombre;
     }
@@ -24,7 +33,7 @@ public class SubcategoriaDTO {
     public String getDescripcion() {
         return descripcion;
     }
-
+    
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
