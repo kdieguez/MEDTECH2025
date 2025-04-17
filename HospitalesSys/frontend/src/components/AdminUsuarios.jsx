@@ -51,7 +51,7 @@ const AdminUsuarios = () => {
   useEffect(() => {
     fetchUsuarios();
     fetchRolesYCargos();
-  }, [pagina]);
+  }, [pagina, fetchUsuarios, fetchRolesYCargos]);
 
   const handleFiltroChange = (e) => {
     const { name, value } = e.target;

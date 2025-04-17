@@ -1,0 +1,58 @@
+.admin-secciones-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #f9f9ff;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .admin-secciones-container h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #5a189a;
+  }
+  
+  .admin-secciones-container select,
+  .admin-secciones-container input,
+  .admin-secciones-container textarea,
+  .admin-secciones-container button {
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  
+  .admin-secciones-container button {
+    background-color: #7b2cbf;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .admin-secciones-container button:hover {
+    background-color: #5a189a;
+  }
+  
+  .seccion-item {
+    background-color: #e0d4f7;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .seccion-item h4 {
+    margin-bottom: 0.5rem;
+    color: #3c096c;
+  }
+  
+  .seccion-item button {
+    width: auto;
+    margin-right: 10px;
+    margin-top: 0.5rem;
+  }  

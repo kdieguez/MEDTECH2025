@@ -3,6 +3,7 @@ com\medtech\hospitales\models\PerfilPaciente.class
 com\medtech\hospitales\controllers\EspecialidadController.class
 com\medtech\hospitales\controllers\CitaMedicaController.class
 com\medtech\hospitales\models\HeaderFooter.class
+com\medtech\hospitales\models\Pagina.class
 com\medtech\hospitales\models\SubcategoriaServicio.class
 com\medtech\hospitales\models\Especialidad.class
 com\medtech\hospitales\utils\CorreoUtils$1.class
@@ -11,6 +12,7 @@ com\medtech\hospitales\controllers\DoctorController$DoctorResumen.class
 com\medtech\hospitales\utils\CustomJsonMapper.class
 com\medtech\hospitales\controllers\LoginController$LoginResponse.class
 com\medtech\hospitales\dtos\ErrorDTO.class
+com\medtech\hospitales\models\SeccionPagina.class
 com\medtech\hospitales\models\CitaMedica.class
 com\medtech\hospitales\controllers\ServicioHospitalarioController.class
 com\medtech\hospitales\dtos\LoginRequest.class
@@ -18,6 +20,7 @@ com\medtech\hospitales\dtos\CitaDTO.class
 com\medtech\hospitales\models\Rol.class
 com\medtech\hospitales\dtos\SubcategoriaDTO.class
 com\medtech\hospitales\dtos\DoctorRegistroDTO.class
+com\medtech\hospitales\services\PaginaService.class
 com\medtech\hospitales\dtos\PacienteDTO.class
 com\medtech\hospitales\models\ServicioXDoctor.class
 com\medtech\hospitales\dtos\ServicioRegistroDTO.class
@@ -43,6 +46,7 @@ com\medtech\hospitales\dtos\ServicioDTO.class
 com\medtech\hospitales\utils\JWTUtil.class
 com\medtech\hospitales\models\ServicioXDoctorId.class
 com\medtech\hospitales\controllers\DoctorController$DoctorDetalleDTO.class
+com\medtech\hospitales\controllers\PaginaController.class
 com\medtech\hospitales\services\UsuarioService.class
 com\medtech\hospitales\dao\CitaMedicaDAO.class
 com\medtech\hospitales\dtos\EspecialidadSimpleDTO.class

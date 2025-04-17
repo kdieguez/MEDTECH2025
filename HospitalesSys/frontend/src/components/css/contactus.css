@@ -1,0 +1,13 @@
+.contactus-container {
+    padding: 20px;
+  }
+  
+  .seccion-contactus {
+    margin-bottom: 30px;
+  }
+  
+  .seccion-contactus img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+  }  

@@ -1,0 +1,13 @@
+.aboutus-container {
+    padding: 20px;
+  }
+  
+  .seccion-aboutus {
+    margin-bottom: 30px;
+  }
+  
+  .seccion-aboutus img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+  }  

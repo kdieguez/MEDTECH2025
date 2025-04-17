@@ -1,0 +1,14 @@
+.home-container {
+    padding: 20px;
+  }
+  
+  .seccion-home {
+    margin-bottom: 30px;
+  }
+  
+  .seccion-home img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+  }
+  

@@ -44,14 +44,14 @@ public class App {
         app.get("/doctores", doctorController.listarDoctores);
         app.get("/doctores/{id}", doctorController.detalleDoctor);
         app.get("/info-doctores", doctorController.listarDoctoresInfo);
-        app.get("/doctores/por-servicio/{id}", doctorController.doctoresPorServicio); 
+        app.get("/doctores/por-servicio/{id}", doctorController.doctoresPorServicio);
 
         ServicioHospitalarioController servicioController = new ServicioHospitalarioController(em);
         app.post("/servicios", servicioController.registrarServicio);
         app.get("/servicios", servicioController.listarServicios);
         app.get("/servicios/{id}", servicioController.detalleServicio);
         app.put("/servicios/{id}", servicioController.actualizarServicio);
-        app.get("/servicios/por-doctor/{id}", servicioController.serviciosPorDoctor); 
+        app.get("/servicios/por-doctor/{id}", servicioController.serviciosPorDoctor);
         app.get("/servicios/{id}/subcategorias", servicioController.subcategoriasPorServicio);
 
         EspecialidadController especialidadController = new EspecialidadController(em);
@@ -75,6 +75,15 @@ public class App {
         HeaderFooterDAO headerFooterDAO = new HeaderFooterDAO(em);
         HeaderFooterService headerFooterService = new HeaderFooterService(headerFooterDAO);
         HeaderFooterController.register(app, headerFooterService);
+
+        PaginaController paginaController = new PaginaController(objectMapper);
+
+        app.get("/paginas", paginaController::obtenerTodasLasPaginas);
+        app.get("/paginas/{idPagina}/secciones", paginaController::obtenerSeccionesDePagina);
+        app.put("/secciones/{idSeccion}", paginaController::actualizarSeccion);
+        app.post("/paginas/{idPagina}/secciones", paginaController::agregarSeccion);
+        app.delete("/secciones/{idSeccion}", paginaController::eliminarSeccion);
+        
 
         app.start(7000);
         System.out.println("Servidor corriendo en: http://localhost:7000");
