@@ -2,17 +2,19 @@ package com.medtech.hospitales;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+
 import com.medtech.hospitales.controllers.*;
 import com.medtech.hospitales.dao.HeaderFooterDAO;
 import com.medtech.hospitales.services.HeaderFooterService;
 import com.medtech.hospitales.utils.JPAUtil;
 import com.medtech.hospitales.utils.CustomJsonMapper;
-import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.persistence.EntityManager;
+
+import java.time.LocalDate;
 
 public class App {
 
@@ -26,13 +28,13 @@ public class App {
             config.jsonMapper(new CustomJsonMapper(objectMapper));
         });
 
+        app.options("/*", App::handlePreflight);
+
         try {
             System.out.println(objectMapper.writeValueAsString(LocalDate.now()));
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             e.printStackTrace();
         }
-
-        app.options("/*", App::handlePreflight);
 
         EntityManager em = JPAUtil.getEntityManager();
 
@@ -42,12 +44,15 @@ public class App {
         app.get("/doctores", doctorController.listarDoctores);
         app.get("/doctores/{id}", doctorController.detalleDoctor);
         app.get("/info-doctores", doctorController.listarDoctoresInfo);
+        app.get("/doctores/por-servicio/{id}", doctorController.doctoresPorServicio); 
 
         ServicioHospitalarioController servicioController = new ServicioHospitalarioController(em);
         app.post("/servicios", servicioController.registrarServicio);
         app.get("/servicios", servicioController.listarServicios);
         app.get("/servicios/{id}", servicioController.detalleServicio);
         app.put("/servicios/{id}", servicioController.actualizarServicio);
+        app.get("/servicios/por-doctor/{id}", servicioController.serviciosPorDoctor); 
+        app.get("/servicios/{id}/subcategorias", servicioController.subcategoriasPorServicio);
 
         EspecialidadController especialidadController = new EspecialidadController(em);
         app.get("/especialidades", especialidadController.obtenerEspecialidades);
@@ -56,11 +61,16 @@ public class App {
         LoginController loginController = new LoginController();
         app.post("/login", loginController.login);
 
+        CitaMedicaController citaController = new CitaMedicaController(new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        );
+        app.post("/citas", citaController::registrarCita);
+        app.get("/citas/horarios-disponibles", citaController::obtenerHorasDisponibles);
+
         UsuarioController.addRoutes(app);
-        CitasController.addRoutes(app);
         RolController.addRoutes(app);
         CargoController.addRoutes(app);
-
 
         HeaderFooterDAO headerFooterDAO = new HeaderFooterDAO(em);
         HeaderFooterService headerFooterService = new HeaderFooterService(headerFooterDAO);

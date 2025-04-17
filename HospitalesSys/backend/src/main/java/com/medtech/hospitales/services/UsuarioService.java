@@ -84,11 +84,9 @@ public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
 
             em.merge(usuarioExistente);
 
-            // Verifica si es un UsuarioConCargo (para rol Empleado)
             if (usuarioActualizado.getIdRol() != null && usuarioActualizado.getIdRol() == 2
                     && usuarioActualizado instanceof UsuarioConCargo usuarioConCargo) {
 
-                // Buscar si ya existe relación con algún cargo
                 UsuarioCargo usuarioCargoExistente = em.createQuery(
                         "SELECT uc FROM UsuarioCargo uc WHERE uc.usuario.id = :id", UsuarioCargo.class)
                         .setParameter("id", id)
@@ -96,7 +94,6 @@ public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
                         .findFirst()
                         .orElse(null);
 
-                // Buscar el cargo indicado
                 Cargo cargo = em.find(Cargo.class, usuarioConCargo.getIdCargo());
 
                 if (cargo != null) {
