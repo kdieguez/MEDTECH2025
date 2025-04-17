@@ -20,6 +20,8 @@ import Home from './components/Home';
 import AboutUs from './components/AboutUs';
 import ContactUs from './components/ContactUs';
 import AdministrarSecciones from './components/AdministrarSecciones';
+import FormularioCita from './components/FormularioCita';
+import RecetaMedica from './components/RecetaMedica';
 
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(null);
@@ -47,6 +49,8 @@ function App() {
           <Route path="/adminUsuarios" element={<AdminUsuarios/>}/>
           <Route path="/servicios/editar/:id" element={<FormularioServicio />}/>
           <Route path="/consultarCitas" element={<VerCitas/>} />
+          <Route path="/formularioCita:idCita" element={<RecetaMedica/>} />
+          <Route path="/crearReceta/:id" element={<RecetaMedica/>} />
         </Routes>
       </main>
       <Footer/>

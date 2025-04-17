@@ -1,0 +1,57 @@
+.receta-container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 25px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    background-color: #fff;
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  .encabezado-receta {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .encabezado-receta h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+  
+  .encabezado-receta h3 {
+    margin: 5px 0;
+    font-size: 20px;
+  }
+  
+  .info-receta,
+  .paciente-receta {
+    margin-bottom: 15px;
+  }
+  
+  .info-receta p,
+  .paciente-receta p {
+    margin: 8px 0;
+    font-size: 16px;
+  }
+  
+  .footer-receta {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .btn-receta {
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .btn-receta:hover {
+    background-color: #0056b3;
+  }
+  

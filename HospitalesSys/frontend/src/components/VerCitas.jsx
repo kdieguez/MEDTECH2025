@@ -6,36 +6,39 @@ import { useNavigate } from 'react-router-dom';
 export default function VerCitas() {
   const [citas, setCitas] = useState([]);
   const [mostrarDoctor, setMostrarDoctor] = useState(true);
+  const [esDoctor, setEsDoctor] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem('usuario'));
     if (!datosUsuario) return;
+  
+    const { id, rol, cargo } = datosUsuario;
 
-    const { idRol, idCargo } = datosUsuario;
-
-    if (idRol === 2 && idCargo === 1) {
-      // Doctor: ver solo sus citas
-      axios.get('http://localhost:7000/citas/mias', {
-        headers: {
-          'idUsuario': datosUsuario.id // si lo necesitas en backend
-        }
-      })
+    if (rol === 2 && cargo === 1) {
+      // Doctor
+      axios.get(`http://localhost:7000/citas/mias?idUsuario=${id}`)
         .then(res => {
           setCitas(res.data);
-          setMostrarDoctor(false); // no mostrar columna doctor
+          setMostrarDoctor(false);
+          setEsDoctor(true); // 💬 Marcar que es doctor
         })
         .catch(err => console.error('Error al cargar citas del doctor', err));
     } else {
-      // Admin o Secretaria: ver todas
+      // Admin o secretaria
       axios.get('http://localhost:7000/citas')
         .then(res => {
           setCitas(res.data);
-          setMostrarDoctor(true); // mostrar columna doctor
+          setMostrarDoctor(true);
+          setEsDoctor(false);
         })
         .catch(err => console.error('Error al cargar todas las citas', err));
     }
-  }, []);
+  }, []);  
+
+  const irAFinalizarCita = (idCita) => {
+    navigate(`/formularioCita/${idCita}`);
+  };
 
   return (
     <div className="ver-citas-container">
@@ -50,6 +53,7 @@ export default function VerCitas() {
             <th>Subcategoría</th>
             <th>Fecha</th>
             <th>Hora</th>
+            {esDoctor && <th>Acciones</th>} 
           </tr>
         </thead>
         <tbody>
@@ -64,14 +68,27 @@ export default function VerCitas() {
                 <td>{cita.subcategoria}</td>
                 <td>{fecha.toLocaleDateString()}</td>
                 <td>{fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+                {esDoctor && (
+                  <td>
+                    <button 
+                      className="btn-formulario"
+                      onClick={() => irAFinalizarCita(cita.idCita)}
+                    >
+                      Ingresar Formulario
+                    </button>
+                  </td>
+                )}
               </tr>
             );
           })}
         </tbody>
       </table>
-      <button onClick={() => navigate('/agendarCitas')} className="btn-ir-vercitas">
-        Agendar nueva cita
-      </button>
+
+      {!esDoctor && (
+        <button onClick={() => navigate('/agendarCita')} className="btn-ir-vercitas">
+          Agendar nueva cita
+        </button>
+      )}
     </div>
   );
 }

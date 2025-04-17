@@ -127,10 +127,22 @@ public class CitaMedicaService {
         }
     }
     
-
     public List<CitaDTO> obtenerCitasPorDoctor(Long idUsuario) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
+            List<Long> idsDoctor = em.createQuery("""
+                SELECT d.id FROM InfoDoctor d
+                WHERE d.usuario.id = :idUsuario
+            """, Long.class)
+            .setParameter("idUsuario", idUsuario)
+            .getResultList();
+    
+            if (idsDoctor.isEmpty()) {
+                return new ArrayList<>();
+            }
+    
+            Long idDoctor = idsDoctor.get(0);
+    
             return em.createQuery("""
                 SELECT new com.medtech.hospitales.dtos.CitaDTO(
                     c.id,
@@ -148,13 +160,14 @@ public class CitaMedicaService {
                 JOIN Usuario du ON du.id = d.usuario.id
                 JOIN SubcategoriaServicio sc ON c.subcategoria.id = sc.id
                 JOIN ServicioHospitalario s ON sc.servicio.id = s.id
-                WHERE d.usuario.id = :idUsuario
+                WHERE c.infoDoctor.id = :idDoctor
             """, CitaDTO.class)
-            .setParameter("idUsuario", idUsuario)
+            .setParameter("idDoctor", idDoctor)
             .getResultList();
+    
         } finally {
             em.close();
         }
-    }
+    }      
     
 }

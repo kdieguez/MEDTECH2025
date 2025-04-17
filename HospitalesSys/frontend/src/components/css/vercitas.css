@@ -26,7 +26,7 @@
   }
   
   .tabla-citas th {
-    background-color: #6a5acd; /* lila */
+    background-color: #6a5acd; 
     color: white;
     font-weight: 600;
   }
@@ -38,5 +38,19 @@
   
   .tabla-citas td {
     color: #333;
+  }
+  
+  .btn-formulario {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .btn-formulario:hover {
+    background-color: #218838;
   }
   
