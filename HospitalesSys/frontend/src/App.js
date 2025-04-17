@@ -15,6 +15,7 @@ import CatalogoServicios from './components/CatalogoServicios';
 import FormularioServicio from './components/FormularioServicio';
 import DetalleServicio from './components/DetalleServicios';
 import AdminUsuarios from './components/AdminUsuarios';
+import PerfilPaciente from './components/PerfilPaciente';
 
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(null);
@@ -37,6 +38,7 @@ function App() {
           <Route path="/servicio/:id" element={<DetalleServicio/>}/>
           <Route path="/adminUsuarios" element={<AdminUsuarios/>}/>
           <Route path="/servicios/editar/:id" element={<FormularioServicio />} />
+          <Route path="/PerfilPaciente" element={<PerfilPaciente/>}/>
 
         </Routes>
       </main>

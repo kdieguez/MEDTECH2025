@@ -1,4 +1,5 @@
 com\medtech\hospitales\models\Usuario.class
+com\medtech\hospitales\models\PerfilPaciente.class
 com\medtech\hospitales\controllers\EspecialidadController.class
 com\medtech\hospitales\models\HeaderFooter.class
 com\medtech\hospitales\models\SubcategoriaServicio.class
@@ -23,6 +24,7 @@ com\medtech\hospitales\services\DoctorService.class
 com\medtech\hospitales\dtos\UsuarioConCargo.class
 com\medtech\hospitales\controllers\CargoController.class
 com\medtech\hospitales\utils\CorreoUtils.class
+com\medtech\hospitales\services\PerfilPacienteService.class
 com\medtech\hospitales\utils\JPAUtil.class
 com\medtech\hospitales\models\InfoDoctor.class
 com\medtech\hospitales\models\TelefonoDoctor.class
@@ -44,4 +46,5 @@ com\medtech\hospitales\dtos\NuevaEspecialidadDTO.class
 com\medtech\hospitales\dtos\EspecialidadDTO.class
 com\medtech\hospitales\controllers\LoginController.class
 com\medtech\hospitales\controllers\UsuarioController.class
+com\medtech\hospitales\controllers\PerfilPacienteController.class
 com\medtech\hospitales\dao\HeaderFooterDAO.class

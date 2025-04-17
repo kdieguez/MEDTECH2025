@@ -17,14 +17,13 @@
   import Ventas from './routes/Publico/Ventas.svelte';
   import Cobros from './routes/Publico/Cobros.svelte';
 
-
   import EditarPaginas from "./routes/Empleado/EditarPaginas.svelte";
   import Registro from './routes/Publico/Registro.svelte';
   import Login from './routes/Publico/Login.svelte';
   import CompletarPerfil from "./routes/Publico/CompletarPerfil.svelte";
   import EditarPerfil from './routes/Publico/EditarPerfil.svelte';
   import AdministrarUsuarios from './routes/Admin/AdministrarUsuarios.svelte';
-  
+  import ServiciosHospitalarios from './routes/Publico/ServiciosHospitalarios.svelte';
 
   let currentPage = "Inicio";
   let menuOpen = false;
@@ -121,8 +120,12 @@
       <Contacto />
     {:else if currentPage === "Catálogo Servicios"}
       <CatalogoServicios />
+    {:else if currentPage === "Servicios Asegurados"}
+      <CatalogoServicios />
     {:else if currentPage === "Catálogo Hospitales"}
       <CatalogoHospitales />
+    {:else if currentPage === "Servicios Hospitalarios"}
+      <ServiciosHospitalarios />
     {:else if currentPage === "Login"}
       <Login 
         on:goRegistro={() => changePage('Registro')}
@@ -140,19 +143,19 @@
       {#if $userRol === 'admin'}
         <AdministrarUsuarios />
       {:else}
-        <p>Acceso denegado. Solo administradores o editores pueden administrar usuarios.</p>
+        <p>Acceso denegado. Solo administradores pueden administrar usuarios.</p>
       {/if}
     {:else if currentPage === "Completar Perfil"}
       <CompletarPerfil />
-      {:else if currentPage === "Editar Perfil"}
+    {:else if currentPage === "Editar Perfil"}
       <EditarPerfil />
-      {:else if currentPage === "Ventas"}
-    {#if $userRol === 'admin'}
-      <Ventas />
-    {:else}
-    <p>Acceso denegado. Solo los administradores pueden acceder al módulo de ventas.</p>
-  {/if}
-     {:else if currentPage === "Cobros"}
+    {:else if currentPage === "Ventas"}
+      {#if $userRol === 'admin'}
+        <Ventas />
+      {:else}
+        <p>Acceso denegado. Solo los administradores pueden acceder al módulo de ventas.</p>
+      {/if}
+    {:else if currentPage === "Cobros"}
       {#if $userRol === 'admin' || $userRol === 'empleado'}
         <Cobros />
       {:else}
@@ -172,13 +175,12 @@
 
     {#if mostrarMenuAdmin}
       <div class="menu-admin-flotante">
-          {#if $userRol === 'admin'}
+        {#if $userRol === 'admin'}
           <button on:click={irAAdministrarUsuarios}>Administrar Usuarios</button>
           <button on:click={irAEditarPaginas}>Editar Páginas</button>
-          {:else if $userRol === 'empleado'}
+        {:else if $userRol === 'empleado'}
           <button on:click={irAEditarPaginas}>Editar Páginas</button>
-          {/if}
-        
+        {/if}
       </div>
     {/if}
   {/if}

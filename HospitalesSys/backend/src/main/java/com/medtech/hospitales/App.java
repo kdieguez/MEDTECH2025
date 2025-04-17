@@ -2,16 +2,19 @@ package com.medtech.hospitales;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+
 import com.medtech.hospitales.controllers.*;
 import com.medtech.hospitales.dao.HeaderFooterDAO;
 import com.medtech.hospitales.services.HeaderFooterService;
 import com.medtech.hospitales.utils.JPAUtil;
 import com.medtech.hospitales.utils.CustomJsonMapper;
+
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
 import jakarta.persistence.EntityManager;
 
 public class App {
@@ -36,6 +39,7 @@ public class App {
 
         EntityManager em = JPAUtil.getEntityManager();
 
+        // Doctores
         DoctorController doctorController = new DoctorController(em);
         app.post("/doctores/perfil", doctorController.registrarPerfilDoctor());
         app.get("/doctores/verificar-perfil/{id}", doctorController.verificarPerfilDoctor);
@@ -43,29 +47,40 @@ public class App {
         app.get("/doctores/{id}", doctorController.detalleDoctor);
         app.get("/info-doctores", doctorController.listarDoctoresInfo);
 
+        // Servicios hospitalarios
         ServicioHospitalarioController servicioController = new ServicioHospitalarioController(em);
         app.post("/servicios", servicioController.registrarServicio);
         app.get("/servicios", servicioController.listarServicios);
         app.get("/servicios/{id}", servicioController.detalleServicio);
         app.put("/servicios/{id}", servicioController.actualizarServicio);
 
+        // Especialidades
         EspecialidadController especialidadController = new EspecialidadController(em);
         app.get("/especialidades", especialidadController.obtenerEspecialidades);
         app.post("/especialidades", especialidadController.agregarEspecialidad);
 
+        // Login
         LoginController loginController = new LoginController();
         app.post("/login", loginController.login);
 
+        // Otras rutas
         UsuarioController.addRoutes(app);
         CitasController.addRoutes(app);
         RolController.addRoutes(app);
         CargoController.addRoutes(app);
 
-
+        // Header y Footer
         HeaderFooterDAO headerFooterDAO = new HeaderFooterDAO(em);
         HeaderFooterService headerFooterService = new HeaderFooterService(headerFooterDAO);
         HeaderFooterController.register(app, headerFooterService);
 
+        // Ficha técnica paciente
+        PerfilPacienteController perfilPacienteController = new PerfilPacienteController(em);
+        app.post("/perfil-paciente", perfilPacienteController.crearPerfil);
+        app.get("/perfil-paciente/{idUsuario}", perfilPacienteController.obtenerPorIdUsuario);
+        app.put("/perfil-paciente", perfilPacienteController.actualizarPerfil);
+
+        // Iniciar servidor
         app.start(7000);
         System.out.println("Servidor corriendo en: http://localhost:7000");
     }
