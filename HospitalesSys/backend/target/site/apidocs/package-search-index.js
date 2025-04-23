@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.medtech.hospitales"},{"l":"com.medtech.hospitales.controllers"},{"l":"com.medtech.hospitales.dao"},{"l":"com.medtech.hospitales.dtos"},{"l":"com.medtech.hospitales.models"},{"l":"com.medtech.hospitales.services"},{"l":"com.medtech.hospitales.utils"}];updateSearchResults();

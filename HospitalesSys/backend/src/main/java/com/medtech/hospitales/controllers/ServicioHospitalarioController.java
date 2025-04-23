@@ -10,23 +10,46 @@ import com.medtech.hospitales.models.SubcategoriaServicio;
 import com.medtech.hospitales.services.ServicioHospitalarioService;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManager;
-import com.medtech.hospitales.dtos.ServicioDTO;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador encargado de gestionar los servicios hospitalarios,
+ * incluyendo su registro, consulta, actualización y obtención de subcategorías.
+ */
 public class ServicioHospitalarioController {
 
+    /**
+     * Servicio encargado de la lógica de negocio para servicios hospitalarios.
+     */
     private ServicioHospitalarioService servicioService = null;
+
+    /**
+     * Mapper utilizado para la conversión entre objetos JSON y clases Java.
+     */
     private final ObjectMapper mapper = new ObjectMapper();
+
+    /**
+     * EntityManager utilizado para operaciones de persistencia en la base de datos.
+     */
     private EntityManager entityManager = null;
 
+    /**
+     * Constructor del controlador que recibe un EntityManager.
+     *
+     * @param entityManager instancia de EntityManager
+     */
     public ServicioHospitalarioController(EntityManager entityManager) {
         this.entityManager = entityManager;
         this.servicioService = new ServicioHospitalarioService(entityManager);
     }
 
+    /**
+     * Handler que registra un nuevo servicio hospitalario en el sistema.
+     * 
+     * @param ctx contexto de Javalin que contiene los datos del servicio a registrar
+     */
     public Handler registrarServicio = ctx -> {
         try {
             ServicioRegistroDTO dto = mapper.readValue(ctx.body(), ServicioRegistroDTO.class);
@@ -37,11 +60,21 @@ public class ServicioHospitalarioController {
         }
     };
 
+    /**
+     * Handler que lista todos los servicios hospitalarios registrados.
+     * 
+     * @param ctx contexto de Javalin
+     */
     public Handler listarServicios = ctx -> {
         List<ServicioHospitalario> servicios = servicioService.listarServicios();
         ctx.json(servicios);
     };
 
+    /**
+     * Handler que obtiene el detalle de un servicio hospitalario específico.
+     * 
+     * @param ctx contexto de Javalin con el ID del servicio
+     */
     public Handler detalleServicio = ctx -> {
         Long id = Long.parseLong(ctx.pathParam("id"));
 
@@ -55,6 +88,11 @@ public class ServicioHospitalarioController {
         ctx.json(servicio);
     };
 
+    /**
+     * Handler que actualiza un servicio hospitalario existente.
+     * 
+     * @param ctx contexto de Javalin con el ID del servicio y los nuevos datos
+     */
     public Handler actualizarServicio = ctx -> {
         try {
             Long id = Long.parseLong(ctx.pathParam("id"));
@@ -64,8 +102,13 @@ public class ServicioHospitalarioController {
         } catch (Exception e) {
             ctx.status(400).result("Error al actualizar servicio: " + e.getMessage());
         }
-    }; 
+    };
 
+    /**
+     * Handler que obtiene todos los servicios asociados a un doctor específico.
+     * 
+     * @param ctx contexto de Javalin con el ID del doctor
+     */
     public Handler serviciosPorDoctor = ctx -> {
         Long idDoctor = Long.parseLong(ctx.pathParam("id"));
         List<ServicioXDoctor> relaciones = entityManager.createQuery(
@@ -75,38 +118,40 @@ public class ServicioHospitalarioController {
         .setParameter("id", idDoctor)
         .getResultList();
 
-    
-    List<ServicioDTO> servicios = relaciones.stream()
-    .map(sxd -> new ServicioDTO(
-        sxd.getServicio().getId(),
-        sxd.getServicio().getNombre()
-    ))
-    .collect(Collectors.toList());
+        List<ServicioDTO> servicios = relaciones.stream()
+            .map(sxd -> new ServicioDTO(
+                sxd.getServicio().getId(),
+                sxd.getServicio().getNombre()
+            ))
+            .collect(Collectors.toList());
 
-    ctx.json(servicios);
-};
+        ctx.json(servicios);
+    };
 
-public Handler subcategoriasPorServicio = ctx -> {
-    Long idServicio = Long.parseLong(ctx.pathParam("id"));
+    /**
+     * Handler que obtiene todas las subcategorías asociadas a un servicio hospitalario.
+     * 
+     * @param ctx contexto de Javalin con el ID del servicio
+     */
+    public Handler subcategoriasPorServicio = ctx -> {
+        Long idServicio = Long.parseLong(ctx.pathParam("id"));
 
-    List<SubcategoriaServicio> subcategorias = entityManager.createQuery(
-        "SELECT s FROM SubcategoriaServicio s WHERE s.servicio.id = :id",
-        SubcategoriaServicio.class
-    )
-    .setParameter("id", idServicio)
-    .getResultList();
+        List<SubcategoriaServicio> subcategorias = entityManager.createQuery(
+            "SELECT s FROM SubcategoriaServicio s WHERE s.servicio.id = :id",
+            SubcategoriaServicio.class
+        )
+        .setParameter("id", idServicio)
+        .getResultList();
 
-    List<SubcategoriaDTO> dtos = subcategorias.stream()
-        .map(s -> new SubcategoriaDTO(
-            s.getId(),
-            s.getNombre(), 
-            s.getDescripcion(),
-            s.getPrecio()
-        ))
-        .collect(Collectors.toList());
+        List<SubcategoriaDTO> dtos = subcategorias.stream()
+            .map(s -> new SubcategoriaDTO(
+                s.getId(),
+                s.getNombre(), 
+                s.getDescripcion(),
+                s.getPrecio()
+            ))
+            .collect(Collectors.toList());
 
-    ctx.json(dtos);
-};
-
-
+        ctx.json(dtos);
+    };
 }

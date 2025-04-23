@@ -7,15 +7,36 @@ import io.javalin.http.Context;
 
 import java.util.Map;
 
+/**
+ * Controlador encargado de gestionar las operaciones relacionadas con medicamentos,
+ * como el registro de nuevos medicamentos en el sistema.
+ */
 public class MedicamentoController {
 
+    /**
+     * Servicio encargado de la lógica de negocio para medicamentos.
+     */
     private final MedicamentoService service = new MedicamentoService();
+
+    /**
+     * Mapper utilizado para la conversión entre objetos JSON y clases Java.
+     */
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructor del controlador que recibe un ObjectMapper para deserialización de JSON.
+     *
+     * @param objectMapper instancia de ObjectMapper
+     */
     public MedicamentoController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Guarda un nuevo medicamento en el sistema utilizando los datos enviados en el cuerpo de la solicitud.
+     * 
+     * @param ctx contexto de Javalin que contiene la solicitud y la respuesta
+     */
     public void guardarMedicamento(Context ctx) {
         try {
             Medicamento medicamento = objectMapper.readValue(ctx.body(), Medicamento.class);

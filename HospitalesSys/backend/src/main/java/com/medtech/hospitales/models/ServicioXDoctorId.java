@@ -2,9 +2,12 @@ package com.medtech.hospitales.models;
 
 import java.io.Serializable;
 import java.util.Objects;
-
 import jakarta.persistence.Embeddable;
 
+/**
+ * Clase que representa la clave primaria compuesta
+ * para la entidad {@link ServicioXDoctor}.
+ */
 @Embeddable
 public class ServicioXDoctorId implements Serializable {
 
@@ -18,6 +21,7 @@ public class ServicioXDoctorId implements Serializable {
         this.idInfoDoctor = idInfoDoctor;
     }
 
+    // Getters y Setters
     public Long getIdServicio() { return idServicio; }
     public void setIdServicio(Long idServicio) { this.idServicio = idServicio; }
 

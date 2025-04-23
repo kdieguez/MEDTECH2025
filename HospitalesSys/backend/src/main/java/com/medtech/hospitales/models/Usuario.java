@@ -3,6 +3,9 @@ package com.medtech.hospitales.models;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 
+/**
+ * Entidad que representa un usuario registrado en el sistema hospitalario.
+ */
 @Entity
 @Table(name = "USUARIOS")
 public class Usuario {
@@ -37,6 +40,7 @@ public class Usuario {
     @Column(name = "FECHACREACION")
     private Timestamp fechaCreacion;
 
+    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -1,23 +1,35 @@
 package com.medtech.hospitales.services;
 
+import com.medtech.hospitales.dtos.PacienteDTO;
+import com.medtech.hospitales.dtos.UsuarioConCargo;
 import com.medtech.hospitales.models.Cargo;
-import com.medtech.hospitales.models.UsuarioCargo;
 import com.medtech.hospitales.models.Usuario;
+import com.medtech.hospitales.models.UsuarioCargo;
 import com.medtech.hospitales.utils.CorreoUtils;
 import com.medtech.hospitales.utils.JPAUtil;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.*;
 
-import com.medtech.hospitales.dtos.PacienteDTO;
-import com.medtech.hospitales.dtos.UsuarioConCargo;
-
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Servicio que maneja las operaciones relacionadas con los usuarios
+ * en el sistema hospitalario, incluyendo creación, edición, activación
+ * y desactivación de usuarios, así como filtrado y paginación.
+ */
 public class UsuarioService {
 
+    /**
+     * EntityManagerFactory para conexión a la base de datos.
+     */
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("HospitalesPU");
 
+    /**
+     * Obtiene todos los usuarios del sistema.
+     *
+     * @return Lista de usuarios.
+     */
     public List<Usuario> obtenerUsuarios() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -27,6 +39,12 @@ public class UsuarioService {
         }
     }
 
+    /**
+     * Obtiene un usuario por su ID.
+     *
+     * @param id ID del usuario.
+     * @return Usuario encontrado, o null si no existe.
+     */
     public Usuario obtenerUsuarioPorId(Long id) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -36,6 +54,11 @@ public class UsuarioService {
         }
     }
 
+    /**
+     * Crea un nuevo usuario en el sistema y envía correos de notificación.
+     *
+     * @param usuario Objeto usuario a crear.
+     */
     public void crearUsuario(Usuario usuario) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -43,9 +66,6 @@ public class UsuarioService {
             em.getTransaction().begin();
             em.persist(usuario);
             em.getTransaction().commit();
-
-            System.out.println("Usuario creado: " + usuario);
-
             enviarCorreosRegistro(usuario);
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,75 +74,74 @@ public class UsuarioService {
         }
     }
 
-public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
-    EntityManager em = emf.createEntityManager();
-    try {
-        Usuario usuarioExistente = em.find(Usuario.class, id);
-        if (usuarioExistente != null) {
-            em.getTransaction().begin();
+    /**
+     * Actualiza la información de un usuario.
+     *
+     * @param id ID del usuario a actualizar.
+     * @param usuarioActualizado Datos actualizados del usuario.
+     */
+    public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            Usuario usuarioExistente = em.find(Usuario.class, id);
+            if (usuarioExistente != null) {
+                em.getTransaction().begin();
 
-            System.out.println("Actualizando usuario ID: " + id);
-            System.out.println("Datos recibidos: " + usuarioActualizado);
+                if (usuarioActualizado.getNombre() != null)
+                    usuarioExistente.setNombre(usuarioActualizado.getNombre());
 
-            if (usuarioActualizado.getNombre() != null)
-                usuarioExistente.setNombre(usuarioActualizado.getNombre());
+                if (usuarioActualizado.getApellido() != null)
+                    usuarioExistente.setApellido(usuarioActualizado.getApellido());
 
-            if (usuarioActualizado.getApellido() != null)
-                usuarioExistente.setApellido(usuarioActualizado.getApellido());
+                if (usuarioActualizado.getEmail() != null)
+                    usuarioExistente.setEmail(usuarioActualizado.getEmail());
 
-            if (usuarioActualizado.getEmail() != null)
-                usuarioExistente.setEmail(usuarioActualizado.getEmail());
+                if (usuarioActualizado.getUsuario() != null)
+                    usuarioExistente.setUsuario(usuarioActualizado.getUsuario());
 
-            if (usuarioActualizado.getUsuario() != null)
-                usuarioExistente.setUsuario(usuarioActualizado.getUsuario());
+                if (usuarioActualizado.getIdRol() != null)
+                    usuarioExistente.setIdRol(usuarioActualizado.getIdRol());
 
-            if (usuarioActualizado.getIdRol() != null)
-                usuarioExistente.setIdRol(usuarioActualizado.getIdRol());
+                if (usuarioActualizado.getHabilitado() != null)
+                    usuarioExistente.setHabilitado(usuarioActualizado.getHabilitado());
 
-            if (usuarioActualizado.getHabilitado() != null)
-                usuarioExistente.setHabilitado(usuarioActualizado.getHabilitado());
+                em.merge(usuarioExistente);
 
-            em.merge(usuarioExistente);
+                if (usuarioActualizado.getIdRol() != null && usuarioActualizado.getIdRol() == 2
+                        && usuarioActualizado instanceof UsuarioConCargo usuarioConCargo) {
+                    UsuarioCargo usuarioCargoExistente = em.createQuery(
+                            "SELECT uc FROM UsuarioCargo uc WHERE uc.usuario.id = :id", UsuarioCargo.class)
+                            .setParameter("id", id)
+                            .getResultStream()
+                            .findFirst()
+                            .orElse(null);
 
-            if (usuarioActualizado.getIdRol() != null && usuarioActualizado.getIdRol() == 2
-                    && usuarioActualizado instanceof UsuarioConCargo usuarioConCargo) {
-
-                UsuarioCargo usuarioCargoExistente = em.createQuery(
-                        "SELECT uc FROM UsuarioCargo uc WHERE uc.usuario.id = :id", UsuarioCargo.class)
-                        .setParameter("id", id)
-                        .getResultStream()
-                        .findFirst()
-                        .orElse(null);
-
-                Cargo cargo = em.find(Cargo.class, usuarioConCargo.getIdCargo());
-
-                if (cargo != null) {
-                    if (usuarioCargoExistente == null) {
-                        usuarioCargoExistente = new UsuarioCargo();
-                        usuarioCargoExistente.setUsuario(usuarioExistente);
+                    Cargo cargo = em.find(Cargo.class, usuarioConCargo.getIdCargo());
+                    if (cargo != null) {
+                        if (usuarioCargoExistente == null) {
+                            usuarioCargoExistente = new UsuarioCargo();
+                            usuarioCargoExistente.setUsuario(usuarioExistente);
+                        }
+                        usuarioCargoExistente.setCargo(cargo);
+                        em.merge(usuarioCargoExistente);
                     }
-                    usuarioCargoExistente.setCargo(cargo);
-                    em.merge(usuarioCargoExistente);
-                } else {
-                    System.out.println("No se encontró el cargo con ID: " + usuarioConCargo.getIdCargo());
                 }
+
+                em.getTransaction().commit();
             }
-
-            em.getTransaction().commit();
-        } else {
-            System.err.println("Usuario no encontrado con ID: " + id);
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
         }
-    } catch (Exception e) {
-        System.err.println("Error al actualizar el usuario: " + e.getMessage());
-        e.printStackTrace();
-        if (em.getTransaction().isActive()) {
-            em.getTransaction().rollback();
-        }
-    } finally {
-        em.close();
     }
-}
 
+    /**
+     * Elimina un usuario del sistema por su ID.
+     *
+     * @param id ID del usuario a eliminar.
+     */
     public void eliminarUsuario(Long id) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -137,6 +156,13 @@ public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
         }
     }
 
+    /**
+     * Realiza el login de un usuario usando su usuario y contraseña.
+     *
+     * @param username Nombre de usuario.
+     * @param password Contraseña.
+     * @return Usuario si las credenciales son correctas, null si no.
+     */
     public Usuario login(String username, String password) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -151,9 +177,14 @@ public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
         }
     }
 
+    /**
+     * Envía correos de notificación al nuevo usuario y a los administradores.
+     *
+     * @param nuevo Nuevo usuario registrado.
+     */
     private void enviarCorreosRegistro(Usuario nuevo) {
         try {
-            String mensajeBienvenida = "¡Bienvenido/a " + nuevo.getNombre() + "!\n\nTu cuenta ha sido registrada exitosamente. Pronto te estará llegando un correo para que puedas ingresar al sistema.";
+            String mensajeBienvenida = "¡Bienvenido/a " + nuevo.getNombre() + "!\n\nTu cuenta ha sido registrada exitosamente.";
             CorreoUtils.enviarCorreo(nuevo.getEmail(), "Bienvenido a Hospital Base", mensajeBienvenida);
 
             EntityManager em = emf.createEntityManager();
@@ -177,6 +208,15 @@ public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
         }
     }
 
+    /**
+     * Filtra usuarios basados en correo, rol y rango de fechas de creación.
+     *
+     * @param correo Filtro por correo (opcional).
+     * @param idRol Filtro por ID de rol (opcional).
+     * @param fechaInicio Fecha de inicio (opcional).
+     * @param fechaFin Fecha de fin (opcional).
+     * @return Lista filtrada de usuarios.
+     */
     public List<Usuario> filtrarUsuarios(String correo, Integer idRol, LocalDate fechaInicio, LocalDate fechaFin) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -216,6 +256,12 @@ public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
         }
     }
 
+    /**
+     * Obtiene usuarios paginados de 10 en 10.
+     *
+     * @param pagina Número de página.
+     * @return Lista de usuarios en esa página.
+     */
     public List<Usuario> obtenerUsuariosPaginados(int pagina) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -228,6 +274,12 @@ public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
         }
     }
 
+    /**
+     * Activa un usuario y envía correo de notificación.
+     *
+     * @param id ID del usuario.
+     * @throws MessagingException en caso de error de correo.
+     */
     public void activarUsuario(Long id) throws MessagingException {
         EntityManager em = emf.createEntityManager();
         try {
@@ -246,6 +298,12 @@ public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
         }
     }
 
+    /**
+     * Desactiva un usuario y envía correo de notificación.
+     *
+     * @param id ID del usuario.
+     * @throws MessagingException en caso de error de correo.
+     */
     public void desactivarUsuario(Long id) throws MessagingException {
         EntityManager em = emf.createEntityManager();
         try {
@@ -264,6 +322,11 @@ public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
         }
     }
 
+    /**
+     * Obtiene la lista de pacientes habilitados en formato DTO.
+     *
+     * @return Lista de pacientes con perfil.
+     */
     public List<PacienteDTO> obtenerPacientesConPerfilDTO() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -277,5 +340,4 @@ public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
             em.close();
         }
     }
-    
 }

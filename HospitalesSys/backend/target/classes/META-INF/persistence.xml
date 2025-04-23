@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
-                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
 
     <persistence-unit name="HospitalesPU" transaction-type="RESOURCE_LOCAL">
@@ -25,9 +24,17 @@
         <class>com.medtech.hospitales.models.TelefonoDoctor</class>
         <class>com.medtech.hospitales.models.UsuarioCargo</class>
         <class>com.medtech.hospitales.models.PerfilPaciente</class>
+        <class>com.medtech.hospitales.models.HistorialServicio</class>
+        <class>com.medtech.hospitales.models.Medicamento</class>
+        <class>com.medtech.hospitales.models.MedicamentoRecetado</class>
+        <class>com.medtech.hospitales.models.Pagina</class>
+        <class>com.medtech.hospitales.models.SeccionPagina</class>
+        <class>com.medtech.hospitales.models.ResultadoExamen</class>
+        <class>com.medtech.hospitales.models.RecetaMedica</class>
+        <class>com.medtech.hospitales.models.RecetaMedicaHeader</class>
 
         <properties>
-            <!-- Conexión a Oracle -->
+            <!-- Configuración de conexión a Oracle -->
             <property name="jakarta.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:oracle:thin:@localhost:1521/XEPDB1"/>
             <property name="jakarta.persistence.jdbc.user" value="HOSPITAL_BASE"/>
@@ -35,9 +42,12 @@
 
             <!-- Configuración de Hibernate -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect"/>
-            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="none"/>
+
+            <!-- Opcional: Para control más estricto en errores -->
+            <property name="hibernate.jdbc.lob.non_contextual_creation" value="true"/>
 
         </properties>
 

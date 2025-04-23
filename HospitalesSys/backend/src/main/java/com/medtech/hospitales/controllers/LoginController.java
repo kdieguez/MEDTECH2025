@@ -11,20 +11,18 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 
 /**
-    * Controlador encargado del proceso de autenticación de usuarios en el sistema hospitalario.
-    * Verifica las credenciales y genera el token JWT si son válidas.
-    */
-
+ * Controlador encargado del proceso de autenticación de usuarios en el sistema hospitalario.
+ * Verifica las credenciales y genera el token JWT si son válidas.
+ */
 public class LoginController {
 
-/*
-    * Handler login de Javalin, realiza el login del usuario.
-    * <p>
-    * Verifica el identificador (correo o usuario), contraseña, si está activo,
-    * y determina si debe mostrar el formulario para completar datos del perfil de doctor.
-    * </p>
-    */
-
+    /**
+     * Handler de Javalin encargado de realizar el proceso de login del usuario.
+     * <p>
+     * Verifica el identificador (correo o usuario), contraseña, si el usuario está activo,
+     * y determina si debe mostrar el formulario para completar datos del perfil de doctor.
+     * </p>
+     */
     public Handler login = ctx -> {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -79,7 +77,8 @@ public class LoginController {
             boolean yaTienePerfil = !em.createQuery(
                     "SELECT d FROM InfoDoctor d WHERE d.usuario.id = :idUsuario", Usuario.class)
                     .setParameter("idUsuario", user.getId())
-                    .getResultList().isEmpty();
+                    .getResultList()
+                    .isEmpty();
 
             mostrarFormularioDoctor = mostrarFormularioDoctor && !yaTienePerfil;
 
@@ -101,21 +100,21 @@ public class LoginController {
         }
     };
 
-/**
- * Clase interna que representa la respuesta del login.
- */
+    /**
+     * Clase interna que representa la respuesta enviada al cliente después de un login exitoso.
+     */
     static class LoginResponse {
         /** Token JWT generado tras autenticación exitosa. */
         public String token;
         
-        /** Indica si debe mostrarse el formulario para completar información de doctor. */
+        /** Indica si debe mostrarse el formulario para completar información del perfil de doctor. */
         public boolean mostrarFormularioDoctor;
         
         /**
          * Constructor para la respuesta del Login.
          *
-         * @param token Token generado
-         * @param mostrarFormularioDoctor bandera para saber si mostrar el formulario
+         * @param token token JWT generado
+         * @param mostrarFormularioDoctor bandera que indica si debe mostrarse el formulario de doctor
          */
         public LoginResponse(String token, boolean mostrarFormularioDoctor) {
             this.token = token;

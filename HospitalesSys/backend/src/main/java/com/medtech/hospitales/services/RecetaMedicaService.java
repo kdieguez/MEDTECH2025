@@ -1,40 +1,49 @@
 package com.medtech.hospitales.services;
 
 import com.medtech.hospitales.models.CitaMedica;
-import com.medtech.hospitales.models.PerfilPaciente;
-import com.medtech.hospitales.models.InfoDoctor;
 import com.medtech.hospitales.models.RecetaMedicaHeader;
 import com.medtech.hospitales.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 
+/**
+ * Servicio que maneja la creación del encabezado de recetas médicas
+ * asociadas a citas médicas en el sistema hospitalario.
+ */
 public class RecetaMedicaService {
 
+    /**
+     * Crea un nuevo encabezado de receta médica basado en una cita existente.
+     *
+     * @param idCita ID de la cita médica para generar la receta.
+     * @throws RuntimeException si ocurre un error al crear la receta.
+     */
     public void crearEncabezadoReceta(Long idCita) {
         EntityManager em = JPAUtil.getEntityManager();
 
         try {
             em.getTransaction().begin();
 
+            // Buscar la cita médica
             CitaMedica cita = em.find(CitaMedica.class, idCita);
             if (cita == null) {
                 throw new RuntimeException("No se encontró la cita con ID: " + idCita);
             }
 
+            // Crear encabezado de receta
             RecetaMedicaHeader receta = new RecetaMedicaHeader();
-
             receta.setFechaReceta(LocalDate.now());
 
-            // Código de receta temporal: "PAZ000" + id de la cita
+            // Código de receta temporal basado en el ID de la cita
             String codigo = "PAZ000-" + idCita;
             receta.setCodigoReceta(codigo);
 
-            // Relacionarlo con paciente y doctor
+            // Asociar paciente y doctor
             receta.setPaciente(cita.getPaciente());
             receta.setInfoDoctor(cita.getInfoDoctor());
 
-            // Guardarlo
+            // Persistir el encabezado de receta
             em.persist(receta);
 
             em.getTransaction().commit();

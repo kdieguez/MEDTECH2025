@@ -1,7 +1,11 @@
 package com.medtech.hospitales.models;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
+/**
+ * Entidad que representa una subcategoría asociada a un servicio hospitalario.
+ */
 @Entity
 @Table(name = "SUBCATEGORIAS_SERVICIO")
 public class SubcategoriaServicio {
@@ -25,6 +29,7 @@ public class SubcategoriaServicio {
     @Column(name = "PRECIO")
     private Double precio;
 
+    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

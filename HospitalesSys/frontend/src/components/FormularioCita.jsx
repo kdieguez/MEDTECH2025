@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import './css/formulariocita.css'; // (mantenemos este)
+import './css/formulariocita.css'; 
 
 export default function FormularioCita() {
   const { idCita } = useParams();

@@ -1,11 +1,15 @@
 package com.medtech.hospitales.models;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
+/**
+ * Entidad que representa un teléfono de contacto de un doctor.
+ */
 @Entity
 @Table(name = "TELEFONO_DOCTOR")
 public class TelefonoDoctor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_TELEFONO")
@@ -21,29 +25,13 @@ public class TelefonoDoctor {
 
     public TelefonoDoctor() {}
 
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-    public String getTelefono() {
-        return telefono;
-    }
-    
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-    
-    public InfoDoctor getInfoDoctor() {
-        return infoDoctor;
-    }
-    
-    public void setInfoDoctor(InfoDoctor infoDoctor) {
-        this.infoDoctor = infoDoctor;
-    }
-    
-}
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+
+    public InfoDoctor getInfoDoctor() { return infoDoctor; }
+    public void setInfoDoctor(InfoDoctor infoDoctor) { this.infoDoctor = infoDoctor; }
+}

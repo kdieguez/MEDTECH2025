@@ -4,11 +4,26 @@ import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import java.util.*;
 
+/**
+ * Clase utilitaria para enviar correos electrónicos usando SMTP de Gmail.
+ */
 public class CorreoUtils {
 
+    /**
+     * Dirección de correo remitente.
+     */
     private static final String REMITENTE = "kds2games@gmail.com";
-    private static final String CLAVE = "ncsa noau lkcd gics";    
 
+    /**
+     * Contraseña de la cuenta de correo (clave de aplicación).
+     */
+    private static final String CLAVE = "ncsa noau lkcd gics";
+
+    /**
+     * Inicializa la sesión de correo configurada para Gmail con autenticación y TLS.
+     *
+     * @return Sesión de correo lista para enviar mensajes.
+     */
     private static Session iniciarSesionCorreo() {
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -17,12 +32,21 @@ public class CorreoUtils {
         props.put("mail.smtp.starttls.enable", "true");
 
         return Session.getInstance(props, new Authenticator() {
+            @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(REMITENTE, CLAVE);
             }
         });
     }
 
+    /**
+     * Envía un correo electrónico a un destinatario específico.
+     *
+     * @param destinatario Dirección de correo del destinatario.
+     * @param asunto Asunto del correo.
+     * @param mensaje Cuerpo del mensaje a enviar.
+     * @throws MessagingException Si ocurre un error durante el envío.
+     */
     public static void enviarCorreo(String destinatario, String asunto, String mensaje) throws MessagingException {
         Session session = iniciarSesionCorreo();
 

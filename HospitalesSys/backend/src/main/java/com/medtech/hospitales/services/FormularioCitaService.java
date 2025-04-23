@@ -7,11 +7,24 @@ import com.medtech.hospitales.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+/**
+ * Servicio que maneja las operaciones relacionadas con el formulario de citas médicas,
+ * incluyendo el registro de diagnósticos, resultados de exámenes y generación de recetas médicas.
+ */
 public class FormularioCitaService {
 
+    /**
+     * EntityManager inyectado para operaciones de persistencia.
+     */
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * Guarda la información del formulario de una cita médica, incluyendo
+     * resultados de exámenes y diagnóstico, asociándolos a la cita existente.
+     *
+     * @param dto Objeto DTO que contiene los datos del formulario.
+     */
     public void guardarFormulario(FormularioCitaDTO dto) {
         EntityManager em = JPAUtil.getEntityManager();
 
@@ -27,6 +40,7 @@ public class FormularioCitaService {
 
             em.getTransaction().begin();
 
+            // Buscar la cita médica
             CitaMedica cita = em.find(CitaMedica.class, dto.getIdCita());
             if (cita == null) {
                 throw new RuntimeException("No se encontró la cita médica con ID: " + dto.getIdCita());
@@ -42,7 +56,7 @@ public class FormularioCitaService {
                 }
             }
 
-            // Guardar historial médico si existe
+            // Guardar historial médico si existe diagnóstico o pasos siguientes
             if (dto.getDiagnostico() != null || dto.getPasosSiguientes() != null) {
                 HistorialServicio historial = new HistorialServicio();
                 historial.setDiagnostico(dto.getDiagnostico());
@@ -63,8 +77,14 @@ public class FormularioCitaService {
         }
     }
 
+    /**
+     * Genera un objeto de receta médica basado en la información de una cita específica.
+     *
+     * @param idCita ID de la cita médica a partir de la cual se generará la receta.
+     * @return Objeto RecetaDTO con los datos de la receta generada.
+     */
     public RecetaDTO generarReceta(Long idCita) {
-        EntityManager em = JPAUtil.getEntityManager(); // Corregido: obtener EntityManager
+        EntityManager em = JPAUtil.getEntityManager();
 
         try {
             CitaMedica cita = em.find(CitaMedica.class, idCita);
@@ -76,6 +96,7 @@ public class FormularioCitaService {
             receta.setFechaCita(cita.getFechaHora().toLocalDate());
             receta.setCodigoReceta("PAZ000-" + cita.getId());
 
+            // Datos del paciente
             PerfilPaciente paciente = cita.getPaciente();
             if (paciente != null && paciente.getUsuario() != null) {
                 receta.setNombrePaciente(
@@ -83,6 +104,7 @@ public class FormularioCitaService {
                 );
             }
 
+            // Datos del doctor
             InfoDoctor doctor = cita.getInfoDoctor();
             if (doctor != null && doctor.getUsuario() != null) {
                 receta.setNombreDoctor(
@@ -91,6 +113,7 @@ public class FormularioCitaService {
                 receta.setNumColegiado(doctor.getNumColegiado());
             }
 
+            // Especialidad
             SubcategoriaServicio especialidad = cita.getSubcategoria();
             if (especialidad != null) {
                 receta.setEspecialidad(especialidad.getNombre());

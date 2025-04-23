@@ -6,7 +6,6 @@ import com.medtech.hospitales.models.Rol;
 import com.medtech.hospitales.models.Usuario;
 import com.medtech.hospitales.services.UsuarioService;
 import com.medtech.hospitales.utils.JPAUtil;
-
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import jakarta.persistence.EntityManager;
@@ -16,10 +15,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controlador encargado de gestionar las operaciones relacionadas con los usuarios,
+ * incluyendo administración de pacientes, roles, cargos y filtros de búsqueda.
+ */
 public class UsuarioController {
 
+    /**
+     * Servicio encargado de la lógica de negocio para usuarios.
+     */
     private final UsuarioService usuarioService = new UsuarioService();
 
+    /**
+     * Registra las rutas de usuario en la aplicación Javalin.
+     *
+     * @param app instancia de Javalin donde se registrarán las rutas
+     */
     public static void addRoutes(Javalin app) {
         UsuarioController controller = new UsuarioController();
 
@@ -37,11 +48,21 @@ public class UsuarioController {
         app.put("/admin/usuarios/{id}/desactivar", controller::desactivarUsuario);
     }
 
+    /**
+     * Obtiene todos los usuarios registrados en el sistema.
+     *
+     * @param ctx contexto de Javalin
+     */
     public void obtenerUsuarios(Context ctx) {
         List<Usuario> usuarios = usuarioService.obtenerUsuarios();
         ctx.json(usuarios);
     }
 
+    /**
+     * Obtiene un usuario por su ID.
+     *
+     * @param ctx contexto de Javalin que contiene el ID
+     */
     public void obtenerUsuarioPorId(Context ctx) {
         Long id = Long.valueOf(ctx.pathParam("id"));
         Usuario usuario = usuarioService.obtenerUsuarioPorId(id);
@@ -52,6 +73,11 @@ public class UsuarioController {
         }
     }
 
+    /**
+     * Crea un nuevo usuario en el sistema.
+     *
+     * @param ctx contexto de Javalin que contiene los datos del usuario
+     */
     public void crearUsuario(Context ctx) {
         try {
             Usuario usuario = ctx.bodyAsClass(Usuario.class);
@@ -64,6 +90,11 @@ public class UsuarioController {
         }
     }
 
+    /**
+     * Actualiza los datos de un usuario existente.
+     *
+     * @param ctx contexto de Javalin con el ID del usuario y los nuevos datos
+     */
     public void actualizarUsuario(Context ctx) {
         Long id = Long.valueOf(ctx.pathParam("id"));
         try {
@@ -76,12 +107,22 @@ public class UsuarioController {
         }
     }
 
+    /**
+     * Elimina un usuario del sistema.
+     *
+     * @param ctx contexto de Javalin con el ID del usuario
+     */
     public void eliminarUsuario(Context ctx) {
         Long id = Long.valueOf(ctx.pathParam("id"));
         usuarioService.eliminarUsuario(id);
         ctx.result("Usuario eliminado");
     }
 
+    /**
+     * Filtra usuarios por correo, rol y rangos de fechas de creación.
+     *
+     * @param ctx contexto de Javalin con parámetros de filtro
+     */
     public void filtrarUsuarios(Context ctx) {
         String correo = ctx.queryParam("correo");
         String rolParam = ctx.queryParam("rol");
@@ -96,6 +137,11 @@ public class UsuarioController {
         ctx.json(usuarios);
     }
 
+    /**
+     * Obtiene usuarios en forma paginada, mostrando 10 usuarios por página.
+     *
+     * @param ctx contexto de Javalin que contiene el número de página
+     */
     public void obtenerUsuariosPaginados(Context ctx) {
         String paginaParam = ctx.queryParam("pagina");
         int pagina = (paginaParam != null && !paginaParam.isBlank()) ? Integer.parseInt(paginaParam) : 1;
@@ -110,6 +156,11 @@ public class UsuarioController {
         ctx.json(response);
     }
 
+    /**
+     * Activa un usuario en el sistema.
+     *
+     * @param ctx contexto de Javalin con el ID del usuario
+     */
     public void activarUsuario(Context ctx) {
         Long id = Long.valueOf(ctx.pathParam("id"));
         try {
@@ -123,6 +174,11 @@ public class UsuarioController {
         }
     }
 
+    /**
+     * Desactiva un usuario en el sistema.
+     *
+     * @param ctx contexto de Javalin con el ID del usuario
+     */
     public void desactivarUsuario(Context ctx) {
         Long id = Long.valueOf(ctx.pathParam("id"));
         try {
@@ -134,6 +190,11 @@ public class UsuarioController {
         }
     }
 
+    /**
+     * Obtiene los pacientes habilitados del sistema.
+     *
+     * @param ctx contexto de Javalin
+     */
     public void obtenerPacientesHabilitados(Context ctx) {
         try {
             List<PacienteDTO> pacientes = usuarioService.obtenerPacientesConPerfilDTO();
@@ -142,10 +203,13 @@ public class UsuarioController {
             e.printStackTrace();
             ctx.status(500).json(Map.of("error", e.getMessage()));
         }
-    }   
-    
-    private record ErrorResponse(String details) {}
+    }
 
+    /**
+     * Obtiene todos los roles disponibles en el sistema.
+     *
+     * @param ctx contexto de Javalin
+     */
     public void obtenerRoles(Context ctx) {
         EntityManager em = JPAUtil.getEntityManager();
         List<Rol> roles = em.createQuery("SELECT r FROM Rol r", Rol.class).getResultList();
@@ -153,10 +217,22 @@ public class UsuarioController {
         em.close();
     }
 
+    /**
+     * Obtiene todos los cargos disponibles en el sistema.
+     *
+     * @param ctx contexto de Javalin
+     */
     public void obtenerCargos(Context ctx) {
         EntityManager em = JPAUtil.getEntityManager();
         List<Cargo> cargos = em.createQuery("SELECT c FROM Cargo c", Cargo.class).getResultList();
         ctx.json(cargos);
         em.close();
     }
+
+    /**
+     * Clase interna para representar errores como respuesta JSON.
+     *
+     * @param details descripción del error
+     */
+    private record ErrorResponse(String details) {}
 }

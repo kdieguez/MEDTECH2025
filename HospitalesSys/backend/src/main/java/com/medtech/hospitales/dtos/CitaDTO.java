@@ -2,15 +2,58 @@ package com.medtech.hospitales.dtos;
 
 import java.time.LocalDateTime;
 
+/**
+ * DTO (Data Transfer Object) que representa la información resumida de una cita médica,
+ * incluyendo datos del paciente, doctor, servicio, subcategoría y fecha de la cita.
+ */
 public class CitaDTO {
+
+    /**
+     * Identificador único de la cita.
+     */
     private Long idCita;
+
+    /**
+     * Nombre completo del paciente.
+     */
     private String nombrePaciente;
+
+    /**
+     * DPI (Documento Personal de Identificación) del paciente.
+     */
     private String dpiPaciente;
+
+    /**
+     * Nombre del doctor asignado a la cita.
+     */
     private String nombreDoctor;
+
+    /**
+     * Nombre del servicio hospitalario relacionado con la cita.
+     */
     private String servicio;
+
+    /**
+     * Subcategoría específica del servicio asociado a la cita.
+     */
     private String subcategoria;
+
+    /**
+     * Fecha y hora programada para la cita médica.
+     */
     private LocalDateTime fechaHora;
 
+    /**
+     * Constructor para inicializar todos los campos de la cita médica.
+     *
+     * @param idCita ID de la cita
+     * @param nombrePaciente nombre del paciente
+     * @param dpiPaciente DPI del paciente
+     * @param nombreDoctor nombre del doctor
+     * @param servicio nombre del servicio
+     * @param subcategoria nombre de la subcategoría
+     * @param fechaHora fecha y hora de la cita
+     */
     public CitaDTO(Long idCita, String nombrePaciente, String dpiPaciente, String nombreDoctor, String servicio, String subcategoria, LocalDateTime fechaHora) {
         this.idCita = idCita;
         this.nombrePaciente = nombrePaciente;

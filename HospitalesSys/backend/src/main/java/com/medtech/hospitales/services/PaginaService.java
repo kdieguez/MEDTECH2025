@@ -7,11 +7,22 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import java.util.List;
 
+/**
+ * Servicio que maneja las operaciones CRUD relacionadas con las páginas
+ * informativas y sus secciones en el sistema hospitalario.
+ */
 public class PaginaService {
 
+    /**
+     * EntityManagerFactory para gestionar conexiones a la base de datos.
+     */
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("HospitalesPU");
 
-    // Obtener todas las páginas
+    /**
+     * Obtiene todas las páginas registradas en el sistema.
+     *
+     * @return lista de objetos Pagina.
+     */
     public List<Pagina> obtenerTodasLasPaginas() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -21,7 +32,12 @@ public class PaginaService {
         }
     }
 
-    // Obtener todas las secciones de una página específica
+    /**
+     * Obtiene todas las secciones asociadas a una página específica.
+     *
+     * @param idPagina ID de la página a consultar.
+     * @return lista de secciones de la página.
+     */
     public List<SeccionPagina> obtenerSeccionesDePagina(Long idPagina) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -36,7 +52,14 @@ public class PaginaService {
         }
     }
 
-    // Actualizar una sección existente
+    /**
+     * Actualiza el contenido de una sección existente.
+     *
+     * @param idSeccion ID de la sección a actualizar.
+     * @param nuevoTitulo Nuevo título de la sección.
+     * @param nuevoContenido Nuevo contenido de la sección.
+     * @param nuevaImagenUrl Nueva URL de la imagen de la sección.
+     */
     public void actualizarSeccion(Long idSeccion, String nuevoTitulo, String nuevoContenido, String nuevaImagenUrl) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -53,7 +76,15 @@ public class PaginaService {
         }
     }
 
-    // Agregar una nueva sección a una página
+    /**
+     * Agrega una nueva sección a una página existente.
+     *
+     * @param idPagina ID de la página a la cual agregar la sección.
+     * @param titulo Título de la nueva sección.
+     * @param contenido Contenido de la nueva sección.
+     * @param imagenUrl URL de la imagen asociada a la sección.
+     * @param orden Orden en el que se debe mostrar la sección.
+     */
     public void agregarSeccion(Long idPagina, String titulo, String contenido, String imagenUrl, Integer orden) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -68,7 +99,7 @@ public class PaginaService {
                 nuevaSeccion.setOrden(orden);
 
                 em.persist(nuevaSeccion);
-                em.flush(); 
+                em.flush();
                 em.refresh(nuevaSeccion);
             }
             em.getTransaction().commit();
@@ -77,7 +108,11 @@ public class PaginaService {
         }
     }
 
-    // Eliminar una sección
+    /**
+     * Elimina una sección específica de una página.
+     *
+     * @param idSeccion ID de la sección a eliminar.
+     */
     public void eliminarSeccion(Long idSeccion) {
         EntityManager em = emf.createEntityManager();
         try {

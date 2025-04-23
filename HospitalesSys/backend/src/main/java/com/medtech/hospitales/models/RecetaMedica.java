@@ -2,38 +2,66 @@ package com.medtech.hospitales.models;
 
 import jakarta.persistence.*;
 
+/**
+ * Entidad que representa un medicamento recetado en una receta médica,
+ * incluyendo detalles como presentación y anotaciones.
+ */
 @Entity
 @Table(name = "RECETA_MEDICAMENTOS")
 public class RecetaMedica {
 
+    /**
+     * Identificador único del medicamento recetado.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_MEDICAMENTO_RECETA")
     private Long id;
 
+    /**
+     * Receta médica a la que pertenece este medicamento.
+     */
     @ManyToOne
     @JoinColumn(name = "ID_RECETA")
     private RecetaMedicaHeader receta;
 
+    /**
+     * Nombre comercial del medicamento.
+     */
     @Column(name = "NOMBRE_MEDICAMENTO")
     private String nombreMedicamento;
 
+    /**
+     * Principio activo del medicamento.
+     */
     @Column(name = "PRINCIPIO_ACTIVO")
     private String principioActivo;
 
+    /**
+     * Concentración del principio activo.
+     */
     @Column(name = "CONCENTRACION")
     private String concentracion;
 
+    /**
+     * Presentación del medicamento.
+     */
     @Column(name = "PRESENTACION")
     private String presentacion;
 
+    /**
+     * Forma farmacéutica del medicamento.
+     */
     @Column(name = "FORMA_FARMACEUTICA")
     private String formaFarmaceutica;
 
+    /**
+     * Anotaciones adicionales sobre el medicamento recetado.
+     */
     @Column(name = "ANOTACIONES")
     private String anotaciones;
 
-    // Getters y setters
+    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

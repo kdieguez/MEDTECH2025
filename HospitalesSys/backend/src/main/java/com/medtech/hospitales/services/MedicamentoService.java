@@ -4,8 +4,17 @@ import com.medtech.hospitales.models.Medicamento;
 import com.medtech.hospitales.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 
+/**
+ * Servicio que maneja las operaciones relacionadas con el registro de medicamentos
+ * en el sistema hospitalario.
+ */
 public class MedicamentoService {
 
+    /**
+     * Guarda un nuevo medicamento en la base de datos.
+     *
+     * @param medicamento Objeto de tipo Medicamento que se desea guardar.
+     */
     public void guardarMedicamento(Medicamento medicamento) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

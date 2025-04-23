@@ -9,26 +9,57 @@ import io.javalin.http.Context;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controlador encargado de gestionar las operaciones relacionadas con las páginas informativas
+ * y sus respectivas secciones dentro del sistema hospitalario.
+ */
 public class PaginaController {
 
+    /**
+     * Servicio encargado de la lógica de negocio para páginas y secciones.
+     */
     private final PaginaService paginaService = new PaginaService();
+
+    /**
+     * Mapper utilizado para la conversión entre objetos JSON y clases Java.
+     */
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructor del controlador que recibe un ObjectMapper para deserialización de JSON.
+     *
+     * @param objectMapper instancia de ObjectMapper
+     */
     public PaginaController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Obtiene todas las páginas informativas registradas en el sistema.
+     *
+     * @param ctx contexto de Javalin que contiene la solicitud y la respuesta
+     */
     public void obtenerTodasLasPaginas(Context ctx) {
         List<Pagina> paginas = paginaService.obtenerTodasLasPaginas();
         ctx.json(paginas);
     }
 
+    /**
+     * Obtiene todas las secciones pertenecientes a una página específica.
+     *
+     * @param ctx contexto de Javalin que contiene la solicitud y la respuesta
+     */
     public void obtenerSeccionesDePagina(Context ctx) {
         Long idPagina = Long.parseLong(ctx.pathParam("idPagina"));
         List<SeccionPagina> secciones = paginaService.obtenerSeccionesDePagina(idPagina);
         ctx.json(secciones);
     }
 
+    /**
+     * Actualiza una sección existente de una página informativa.
+     *
+     * @param ctx contexto de Javalin que contiene el ID de la sección y los nuevos datos
+     */
     public void actualizarSeccion(Context ctx) {
         try {
             Long idSeccion = Long.parseLong(ctx.pathParam("idSeccion"));
@@ -46,6 +77,11 @@ public class PaginaController {
         }
     }
 
+    /**
+     * Agrega una nueva sección a una página informativa existente.
+     *
+     * @param ctx contexto de Javalin que contiene el ID de la página y los datos de la nueva sección
+     */
     public void agregarSeccion(Context ctx) {
         try {
             Long idPagina = Long.parseLong(ctx.pathParam("idPagina"));
@@ -64,6 +100,11 @@ public class PaginaController {
         }
     }
 
+    /**
+     * Elimina una sección específica de una página informativa.
+     *
+     * @param ctx contexto de Javalin que contiene el ID de la sección a eliminar
+     */
     public void eliminarSeccion(Context ctx) {
         try {
             Long idSeccion = Long.parseLong(ctx.pathParam("idSeccion"));
