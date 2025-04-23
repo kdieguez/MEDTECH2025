@@ -53,6 +53,7 @@ public class App {
         app.put("/servicios/{id}", servicioController.actualizarServicio);
         app.get("/servicios/por-doctor/{id}", servicioController.serviciosPorDoctor);
         app.get("/servicios/{id}/subcategorias", servicioController.subcategoriasPorServicio);
+        app.get("/servicios-hospitalarios", servicioController.serviciosParaSeguros);
 
         EspecialidadController especialidadController = new EspecialidadController(em);
         app.get("/especialidades", especialidadController.obtenerEspecialidades);

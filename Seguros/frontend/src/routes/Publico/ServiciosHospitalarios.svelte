@@ -11,7 +11,7 @@
   onMount(async () => {
     try {
       const res = await axios.get('http://localhost:8000/servicios-hospitalarios');
-      servicios = res.data.servicios || [];
+      servicios = res.data || [];
 
       const resCatalogo = await axios.get('http://localhost:8000/catalogo');
       idsCatalogo = resCatalogo.data.map(item => item.servicio.id_subcategoria);
@@ -22,7 +22,7 @@
   });
 
   async function agregarAlCatalogo(servicio) {
-    const polizasSeleccionadas = seleccionadas[servicio.ID_SUBCATEGORIA] || [];
+    const polizasSeleccionadas = seleccionadas[servicio.id_subcategoria] || [];
 
     if (polizasSeleccionadas.length === 0) {
       Swal.fire("Atención", "Debes seleccionar al menos una póliza.", "warning");
@@ -31,14 +31,14 @@
 
     const payload = {
       servicio: {
-        id_servicio: servicio.ID_SERVICIO,
-        nombre_servicio: servicio.NOMBRE_SERVICIO,
-        descripcion_servicio: servicio.DESCRIPCION_SERVICIO,
-        id_subcategoria: servicio.ID_SUBCATEGORIA,
-        nombre_subcategoria: servicio.NOMBRE_SUBCATEGORIA,
-        descripcion_subcategoria: servicio.DESCRIPCION_SUBCATEGORIA,
-        precio: servicio.PRECIO,
-        id_info_doctor: servicio.ID_INFO_DOCTOR[0] ?? null
+        id_servicio: servicio.id_servicio,
+        nombre_servicio: servicio.nombre_servicio,
+        descripcion_servicio: servicio.descripcion_servicio,
+        id_subcategoria: servicio.id_subcategoria,
+        nombre_subcategoria: servicio.nombre_subcategoria,
+        descripcion_subcategoria: servicio.descripcion_subcategoria,
+        precio: servicio.precio,
+        id_info_doctor: servicio.id_info_doctor[0] ?? null
       },
       disponible: true,
       tipos_poliza: polizasSeleccionadas
@@ -46,7 +46,7 @@
 
     try {
       const response = await axios.post('http://localhost:8000/catalogo', payload);
-      idsCatalogo.push(servicio.ID_SUBCATEGORIA);
+      idsCatalogo.push(servicio.id_subcategoria);
       Swal.fire("Éxito", response.data.message, "success");
     } catch (e) {
       Swal.fire("Error", "Error al agregar al catálogo", "error");
@@ -74,7 +74,6 @@
       Swal.fire("Error", "No se pudo eliminar del catálogo", "error");
       console.error(e);
     }
-
   }
 </script>
 
@@ -84,10 +83,10 @@
   <div class="contenedor-servicios">
     {#each servicios as s}
       <div class="servicio">
-        <h2>{s.NOMBRE_SUBCATEGORIA}</h2>
-        <p><strong>Servicio:</strong> {s.NOMBRE_SERVICIO}</p>
-        <p><strong>Descripción:</strong> {s.DESCRIPCION_SUBCATEGORIA}</p>
-        <p><strong>Precio:</strong> Q{s.PRECIO}</p>
+        <h2>{s.nombre_subcategoria}</h2>
+        <p><strong>Servicio:</strong> {s.nombre_servicio}</p>
+        <p><strong>Descripción:</strong> {s.descripcion_subcategoria}</p>
+        <p><strong>Precio:</strong> Q{s.precio}</p>
 
         <div>
           <strong>Selecciona póliza:</strong><br />
@@ -97,23 +96,23 @@
                 type="checkbox"
                 value={poliza}
                 on:change={(e) => {
-                  const selected = seleccionadas[s.ID_SUBCATEGORIA] || [];
+                  const selected = seleccionadas[s.id_subcategoria] || [];
                   if (e.target.checked) {
-                    seleccionadas[s.ID_SUBCATEGORIA] = [...selected, poliza];
+                    seleccionadas[s.id_subcategoria] = [...selected, poliza];
                   } else {
-                    seleccionadas[s.ID_SUBCATEGORIA] = selected.filter(p => p !== poliza);
+                    seleccionadas[s.id_subcategoria] = selected.filter(p => p !== poliza);
                   }
                 }}
-                checked={seleccionadas[s.ID_SUBCATEGORIA]?.includes(poliza)}
-                disabled={idsCatalogo.includes(s.ID_SUBCATEGORIA)}
+                checked={seleccionadas[s.id_subcategoria]?.includes(poliza)}
+                disabled={idsCatalogo.includes(s.id_subcategoria)}
               />
               {poliza}
             </label>
           {/each}
         </div>
 
-        {#if idsCatalogo.includes(s.ID_SUBCATEGORIA)}
-          <button class="eliminar" on:click={() => eliminarDelCatalogo(s.ID_SUBCATEGORIA)}>
+        {#if idsCatalogo.includes(s.id_subcategoria)}
+          <button class="eliminar" on:click={() => eliminarDelCatalogo(s.id_subcategoria)}>
             🗑️ Eliminar del catálogo
           </button>
         {:else}

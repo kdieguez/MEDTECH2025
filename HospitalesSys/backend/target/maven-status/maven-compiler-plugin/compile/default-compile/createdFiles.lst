@@ -15,6 +15,7 @@ com\medtech\hospitales\controllers\DoctorController$DoctorResumen.class
 com\medtech\hospitales\utils\CustomJsonMapper.class
 com\medtech\hospitales\controllers\LoginController$LoginResponse.class
 com\medtech\hospitales\dtos\ErrorDTO.class
+com\medtech\hospitales\dtos\ServicioSimpleDTO.class
 com\medtech\hospitales\models\SeccionPagina.class
 com\medtech\hospitales\models\CitaMedica.class
 com\medtech\hospitales\services\FormularioCitaService.class

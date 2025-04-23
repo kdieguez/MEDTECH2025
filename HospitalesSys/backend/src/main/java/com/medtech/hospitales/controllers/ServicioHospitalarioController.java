@@ -3,6 +3,7 @@ package com.medtech.hospitales.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medtech.hospitales.dtos.ServicioDTO;
 import com.medtech.hospitales.dtos.ServicioRegistroDTO;
+import com.medtech.hospitales.dtos.ServicioSimpleDTO;
 import com.medtech.hospitales.dtos.SubcategoriaDTO;
 import com.medtech.hospitales.models.ServicioHospitalario;
 import com.medtech.hospitales.models.ServicioXDoctor;
@@ -11,45 +12,20 @@ import com.medtech.hospitales.services.ServicioHospitalarioService;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManager;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Controlador encargado de gestionar los servicios hospitalarios,
- * incluyendo su registro, consulta, actualización y obtención de subcategorías.
- */
 public class ServicioHospitalarioController {
 
-    /**
-     * Servicio encargado de la lógica de negocio para servicios hospitalarios.
-     */
     private ServicioHospitalarioService servicioService = null;
-
-    /**
-     * Mapper utilizado para la conversión entre objetos JSON y clases Java.
-     */
     private final ObjectMapper mapper = new ObjectMapper();
-
-    /**
-     * EntityManager utilizado para operaciones de persistencia en la base de datos.
-     */
     private EntityManager entityManager = null;
 
-    /**
-     * Constructor del controlador que recibe un EntityManager.
-     *
-     * @param entityManager instancia de EntityManager
-     */
     public ServicioHospitalarioController(EntityManager entityManager) {
         this.entityManager = entityManager;
         this.servicioService = new ServicioHospitalarioService(entityManager);
     }
 
-    /**
-     * Handler que registra un nuevo servicio hospitalario en el sistema.
-     * 
-     * @param ctx contexto de Javalin que contiene los datos del servicio a registrar
-     */
     public Handler registrarServicio = ctx -> {
         try {
             ServicioRegistroDTO dto = mapper.readValue(ctx.body(), ServicioRegistroDTO.class);
@@ -60,21 +36,11 @@ public class ServicioHospitalarioController {
         }
     };
 
-    /**
-     * Handler que lista todos los servicios hospitalarios registrados.
-     * 
-     * @param ctx contexto de Javalin
-     */
     public Handler listarServicios = ctx -> {
         List<ServicioHospitalario> servicios = servicioService.listarServicios();
         ctx.json(servicios);
     };
 
-    /**
-     * Handler que obtiene el detalle de un servicio hospitalario específico.
-     * 
-     * @param ctx contexto de Javalin con el ID del servicio
-     */
     public Handler detalleServicio = ctx -> {
         Long id = Long.parseLong(ctx.pathParam("id"));
 
@@ -88,11 +54,6 @@ public class ServicioHospitalarioController {
         ctx.json(servicio);
     };
 
-    /**
-     * Handler que actualiza un servicio hospitalario existente.
-     * 
-     * @param ctx contexto de Javalin con el ID del servicio y los nuevos datos
-     */
     public Handler actualizarServicio = ctx -> {
         try {
             Long id = Long.parseLong(ctx.pathParam("id"));
@@ -104,11 +65,6 @@ public class ServicioHospitalarioController {
         }
     };
 
-    /**
-     * Handler que obtiene todos los servicios asociados a un doctor específico.
-     * 
-     * @param ctx contexto de Javalin con el ID del doctor
-     */
     public Handler serviciosPorDoctor = ctx -> {
         Long idDoctor = Long.parseLong(ctx.pathParam("id"));
         List<ServicioXDoctor> relaciones = entityManager.createQuery(
@@ -118,8 +74,8 @@ public class ServicioHospitalarioController {
         .setParameter("id", idDoctor)
         .getResultList();
 
-        List<ServicioDTO> servicios = relaciones.stream()
-            .map(sxd -> new ServicioDTO(
+        List<ServicioSimpleDTO> servicios = relaciones.stream()
+            .map(sxd -> new ServicioSimpleDTO(
                 sxd.getServicio().getId(),
                 sxd.getServicio().getNombre()
             ))
@@ -128,11 +84,6 @@ public class ServicioHospitalarioController {
         ctx.json(servicios);
     };
 
-    /**
-     * Handler que obtiene todas las subcategorías asociadas a un servicio hospitalario.
-     * 
-     * @param ctx contexto de Javalin con el ID del servicio
-     */
     public Handler subcategoriasPorServicio = ctx -> {
         Long idServicio = Long.parseLong(ctx.pathParam("id"));
 
@@ -146,12 +97,53 @@ public class ServicioHospitalarioController {
         List<SubcategoriaDTO> dtos = subcategorias.stream()
             .map(s -> new SubcategoriaDTO(
                 s.getId(),
-                s.getNombre(), 
+                s.getNombre(),
                 s.getDescripcion(),
                 s.getPrecio()
             ))
             .collect(Collectors.toList());
 
         ctx.json(dtos);
+    };
+
+    public Handler serviciosParaSeguros = ctx -> {
+        List<Object[]> resultados = entityManager.createNativeQuery(
+            "SELECT sh.ID_SERVICIO, sh.NOMBRE_SERVICIO, sh.DESCRIPCION, " +
+            "sc.ID_SUBCATEGORIA, sc.NOMBRE_SUBCATEGORIA, sc.DESCRIPCION, sc.PRECIO, " +
+            "LISTAGG(sd.ID_INFO_DOCTOR, ',') WITHIN GROUP (ORDER BY sd.ID_INFO_DOCTOR) AS IDS_DOCTORES " +
+            "FROM SERVICIOS_HOSPITALARIOS sh " +
+            "LEFT JOIN SUBCATEGORIAS_SERVICIO sc ON sh.ID_SERVICIO = sc.ID_SERVICIO " +
+            "LEFT JOIN SERVICIO_X_DOCTOR sd ON sh.ID_SERVICIO = sd.ID_SERVICIO " +
+            "GROUP BY sh.ID_SERVICIO, sh.NOMBRE_SERVICIO, sh.DESCRIPCION, " +
+            "sc.ID_SUBCATEGORIA, sc.NOMBRE_SUBCATEGORIA, sc.DESCRIPCION, sc.PRECIO " +
+            "ORDER BY sh.ID_SERVICIO, sc.ID_SUBCATEGORIA"
+        ).getResultList();
+
+        List<ServicioDTO> servicios = new ArrayList<>();
+
+        for (Object[] fila : resultados) {
+            ServicioDTO dto = new ServicioDTO();
+            dto.setId_servicio(((Number) fila[0]).longValue());
+            dto.setNombre_servicio((String) fila[1]);
+            dto.setDescripcion_servicio((String) fila[2]);
+            dto.setId_subcategoria(((Number) fila[3]).longValue());
+            dto.setNombre_subcategoria((String) fila[4]);
+            dto.setDescripcion_subcategoria((String) fila[5]);
+            dto.setPrecio(((Number) fila[6]).doubleValue());
+
+            String ids = (String) fila[7];
+            if (ids != null && !ids.isEmpty()) {
+                List<Long> doctores = Arrays.stream(ids.split(","))
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+                dto.setId_info_doctor(doctores);
+            } else {
+                dto.setId_info_doctor(new ArrayList<>());
+            }
+
+            servicios.add(dto);
+        }
+
+        ctx.json(servicios);
     };
 }
