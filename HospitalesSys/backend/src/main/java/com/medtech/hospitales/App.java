@@ -79,7 +79,7 @@ public class App {
 
         UsuarioController.addRoutes(app);
         RolController.addRoutes(app);
-        CargoController.addRoutes(app);
+        CargoController.addRoutes(app, em);
 
         HeaderFooterDAO headerFooterDAO = new HeaderFooterDAO(em);
         HeaderFooterService headerFooterService = new HeaderFooterService(headerFooterDAO);

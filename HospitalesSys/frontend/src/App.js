@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Registro from './components/registro'; 
-import AgendarCita from './components/agendarcita'; 
+import AgendarCita from './components/AgendarCita'; 
 import Login from './components/login';
 import Header from './components/Header';
 import Footer from './components/Footer';
