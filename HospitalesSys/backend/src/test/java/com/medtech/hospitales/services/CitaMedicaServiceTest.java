@@ -38,7 +38,6 @@ class CitaMedicaServiceTest {
 
     @Test
     void registrarCita_deberiaPersistirCitaCuandoNoHayConflicto() {
-        // Arrange
         CitaMedicaService service = new CitaMedicaService() {
             @Override
             public boolean existeCitaParaDoctorEnHorario(Long idDoctor, LocalDateTime fechaHora) {
@@ -67,13 +66,11 @@ class CitaMedicaServiceTest {
         dto.setIdSubcategoria(3L);
         dto.setFechaHora(LocalDateTime.of(2025, 5, 1, 10, 0));
 
-        // Act & Assert
         assertDoesNotThrow(() -> service.registrarCita(dto));
     }
 
     @Test
     void registrarCita_deberiaLanzarExcepcionCuandoYaExisteCita() {
-        // Arrange
         CitaMedicaService service = new CitaMedicaService() {
             @Override
             public boolean existeCitaParaDoctorEnHorario(Long idDoctor, LocalDateTime fechaHora) {
@@ -85,7 +82,6 @@ class CitaMedicaServiceTest {
         dto.setIdDoctor(1L);
         dto.setFechaHora(LocalDateTime.now());
 
-        // Act & Assert
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.registrarCita(dto));
         assertTrue(ex.getMessage().contains("Ya existe una cita"));
     }
