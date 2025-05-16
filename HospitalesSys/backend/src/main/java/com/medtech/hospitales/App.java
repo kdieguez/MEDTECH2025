@@ -71,7 +71,6 @@ public class App {
     app.get("/citas/horarios-disponibles", citaController::obtenerHorasDisponibles);
     app.get("/citas/mias", citaController::obtenerMisCitas);
     app.post("/formulario-cita", citaController::guardarFormularioCita);
-    app.post("/receta/crear/{id}", citaController::crearRecetaYRetornarId);
     app.get("/receta/{idCita}", citaController::obtenerDatosReceta);
     app.post("/receta/{id}/crear", citaController::crearRecetaYRetornarId);
     app.post("/receta/{id}/guardar-medicamentos", citaController::guardarMedicamentosPorReceta);
