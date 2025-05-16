@@ -15,9 +15,28 @@ public class RecetaDTO {
     private List<MedicamentoRecetadoDTO> medicamentos;
     private String tituloHospital;
     private List<String> telefonosDoctor;
+    private String diagnostico;
+    private String pasosSiguientes;
 
     private Long idRM;
     private Double total;
+
+    public String getDiagnostico() {
+        return diagnostico;
+    }
+    
+    public void setDiagnostico(String diagnostico) {
+        this.diagnostico = diagnostico;
+    }
+    
+    public String getPasosSiguientes() {
+        return pasosSiguientes;
+    }
+    
+    public void setPasosSiguientes(String pasosSiguientes) {
+        this.pasosSiguientes = pasosSiguientes;
+    }
+    
 
 public Double getTotal() {
     return total;

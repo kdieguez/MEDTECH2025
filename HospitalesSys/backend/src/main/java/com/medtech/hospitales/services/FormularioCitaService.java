@@ -7,10 +7,7 @@ import com.medtech.hospitales.models.*;
 import com.medtech.hospitales.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class FormularioCitaService {
 
@@ -137,7 +134,21 @@ public class FormularioCitaService {
             .getSingleResult();
             
             receta.setTituloHospital(tituloTexto);
-            
+            // Extraer diagnóstico y siguientes pasos desde HISTORIAL_SERVICIOS
+List<Object[]> historial = em.createQuery("""
+    SELECT h.diagnostico, h.pasosSiguientes
+    FROM HistorialServicio h
+    WHERE h.cita.id = :idCita
+""", Object[].class)
+.setParameter("idCita", idCita)
+.getResultList();
+
+if (!historial.isEmpty()) {
+    Object[] fila = historial.get(0);
+    receta.setDiagnostico((String) fila[0]);
+    receta.setPasosSiguientes((String) fila[1]);
+}
+
     
             // Datos de receta médica
             RecetaMedica recetaMedica = em.createQuery("""
@@ -177,4 +188,45 @@ public class FormularioCitaService {
             em.close();
         }
     }
+
+    public boolean existeFormularioParaCita(Long idCita) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long count = em.createQuery("""
+                SELECT COUNT(h) FROM HistorialServicio h WHERE h.cita.id = :idCita
+            """, Long.class)
+            .setParameter("idCita", idCita)
+            .getSingleResult();
+            return count > 0;
+        } finally {
+            em.close();
+        }
     }
+    
+    public FormularioCitaDTO obtenerFormularioPorCita(Long idCita) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            HistorialServicio historial = em.createQuery("""
+                SELECT h FROM HistorialServicio h WHERE h.cita.id = :idCita
+            """, HistorialServicio.class)
+            .setParameter("idCita", idCita)
+            .setMaxResults(1)
+            .getSingleResult();
+    
+            List<String> urls = em.createQuery("""
+                SELECT r.url FROM ResultadoExamen r WHERE r.cita.id = :idCita
+            """, String.class)
+            .setParameter("idCita", idCita)
+            .getResultList();
+    
+            FormularioCitaDTO dto = new FormularioCitaDTO();
+            dto.setDiagnostico(historial.getDiagnostico());
+            dto.setPasosSiguientes(historial.getPasosSiguientes());
+            dto.setUrlsResultadosExamenes(urls);
+            return dto;
+        } finally {
+            em.close();
+        }
+    }
+     
+}

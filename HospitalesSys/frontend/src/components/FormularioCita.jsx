@@ -10,12 +10,27 @@ export default function FormularioCita() {
   const [diagnostico, setDiagnostico] = useState('');
   const [siguientesPasos, setSiguientesPasos] = useState('');
   const [resultadosExamenes, setResultadosExamenes] = useState(['']);
-  const [citaId, setCitaId] = useState(null);
+  const [imagenes, setImagenes] = useState([]);
+  const [imagenAmpliada, setImagenAmpliada] = useState(null);
+  const [soloLectura, setSoloLectura] = useState(false);
   const [yaTieneReceta, setYaTieneReceta] = useState(false);
 
   useEffect(() => {
     if (idCita) {
-      setCitaId(Number(idCita));
+      axios.get(`http://localhost:7000/formulario-cita/verificar/${idCita}`)
+        .then(res => {
+          setSoloLectura(res.data.formularioLlenado);
+          if (res.data.formularioLlenado) {
+            axios.get(`http://localhost:7000/formulario-cita/${idCita}`)
+              .then(response => {
+                setDiagnostico(response.data.diagnostico || '');
+                setSiguientesPasos(response.data.pasosSiguientes || '');
+              });          
+            axios.get(`http://localhost:7000/formulario-cita/imagenes/${idCita}`)
+              .then(response => setImagenes(response.data));
+          }
+        });
+
       axios.get(`http://localhost:7000/receta/${idCita}`)
         .then(response => {
           if (response.data?.codigoReceta) {
@@ -39,13 +54,13 @@ export default function FormularioCita() {
   };
 
   const enviarFormulario = () => {
-    if (!citaId) {
+    if (!idCita) {
       alert('Error: No se encontró ID de la cita.');
       return;
     }
 
     const payload = {
-      idCita: citaId,
+      idCita: Number(idCita),
       diagnostico,
       pasosSiguientes: siguientesPasos,
       urlsResultadosExamenes: resultadosExamenes.filter(url => url.trim() !== ''),
@@ -64,7 +79,7 @@ export default function FormularioCita() {
   };
 
   const irACrearReceta = () => {
-    navigate(`/crearReceta/${citaId}`);
+    navigate(`/crearReceta/${idCita}`);
   };
 
   return (
@@ -73,37 +88,73 @@ export default function FormularioCita() {
 
       <div className="formulario-finalizar">
         <label>Diagnóstico:</label>
-        <textarea value={diagnostico} onChange={(e) => setDiagnostico(e.target.value)} />
+        {soloLectura ? (
+          <p>{diagnostico}</p>
+        ) : (
+          <textarea value={diagnostico} onChange={(e) => setDiagnostico(e.target.value)} />
+        )}
 
         <label>Siguientes Pasos:</label>
-        <textarea value={siguientesPasos} onChange={(e) => setSiguientesPasos(e.target.value)} />
+        {soloLectura ? (
+          <p>{siguientesPasos}</p>
+        ) : (
+          <textarea value={siguientesPasos} onChange={(e) => setSiguientesPasos(e.target.value)} />
+        )}
 
-        <label>Resultados de Exámenes (URL):</label>
-        {resultadosExamenes.map((resultado, index) => (
-          <input
-            key={index}
-            type="text"
-            placeholder="URL del resultado de examen"
-            value={resultado}
-            onChange={(e) => handleResultadoChange(index, e.target.value)}
-          />
-        ))}
-        <button type="button" onClick={agregarResultado}>Agregar otro resultado</button>
+        <label>Resultados de Exámenes:</label>
+        {soloLectura ? (
+          <div className="galeria-mini">
+            {imagenes.map((img, i) => (
+              <img
+                key={i}
+                src={img.url}
+                alt="Resultado"
+                className="imagen-mini"
+                onClick={() => setImagenAmpliada(img.url)}
+              />
+            ))}
+          </div>
+        ) : (
+          <>
+            {resultadosExamenes.map((resultado, index) => (
+              <input
+                key={index}
+                type="text"
+                placeholder="URL del resultado de examen"
+                value={resultado}
+                onChange={(e) => handleResultadoChange(index, e.target.value)}
+              />
+            ))}
+            <button type="button" onClick={agregarResultado}>Agregar otro resultado</button>
+          </>
+        )}
 
-        <button type="button" className="btn-finalizar" onClick={enviarFormulario}>
-          Guardar Formulario
-        </button>
+        {!soloLectura && (
+          <button type="button" className="btn-finalizar" onClick={enviarFormulario}>
+            Guardar Formulario
+          </button>
+        )}
 
         {yaTieneReceta ? (
           <button type="button" className="btn-receta" onClick={() => navigate(`/crearReceta/${idCita}`)}>
             Ver Receta Médica
           </button>
-        ) : (
+        ) : (!soloLectura && (
           <button type="button" className="btn-receta" onClick={irACrearReceta}>
             Crear Receta Médica
           </button>
-        )}
+        ))}
+
+        <button type="button" onClick={() => navigate('/consultarCitas')}>
+          Volver
+        </button>
       </div>
+
+      {imagenAmpliada && (
+        <div className="modal-imagen" onClick={() => setImagenAmpliada(null)}>
+          <img src={imagenAmpliada} alt="Resultado ampliado" />
+        </div>
+      )}
     </div>
   );
 }

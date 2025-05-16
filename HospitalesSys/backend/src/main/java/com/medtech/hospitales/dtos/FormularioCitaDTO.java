@@ -52,6 +52,8 @@ public class FormularioCitaDTO {
      */
     private List<MedicamentoRecetadoDTO> medicamentos;
 
+    
+
     /**
      * Obtiene el ID de la cita médica.
      *

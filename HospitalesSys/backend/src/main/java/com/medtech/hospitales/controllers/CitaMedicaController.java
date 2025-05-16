@@ -11,7 +11,7 @@ import com.medtech.hospitales.utils.JPAUtil;
 import com.medtech.hospitales.dtos.MedicamentoRecetadoDTO;
 import com.medtech.hospitales.models.CitaMedica;
 import com.medtech.hospitales.models.RecetaMedica;
-
+import io.javalin.http.Handler;
 import io.javalin.http.Context;
 import jakarta.persistence.EntityManager;
 
@@ -174,6 +174,53 @@ public void crearRecetaYRetornarId(Context ctx) {
         ctx.status(500).json(Map.of("error", "No se pudo crear la receta médica"));
     } finally {
         em.close();
+    }
+}
+
+public void verificarFormularioLlenado(Context ctx) {
+    try {
+        Long idCita = Long.parseLong(ctx.pathParam("id"));
+        boolean existe = new FormularioCitaService().existeFormularioParaCita(idCita);
+        ctx.json(Map.of("formularioLlenado", existe));
+    } catch (Exception e) {
+        e.printStackTrace();
+        ctx.status(500).json(Map.of("error", "Error al verificar formulario"));
+    }
+}
+
+public Handler obtenerImagenesResultados = ctx -> {
+    Long idCita = Long.parseLong(ctx.pathParam("id"));
+    EntityManager em = JPAUtil.getEntityManager();
+
+    try {
+        List<String> urls = em.createQuery("""
+            SELECT r.url FROM ResultadoExamen r
+            WHERE r.cita.id = :idCita
+        """, String.class)
+        .setParameter("idCita", idCita)
+        .getResultList();
+
+        List<Map<String, String>> json = urls.stream()
+            .map(url -> Map.of("url", url))
+            .toList();
+
+        ctx.json(json);
+    } catch (Exception e) {
+        e.printStackTrace(); // esto imprimirá el error real
+        ctx.status(500).json(Map.of("error", "Error al obtener imágenes"));
+    } finally {
+        em.close();
+    }
+};
+
+public void obtenerFormularioCita(Context ctx) {
+    try {
+        Long idCita = Long.parseLong(ctx.pathParam("id"));
+        FormularioCitaDTO dto = new FormularioCitaService().obtenerFormularioPorCita(idCita);
+        ctx.json(dto);
+    } catch (Exception e) {
+        e.printStackTrace();
+        ctx.status(500).json(Map.of("error", "Error al obtener datos del formulario"));
     }
 }
 
