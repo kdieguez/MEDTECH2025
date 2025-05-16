@@ -5,14 +5,14 @@ import java.time.LocalDate;
 
 /**
  * Entidad que representa el encabezado general de una receta médica,
- * relacionando paciente, doctor y fecha de emisión de la receta.
+ * asociando al paciente, doctor, fecha de emisión y un código único de receta.
  */
 @Entity
 @Table(name = "RECETA_MEDICA_HEADER")
 public class RecetaMedicaHeader {
 
     /**
-     * Identificador único del encabezado de receta médica.
+     * Identificador único del encabezado de la receta médica.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,44 +20,69 @@ public class RecetaMedicaHeader {
     private Long id;
 
     /**
-     * Código único de la receta médica.
+     * Código único asignado a la receta médica
+     * con formato "HOSP-SEG-IDRECETA".
      */
     @Column(name = "CODIGO_RECETA", unique = true)
     private String codigoReceta;
 
     /**
-     * Fecha de emisión de la receta médica.
+     * Fecha en que se emite la receta médica.
      */
     @Column(name = "FECHA_RECETA")
     private LocalDate fechaReceta;
 
     /**
-     * Paciente al que se le emite la receta.
+     * Paciente al que se le entrega la receta médica.
      */
-    @ManyToOne
-    @JoinColumn(name = "ID_PACIENTE")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PACIENTE", nullable = false)
     private PerfilPaciente paciente;
 
     /**
-     * Doctor que emite la receta.
+     * Doctor que prescribe la receta médica.
      */
-    @ManyToOne
-    @JoinColumn(name = "ID_INFO_DOCTOR")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_INFO_DOCTOR", nullable = false)
     private InfoDoctor infoDoctor;
 
-    // Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getCodigoReceta() { return codigoReceta; }
-    public void setCodigoReceta(String codigoReceta) { this.codigoReceta = codigoReceta; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public LocalDate getFechaReceta() { return fechaReceta; }
-    public void setFechaReceta(LocalDate fechaReceta) { this.fechaReceta = fechaReceta; }
+    public String getCodigoReceta() {
+        return codigoReceta;
+    }
 
-    public PerfilPaciente getPaciente() { return paciente; }
-    public void setPaciente(PerfilPaciente paciente) { this.paciente = paciente; }
+    public void setCodigoReceta(String codigoReceta) {
+        this.codigoReceta = codigoReceta;
+    }
 
-    public InfoDoctor getInfoDoctor() { return infoDoctor; }
-    public void setInfoDoctor(InfoDoctor infoDoctor) { this.infoDoctor = infoDoctor; }
+    public LocalDate getFechaReceta() {
+        return fechaReceta;
+    }
+
+    public void setFechaReceta(LocalDate fechaReceta) {
+        this.fechaReceta = fechaReceta;
+    }
+
+    public PerfilPaciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(PerfilPaciente paciente) {
+        this.paciente = paciente;
+    }
+
+    public InfoDoctor getInfoDoctor() {
+        return infoDoctor;
+    }
+
+    public void setInfoDoctor(InfoDoctor infoDoctor) {
+        this.infoDoctor = infoDoctor;
+    }
 }

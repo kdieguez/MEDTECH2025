@@ -16,6 +16,7 @@
         <class>com.medtech.hospitales.models.Cargo</class>
         <class>com.medtech.hospitales.models.CitaMedica</class>
         <class>com.medtech.hospitales.models.Especialidad</class>
+        <class>com.medtech.hospitales.models.RecetaMedica</class>
         <class>com.medtech.hospitales.models.Rol</class>
         <class>com.medtech.hospitales.models.ServicioHospitalario</class>
         <class>com.medtech.hospitales.models.ServicioXDoctor</class>

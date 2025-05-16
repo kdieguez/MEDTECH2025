@@ -47,6 +47,10 @@ public class Medicamento {
     @Column(name = "FORMA_FARMACEUTICA", nullable = false)
     private String formaFarmaceutica;
 
+    @Column(name = "PRECIO", nullable = false)
+    private Double precio;
+
+
     // Getters y Setters
     public Long getIdMedicamento() { return idMedicamento; }
     public void setIdMedicamento(Long idMedicamento) { this.idMedicamento = idMedicamento; }
@@ -65,4 +69,8 @@ public class Medicamento {
 
     public String getFormaFarmaceutica() { return formaFarmaceutica; }
     public void setFormaFarmaceutica(String formaFarmaceutica) { this.formaFarmaceutica = formaFarmaceutica; }
+    
+    public Double getPrecio() {return precio;}
+    public void setPrecio(Double precio) {this.precio = precio;}
+    
 }

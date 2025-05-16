@@ -30,12 +30,17 @@ public class MedicamentoDTO {
      * Forma farmacéutica (tableta, inyección, crema, etc.).
      */
     private String formaFarmaceutica;
+    
+    private Double precio;
 
-    /**
-     * Notas especiales o instrucciones adicionales para el medicamento.
-     */
-    private String notasEspeciales;
-
+    public Double getPrecio() {
+        return precio;
+    }
+    
+    public void setPrecio(Double precio) {
+        this.precio = precio;
+    }
+    
     /**
      * Obtiene el nombre comercial del medicamento.
      *
@@ -126,21 +131,4 @@ public class MedicamentoDTO {
         this.formaFarmaceutica = formaFarmaceutica; 
     }
 
-    /**
-     * Obtiene las notas especiales del medicamento.
-     *
-     * @return notas especiales
-     */
-    public String getNotasEspeciales() { 
-        return notasEspeciales; 
-    }
-
-    /**
-     * Establece las notas especiales del medicamento.
-     *
-     * @param notasEspeciales notas especiales
-     */
-    public void setNotasEspeciales(String notasEspeciales) { 
-        this.notasEspeciales = notasEspeciales; 
-    }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import './css/formulariocita.css'; 
+import './css/formulariocita.css';
 
 export default function FormularioCita() {
   const { idCita } = useParams();
@@ -11,10 +11,20 @@ export default function FormularioCita() {
   const [siguientesPasos, setSiguientesPasos] = useState('');
   const [resultadosExamenes, setResultadosExamenes] = useState(['']);
   const [citaId, setCitaId] = useState(null);
+  const [yaTieneReceta, setYaTieneReceta] = useState(false);
 
   useEffect(() => {
     if (idCita) {
       setCitaId(Number(idCita));
+      axios.get(`http://localhost:7000/receta/${idCita}`)
+        .then(response => {
+          if (response.data?.codigoReceta) {
+            setYaTieneReceta(true);
+          }
+        })
+        .catch(() => {
+          setYaTieneReceta(false);
+        });
     }
   }, [idCita]);
 
@@ -42,17 +52,15 @@ export default function FormularioCita() {
       crearRecetaMedica: false
     };
 
-    axios.post('http://localhost:7000/formulario-cita', payload, {
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .then(() => {
-      alert('¡Formulario enviado exitosamente!');
-      navigate('/consultarCitas');
-    })
-    .catch(err => {
-      console.error('Error al enviar el formulario', err);
-      alert('Hubo un error al guardar el formulario.');
-    });
+    axios.post('http://localhost:7000/formulario-cita', payload)
+      .then(() => {
+        alert('¡Formulario enviado exitosamente!');
+        navigate('/consultarCitas');
+      })
+      .catch(err => {
+        console.error('Error al enviar el formulario', err);
+        alert('Hubo un error al guardar el formulario.');
+      });
   };
 
   const irACrearReceta = () => {
@@ -65,16 +73,10 @@ export default function FormularioCita() {
 
       <div className="formulario-finalizar">
         <label>Diagnóstico:</label>
-        <textarea
-          value={diagnostico}
-          onChange={(e) => setDiagnostico(e.target.value)}
-        />
+        <textarea value={diagnostico} onChange={(e) => setDiagnostico(e.target.value)} />
 
         <label>Siguientes Pasos:</label>
-        <textarea
-          value={siguientesPasos}
-          onChange={(e) => setSiguientesPasos(e.target.value)}
-        />
+        <textarea value={siguientesPasos} onChange={(e) => setSiguientesPasos(e.target.value)} />
 
         <label>Resultados de Exámenes (URL):</label>
         {resultadosExamenes.map((resultado, index) => (
@@ -92,10 +94,15 @@ export default function FormularioCita() {
           Guardar Formulario
         </button>
 
-        {/* ✅ Botón para crear receta */}
-        <button type="button" className="btn-receta" onClick={irACrearReceta}>
-          Crear Receta Médica
-        </button>
+        {yaTieneReceta ? (
+          <button type="button" className="btn-receta" onClick={() => navigate(`/crearReceta/${idCita}`)}>
+            Ver Receta Médica
+          </button>
+        ) : (
+          <button type="button" className="btn-receta" onClick={irACrearReceta}>
+            Crear Receta Médica
+          </button>
+        )}
       </div>
     </div>
   );

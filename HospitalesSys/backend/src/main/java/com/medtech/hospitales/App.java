@@ -64,18 +64,23 @@ public class App {
 
         CitaMedicaController citaController = new CitaMedicaController(new ObjectMapper()
         .registerModule(new JavaTimeModule())
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)    
     );
     app.post("/citas", citaController::registrarCita);
     app.get("/citas", citaController::obtenerTodasLasCitas);
     app.get("/citas/horarios-disponibles", citaController::obtenerHorasDisponibles);
     app.get("/citas/mias", citaController::obtenerMisCitas);
     app.post("/formulario-cita", citaController::guardarFormularioCita);
+    app.post("/receta/crear/{id}", citaController::crearRecetaYRetornarId);
     app.get("/receta/{idCita}", citaController::obtenerDatosReceta);
-    app.post("/recetas/crear/{id}", citaController::crearRecetaMedica);
+    app.post("/receta/{id}/crear", citaController::crearRecetaYRetornarId);
+    app.post("/receta/{id}/guardar-medicamentos", citaController::guardarMedicamentosPorReceta);
+    app.post("/receta/{id}/comentario", citaController::guardarRecetaCompleta);
+
 
     MedicamentoController medicamentoController = new MedicamentoController(objectMapper);
     app.post("/medicamentos", medicamentoController::guardarMedicamento);
+    app.get("/medicamentos", medicamentoController::obtenerMedicamentos);
 
         UsuarioController.addRoutes(app);
         RolController.addRoutes(app);

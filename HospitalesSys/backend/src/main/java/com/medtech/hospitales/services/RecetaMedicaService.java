@@ -1,60 +1,52 @@
 package com.medtech.hospitales.services;
 
-import com.medtech.hospitales.models.CitaMedica;
-import com.medtech.hospitales.models.RecetaMedicaHeader;
-import com.medtech.hospitales.utils.JPAUtil;
+import com.medtech.hospitales.models.*;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+import java.util.List;
 
-import java.time.LocalDate;
-
-/**
- * Servicio que maneja la creación del encabezado de recetas médicas
- * asociadas a citas médicas en el sistema hospitalario.
- */
 public class RecetaMedicaService {
 
-    /**
-     * Crea un nuevo encabezado de receta médica basado en una cita existente.
-     *
-     * @param idCita ID de la cita médica para generar la receta.
-     * @throws RuntimeException si ocurre un error al crear la receta.
-     */
-    public void crearEncabezadoReceta(Long idCita) {
-        EntityManager em = JPAUtil.getEntityManager();
+    @PersistenceContext
+    private EntityManager entityManager;
 
-        try {
-            em.getTransaction().begin();
+    public RecetaMedicaService(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
-            // Buscar la cita médica
-            CitaMedica cita = em.find(CitaMedica.class, idCita);
-            if (cita == null) {
-                throw new RuntimeException("No se encontró la cita con ID: " + idCita);
-            }
-
-            // Crear encabezado de receta
-            RecetaMedicaHeader receta = new RecetaMedicaHeader();
-            receta.setFechaReceta(LocalDate.now());
-
-            // Código de receta temporal basado en el ID de la cita
-            String codigo = "PAZ000-" + idCita;
-            receta.setCodigoReceta(codigo);
-
-            // Asociar paciente y doctor
-            receta.setPaciente(cita.getPaciente());
-            receta.setInfoDoctor(cita.getInfoDoctor());
-
-            // Persistir el encabezado de receta
-            em.persist(receta);
-
-            em.getTransaction().commit();
-            System.out.println("Receta médica encabezado guardado para cita ID: " + idCita);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (em.getTransaction().isActive()) em.getTransaction().rollback();
-            throw new RuntimeException("Error al crear el encabezado de receta médica: " + e.getMessage(), e);
-        } finally {
-            em.close();
+    @Transactional
+    public RecetaMedica crearReceta(Long idCita, List<MedicamentoRecetado> medicamentos, String anotaciones) {
+        CitaMedica cita = entityManager.find(CitaMedica.class, idCita);
+        if (cita == null) {
+            throw new RuntimeException("Cita no encontrada");
         }
+
+        RecetaMedica receta = new RecetaMedica();
+        receta.setCitaMedica(cita);
+        receta.setAnotaciones(anotaciones);
+
+        // Código temporal: HOS-SEG-ID_CITA
+        String codigo = "HOS-SEG-" + cita.getId();
+        receta.setCodigoReceta(codigo);
+
+        double total = 0.0;
+        for (MedicamentoRecetado medRec : medicamentos) {
+            Medicamento med = entityManager.find(Medicamento.class, medRec.getMedicamento().getIdMedicamento());
+            if (med == null) {
+                throw new RuntimeException("Medicamento no encontrado con ID: " + medRec.getMedicamento().getIdMedicamento());
+            }
+            medRec.setMedicamento(med);
+            medRec.setReceta(receta);
+            total += med.getPrecio();
+        }
+
+        receta.setTotal(total);
+        receta.setMedicamentos(medicamentos);
+
+        entityManager.persist(receta);
+        // Medicamentos se guardan automáticamente por cascade
+
+        return receta;
     }
 }

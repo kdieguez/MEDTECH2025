@@ -54,4 +54,24 @@
   .btn-receta:hover {
     background-color: #0056b3;
   }
+
+  .sin-borde {
+    border: none !important;
+    box-shadow: none !important;
+  } 
+
+  @media print {
+    .btn-descargar-pdf {
+      display: none !important;
+    }
+  
+    .receta-container {
+      border: none !important;
+      box-shadow: none !important;
+    }
+  }
+  
+  
+  
+  
   

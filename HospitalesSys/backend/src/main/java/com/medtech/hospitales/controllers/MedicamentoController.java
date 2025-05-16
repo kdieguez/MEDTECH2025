@@ -3,6 +3,8 @@ package com.medtech.hospitales.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medtech.hospitales.models.Medicamento;
 import com.medtech.hospitales.services.MedicamentoService;
+import com.medtech.hospitales.utils.JPAUtil;
+
 import io.javalin.http.Context;
 
 import java.util.Map;
@@ -47,4 +49,18 @@ public class MedicamentoController {
             ctx.status(500).json(Map.of("error", "Error al guardar el medicamento"));
         }
     }
+
+    public void obtenerMedicamentos(Context ctx) {
+    try {
+        var em = JPAUtil.getEntityManager();
+        var medicamentos = em.createQuery("SELECT m FROM Medicamento m", Medicamento.class)
+                             .getResultList();
+        em.close();
+        ctx.json(medicamentos);
+    } catch (Exception e) {
+        e.printStackTrace();
+        ctx.status(500).json(Map.of("error", "Error al obtener medicamentos"));
+    }
+}
+
 }

@@ -1,100 +1,57 @@
 package com.medtech.hospitales.dtos;
 
 /**
- * DTO (Data Transfer Object) que representa un medicamento recetado en una receta médica,
- * incluyendo información como nombre, dosis, frecuencia de administración y duración del tratamiento.
+ * DTO (Data Transfer Object) que representa un medicamento recetado,
+ * utilizado para enviar o recibir datos de recetas médicas
+ * entre el frontend y el backend.
  */
 public class MedicamentoRecetadoDTO {
 
-    /**
-     * Nombre del medicamento recetado.
-     */
-    private String nombre;
-
-    /**
-     * Dosis prescrita para el medicamento (por ejemplo, 500mg).
-     */
+    private Long idMedicamento;
     private String dosis;
-
-    /**
-     * Frecuencia de administración del medicamento (por ejemplo, "cada 8 horas").
-     */
     private String frecuencia;
-
-    /**
-     * Duración total del tratamiento (por ejemplo, "7 días").
-     */
     private String duracion;
 
-    /**
-     * Obtiene el nombre del medicamento recetado.
-     *
-     * @return nombre del medicamento
-     */
-    public String getNombre() { 
-        return nombre; 
+    // 🔧 Constructor vacío requerido por Jackson
+    public MedicamentoRecetadoDTO() {}
+
+    // 🔧 Constructor para consultas o inicialización directa
+    public MedicamentoRecetadoDTO(Long idMedicamento, String dosis, String frecuencia, String duracion) {
+        this.idMedicamento = idMedicamento;
+        this.dosis = dosis;
+        this.frecuencia = frecuencia;
+        this.duracion = duracion;
     }
 
-    /**
-     * Establece el nombre del medicamento recetado.
-     *
-     * @param nombre nombre del medicamento
-     */
-    public void setNombre(String nombre) { 
-        this.nombre = nombre; 
+    public Long getIdMedicamento() {
+        return idMedicamento;
     }
 
-    /**
-     * Obtiene la dosis prescrita del medicamento.
-     *
-     * @return dosis prescrita
-     */
-    public String getDosis() { 
-        return dosis; 
+    public void setIdMedicamento(Long idMedicamento) {
+        this.idMedicamento = idMedicamento;
     }
 
-    /**
-     * Establece la dosis prescrita del medicamento.
-     *
-     * @param dosis dosis prescrita
-     */
-    public void setDosis(String dosis) { 
-        this.dosis = dosis; 
+    public String getDosis() {
+        return dosis;
     }
 
-    /**
-     * Obtiene la frecuencia de administración del medicamento.
-     *
-     * @return frecuencia de administración
-     */
-    public String getFrecuencia() { 
-        return frecuencia; 
+    public void setDosis(String dosis) {
+        this.dosis = dosis;
     }
 
-    /**
-     * Establece la frecuencia de administración del medicamento.
-     *
-     * @param frecuencia frecuencia de administración
-     */
-    public void setFrecuencia(String frecuencia) { 
-        this.frecuencia = frecuencia; 
+    public String getFrecuencia() {
+        return frecuencia;
     }
 
-    /**
-     * Obtiene la duración total del tratamiento.
-     *
-     * @return duración del tratamiento
-     */
-    public String getDuracion() { 
-        return duracion; 
+    public void setFrecuencia(String frecuencia) {
+        this.frecuencia = frecuencia;
     }
 
-    /**
-     * Establece la duración total del tratamiento.
-     *
-     * @param duracion duración del tratamiento
-     */
-    public void setDuracion(String duracion) { 
-        this.duracion = duracion; 
+    public String getDuracion() {
+        return duracion;
+    }
+
+    public void setDuracion(String duracion) {
+        this.duracion = duracion;
     }
 }
