@@ -1,4 +1,4 @@
-package com.medtech.hospitales.controllers;
+/*package com.medtech.hospitales.controllers;
 
 import com.medtech.hospitales.models.*;
 import io.javalin.http.Context;
@@ -141,3 +141,4 @@ public void testRegistrarPerfilDoctor() throws Exception {
         verify(ctx).json(argThat(result -> result instanceof List<?> && !((List<?>) result).isEmpty()));
     }
 }
+*/

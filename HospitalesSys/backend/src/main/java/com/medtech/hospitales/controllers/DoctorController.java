@@ -114,35 +114,32 @@ public class DoctorController {
      */
     public Handler detalleDoctor = ctx -> {
         try {
-            Long id = Long.parseLong(ctx.pathParam("id"));
+            Long idInfoDoctor = Long.parseLong(ctx.pathParam("id"));
 
-            Usuario usuario = entityManager.find(Usuario.class, id);
-            if (usuario == null) {
-                ctx.status(404).json("Usuario no encontrado con ID: " + id);
-                return;
-            }
+InfoDoctor infoDoctor = entityManager.find(InfoDoctor.class, idInfoDoctor);
+if (infoDoctor == null) {
+    ctx.status(404).json("InfoDoctor no encontrado con ID: " + idInfoDoctor);
+    return;
+}
 
-            InfoDoctor infoDoctor = entityManager.createQuery(
-                    "FROM InfoDoctor d WHERE d.usuario.id = :id", InfoDoctor.class)
-                    .setParameter("id", id)
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
+Usuario usuario = infoDoctor.getUsuario();
+
 
             if (infoDoctor == null) {
-                ctx.status(404).json("InfoDoctor no encontrada con ID de usuario: " + id);
+                ctx.status(404).json("InfoDoctor no encontrada con ID de usuario: " + idInfoDoctor);
                 return;
             }
 
             List<TelefonoDoctor> telefonos = entityManager.createQuery(
-                    "FROM TelefonoDoctor t WHERE t.infoDoctor.usuario.id = :id", TelefonoDoctor.class)
-                    .setParameter("id", id)
-                    .getResultList();
+    "FROM TelefonoDoctor t WHERE t.infoDoctor.id = :id", TelefonoDoctor.class)
+    .setParameter("id", idInfoDoctor)
+    .getResultList();
 
-            List<EspecialidadDoctor> especialidades = entityManager.createQuery(
-                    "FROM EspecialidadDoctor e WHERE e.infoDoctor.usuario.id = :id", EspecialidadDoctor.class)
-                    .setParameter("id", id)
-                    .getResultList();
+List<EspecialidadDoctor> especialidades = entityManager.createQuery(
+    "FROM EspecialidadDoctor e WHERE e.infoDoctor.id = :id", EspecialidadDoctor.class)
+    .setParameter("id", idInfoDoctor)
+    .getResultList();
+
 
             DoctorDetalleDTO dto = new DoctorDetalleDTO(
                     usuario.getId(),
