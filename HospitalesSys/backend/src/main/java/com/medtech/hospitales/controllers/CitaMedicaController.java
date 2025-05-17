@@ -126,102 +126,101 @@ public class CitaMedicaController {
         }
     }
 
-public void crearRecetaYRetornarId(Context ctx) {
-    EntityManager em = JPAUtil.getEntityManager();
-    try {
-        Long idCita = Long.parseLong(ctx.pathParam("id"));
+    public void crearRecetaYRetornarId(Context ctx) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long idCita = Long.parseLong(ctx.pathParam("id"));
 
-        // Verificar si ya existe receta
-        RecetaMedica existente = em.createQuery("""
-            SELECT r FROM RecetaMedica r
-            WHERE r.citaMedica.id = :idCita
-        """, RecetaMedica.class)
-        .setParameter("idCita", idCita)
-        .setMaxResults(1)
-        .getResultStream()
-        .findFirst()
-        .orElse(null);
+            // Verificar si ya existe receta
+            RecetaMedica existente = em.createQuery("""
+                SELECT r FROM RecetaMedica r
+                WHERE r.citaMedica.id = :idCita
+            """, RecetaMedica.class)
+            .setParameter("idCita", idCita)
+            .setMaxResults(1)
+            .getResultStream()
+            .findFirst()
+            .orElse(null);
 
-        if (existente != null) {
-            ctx.status(200).json(Map.of("idRM", existente.getId()));
-            return;
+            if (existente != null) {
+                ctx.status(200).json(Map.of("idRM", existente.getId()));
+                return;
+            }
+
+
+            // Crear nueva receta vacía
+            em.getTransaction().begin();
+
+            CitaMedica cita = em.find(CitaMedica.class, idCita);
+            if (cita == null) {
+                ctx.status(404).json(Map.of("error", "Cita médica no encontrada"));
+                return;
+            }
+
+            RecetaMedica nueva = new RecetaMedica();
+            nueva.setCitaMedica(cita);
+            nueva.setCodigoReceta("HOSP-SEG-" + cita.getId());
+            nueva.setAnotaciones(null);
+            nueva.setTotal(0.0);
+
+            em.persist(nueva);
+            em.getTransaction().commit();
+
+            ctx.status(201).json(Map.of("idRM", nueva.getId()));
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            e.printStackTrace();
+            ctx.status(500).json(Map.of("error", "No se pudo crear la receta médica"));
+        } finally {
+            em.close();
         }
-        
+    }
 
-        // Crear nueva receta vacía
-        em.getTransaction().begin();
-
-        CitaMedica cita = em.find(CitaMedica.class, idCita);
-        if (cita == null) {
-            ctx.status(404).json(Map.of("error", "Cita médica no encontrada"));
-            return;
+    public void verificarFormularioLlenado(Context ctx) {
+        try {
+            Long idCita = Long.parseLong(ctx.pathParam("id"));
+            boolean existe = new FormularioCitaService().existeFormularioParaCita(idCita);
+            ctx.json(Map.of("formularioLlenado", existe));
+        } catch (Exception e) {
+            e.printStackTrace();
+            ctx.status(500).json(Map.of("error", "Error al verificar formulario"));
         }
-
-        RecetaMedica nueva = new RecetaMedica();
-        nueva.setCitaMedica(cita);
-        nueva.setCodigoReceta("HOSP-SEG-" + cita.getId());
-        nueva.setAnotaciones(null);
-        nueva.setTotal(0.0);
-
-        em.persist(nueva);
-        em.getTransaction().commit();
-
-        ctx.status(201).json(Map.of("idRM", nueva.getId()));
-
-    } catch (Exception e) {
-        if (em.getTransaction().isActive()) em.getTransaction().rollback();
-        e.printStackTrace();
-        ctx.status(500).json(Map.of("error", "No se pudo crear la receta médica"));
-    } finally {
-        em.close();
     }
-}
 
-public void verificarFormularioLlenado(Context ctx) {
-    try {
+    public Handler obtenerImagenesResultados = ctx -> {
         Long idCita = Long.parseLong(ctx.pathParam("id"));
-        boolean existe = new FormularioCitaService().existeFormularioParaCita(idCita);
-        ctx.json(Map.of("formularioLlenado", existe));
-    } catch (Exception e) {
-        e.printStackTrace();
-        ctx.status(500).json(Map.of("error", "Error al verificar formulario"));
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            List<String> urls = em.createQuery("""
+                SELECT r.url FROM ResultadoExamen r
+                WHERE r.cita.id = :idCita
+            """, String.class)
+            .setParameter("idCita", idCita)
+            .getResultList();
+
+            List<Map<String, String>> json = urls.stream()
+                .map(url -> Map.of("url", url))
+                .toList();
+
+            ctx.json(json);
+        } catch (Exception e) {
+            e.printStackTrace(); // esto imprimirá el error real
+            ctx.status(500).json(Map.of("error", "Error al obtener imágenes"));
+        } finally {
+            em.close();
+        }
+    };
+
+    public void obtenerFormularioCita(Context ctx) {
+        try {
+            Long idCita = Long.parseLong(ctx.pathParam("id"));
+            FormularioCitaDTO dto = new FormularioCitaService().obtenerFormularioPorCita(idCita);
+            ctx.json(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ctx.status(500).json(Map.of("error", "Error al obtener datos del formulario"));
+        }
     }
-}
-
-public Handler obtenerImagenesResultados = ctx -> {
-    Long idCita = Long.parseLong(ctx.pathParam("id"));
-    EntityManager em = JPAUtil.getEntityManager();
-
-    try {
-        List<String> urls = em.createQuery("""
-            SELECT r.url FROM ResultadoExamen r
-            WHERE r.cita.id = :idCita
-        """, String.class)
-        .setParameter("idCita", idCita)
-        .getResultList();
-
-        List<Map<String, String>> json = urls.stream()
-            .map(url -> Map.of("url", url))
-            .toList();
-
-        ctx.json(json);
-    } catch (Exception e) {
-        e.printStackTrace(); // esto imprimirá el error real
-        ctx.status(500).json(Map.of("error", "Error al obtener imágenes"));
-    } finally {
-        em.close();
-    }
-};
-
-public void obtenerFormularioCita(Context ctx) {
-    try {
-        Long idCita = Long.parseLong(ctx.pathParam("id"));
-        FormularioCitaDTO dto = new FormularioCitaService().obtenerFormularioPorCita(idCita);
-        ctx.json(dto);
-    } catch (Exception e) {
-        e.printStackTrace();
-        ctx.status(500).json(Map.of("error", "Error al obtener datos del formulario"));
-    }
-}
-
 }

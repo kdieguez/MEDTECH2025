@@ -20,8 +20,50 @@ export default function RecetaMedica() {
   const [frecuencia, setFrecuencia] = useState('');
   const [duracion, setDuracion] = useState('');
   const [medicamentosRecetados, setMedicamentosRecetados] = useState([]);
+  const [mostrarCorreo, setMostrarCorreo] = useState(false);
+  const [correoDestino, setCorreoDestino] = useState('');
+  const [mensajeCorreo, setMensajeCorreo] = useState('');
+  const [mostrarFormularioCorreo, setMostrarFormularioCorreo] = useState(false);
 
   const volverAFormulario = () => navigate(`/formularioCita/${id}`);
+
+  const enviarCorreo = async () => {
+  if (!correoDestino || !mensajeCorreo) {
+    alert("Completa ambos campos");
+    return;
+  }
+  const formData = new URLSearchParams();
+  formData.append("correo", correoDestino);
+  formData.append("mensaje", mensajeCorreo);
+
+  try {
+      await axios.post(`http://localhost:7000/receta/${id}/enviar`, formData);
+      alert("Correo enviado correctamente");
+      setMostrarCorreo(false);
+    } catch (e) {
+      alert("Error al enviar correo");
+      console.error(e);
+    }
+  };
+  const generarPDFBlob = async () => {
+    const elemento = document.querySelector(".receta-container");
+    elemento.classList.add("sin-borde");
+
+    const opt = {
+      margin: 0.2,
+      filename: receta.codigoReceta + ".pdf",
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 5 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    const pdfBlob = await html2pdf().set(opt).from(elemento).outputPdf('blob');
+
+    elemento.classList.remove("sin-borde");
+
+    return pdfBlob;
+  };
+
 
   const crearRecetaSiNoExiste = async () => {
     try {
@@ -75,6 +117,30 @@ export default function RecetaMedica() {
     };
     inicializar();
   }, [id]);
+
+  const enviarPorCorreo = async () => {
+  if (!correoDestino) {
+    alert("Debes ingresar un correo válido.");
+    return;
+  }
+
+  const pdfBlob = await generarPDFBlob();
+
+  const formData = new FormData();
+  formData.append('correo', correoDestino);
+  formData.append('mensaje', mensajeCorreo);
+  formData.append('paciente', receta.nombrePaciente);
+  formData.append('pdf', pdfBlob, receta.codigoReceta + ".pdf");
+
+  try {
+    await axios.post('http://localhost:7000/receta/enviar-correo', formData);
+    alert("Correo enviado exitosamente.");
+    setMostrarFormularioCorreo(false);
+  } catch (e) {
+    console.error("Error al enviar correo", e);
+    alert("Hubo un problema al enviar el correo.");
+  }
+};
 
   const abrirModal = () => setShowModal(true);
   const cerrarModal = () => {
@@ -224,10 +290,10 @@ export default function RecetaMedica() {
         </div>
 
         {recetaFinalizada && (
-  <div style={{ marginTop: '20px', textAlign: 'right', fontWeight: 'bold' }}>
-    Total: Q.{receta.total?.toFixed(2)}
-  </div>
-)}
+          <div style={{ marginTop: '20px', textAlign: 'right', fontWeight: 'bold' }}>
+            Total: Q.{receta.total?.toFixed(2)}
+          </div>
+        )}
 
         {!recetaFinalizada && (
           <button className="btn-guardar-receta" onClick={guardarRecetaCompleta}>Guardar Receta</button>
@@ -241,10 +307,34 @@ export default function RecetaMedica() {
         </div>
       </div>
 
-      {recetaFinalizada && (
-        <button className="btn-descargar-pdf" onClick={descargarPDF}>Descargar PDF</button>
-      )}
+{recetaFinalizada && (
+  <>
+  <button className="btn-descargar-pdf" onClick={descargarPDF}>
+  Descargar PDF
+</button>
 
+    <button onClick={() => setMostrarFormularioCorreo(true)}>Enviar por Correo</button>
+
+{mostrarFormularioCorreo && (
+  <div className="formulario-correo">
+    <input
+      type="email"
+      placeholder="Correo destinatario"
+      value={correoDestino}
+      onChange={e => setCorreoDestino(e.target.value)}
+    />
+    <textarea
+      placeholder="Mensaje"
+      value={mensajeCorreo}
+      onChange={e => setMensajeCorreo(e.target.value)}
+      rows={4}
+    />
+    <button onClick={enviarPorCorreo}>Enviar</button>
+  </div>
+)}
+
+  </>
+)}
       <button className="btn-volver-formulario" onClick={volverAFormulario}>Volver</button>
     </div>
   );

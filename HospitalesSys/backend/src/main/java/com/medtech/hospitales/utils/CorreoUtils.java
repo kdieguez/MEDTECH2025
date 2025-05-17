@@ -2,7 +2,12 @@ package com.medtech.hospitales.utils;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.*;
+import java.io.IOException;
+
 
 /**
  * Clase utilitaria para enviar correos electrónicos usando SMTP de Gmail.
@@ -58,4 +63,43 @@ public class CorreoUtils {
 
         Transport.send(message);
     }
+
+    private static byte[] leerBytes(InputStream input) {
+    try {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[4096];
+        while ((nRead = input.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        buffer.flush();
+        return buffer.toByteArray();
+    } catch (IOException e) {
+        throw new RuntimeException("Error al leer el archivo adjunto", e);
+    }
+}
+
+    public static void enviarCorreoConAdjunto(String destinatario, String asunto, String mensaje, InputStream adjunto, String nombreArchivo) throws MessagingException {
+    Session session = iniciarSesionCorreo();
+
+    MimeBodyPart texto = new MimeBodyPart();
+    texto.setText(mensaje);
+
+    MimeBodyPart archivo = new MimeBodyPart();
+    archivo.setFileName(nombreArchivo);
+    archivo.setContent(leerBytes(adjunto), "application/pdf");
+
+    Multipart multipart = new MimeMultipart();
+    multipart.addBodyPart(texto);
+    multipart.addBodyPart(archivo);
+
+    Message email = new MimeMessage(session);
+    email.setFrom(new InternetAddress(REMITENTE));
+    email.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
+    email.setSubject(asunto);
+    email.setContent(multipart);
+
+    Transport.send(email);
+}
+
 }

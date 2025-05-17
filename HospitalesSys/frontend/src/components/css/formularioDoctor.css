@@ -49,4 +49,40 @@
   button:hover {
     background-color: #512da8;
   }
+
+  .galeria-mini {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.imagen-mini {
+  width: 150px;
+  height: auto;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+.imagen-mini:hover {
+  transform: scale(1.05);
+}
+
+.modal-imagen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.8);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-imagen img {
+  width: 450px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
   
