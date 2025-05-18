@@ -8,18 +8,30 @@
   const POLIZAS_DISPONIBLES = ["70%", "90%"];
   let seleccionadas = {};
 
-  onMount(async () => {
-    try {
-      const res = await axios.get('http://localhost:8000/servicios-hospitalarios');
-      servicios = res.data || [];
+onMount(async () => {
+  try {
+    const resServicios = await axios.get('http://localhost:8000/servicios-hospitalarios');
+    servicios = resServicios.data || [];
 
-      const resCatalogo = await axios.get('http://localhost:8000/catalogo');
-      idsCatalogo = resCatalogo.data.map(item => item.servicio.id_subcategoria);
-    } catch (e) {
-      Swal.fire("Error", "No se pudieron cargar los datos", "error");
-      console.error(e);
+    const resCatalogo = await axios.get('http://localhost:8000/catalogo');
+    const catalogo = resCatalogo.data || [];
+
+    idsCatalogo = catalogo.map(item => item.servicio.id_subcategoria);
+
+    // 🔁 Actualizar el precio del servicio si está en el catálogo
+    for (let i = 0; i < servicios.length; i++) {
+      const sub = servicios[i].id_subcategoria;
+      const encontrado = catalogo.find(item => item.servicio.id_subcategoria === sub);
+      if (encontrado) {
+        servicios[i].precio = encontrado.servicio.precio; // Sobrescribe el precio con el de Mongo
+      }
     }
-  });
+  } catch (e) {
+    Swal.fire("Error", "No se pudieron cargar los datos", "error");
+    console.error(e);
+  }
+});
+
 
   async function agregarAlCatalogo(servicio) {
     const polizasSeleccionadas = seleccionadas[servicio.id_subcategoria] || [];
@@ -86,7 +98,20 @@
         <h2>{s.nombre_subcategoria}</h2>
         <p><strong>Servicio:</strong> {s.nombre_servicio}</p>
         <p><strong>Descripción:</strong> {s.descripcion_subcategoria}</p>
-        <p><strong>Precio:</strong> Q{s.precio}</p>
+        <p><strong>Precio:</strong>
+  {#if idsCatalogo.includes(s.id_subcategoria)}
+    Q{s.precio}
+  {:else}
+    <input
+      type="number"
+      bind:value={s.precio}
+      min="0"
+      class="precio-input"
+    />
+  {/if}
+</p>
+
+
 
         <div>
           <strong>Selecciona póliza:</strong><br />

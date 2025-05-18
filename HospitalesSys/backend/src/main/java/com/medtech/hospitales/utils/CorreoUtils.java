@@ -102,4 +102,34 @@ public class CorreoUtils {
     Transport.send(email);
 }
 
+    /**
+ * Envía un correo de bienvenida al paciente recién activado en el sistema hospitalario.
+ * Incluye su contraseña generada y las instrucciones para acceder.
+ *
+ * @param destinatario Correo del paciente
+ * @param nombre Nombre completo del paciente
+ * @param contrasena Contraseña generada para el sistema hospitalario
+ * @throws MessagingException Si ocurre un error durante el envío
+ */
+public static void enviarCorreoBienvenidaPacienteConContrasena(String destinatario, String nombre, String contrasena) throws MessagingException {
+    String asunto = "Bienvenido al sistema de hospitales MEDTECH";
+    String mensaje = """
+        ¡Hola %s!
+
+        Tu cuenta ha sido activada exitosamente en el sistema de hospitales MEDTECH.
+
+        Ahora puedes ingresar con las siguientes credenciales:
+        Usuario: %s
+        Contraseña: %s
+
+        Recomendamos cambiar tu contraseña después de iniciar sesión.
+
+        Saludos,
+        Equipo MEDTECH
+        """.formatted(nombre, destinatario, contrasena);
+
+    enviarCorreo(destinatario, asunto, mensaje);
+}
+
+
 }

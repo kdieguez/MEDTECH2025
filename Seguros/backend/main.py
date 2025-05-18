@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import estructura_web, autenticacion, usuarios, servicios, hospitales, ventas, cobros, servicios_hospitalarios, catalogo
+from routers import estructura_web, autenticacion, usuarios, servicios, hospitales, ventas, cobros, servicios_hospitalarios, catalogo, citas
 
 app = FastAPI()
 
@@ -25,6 +25,8 @@ app.include_router(ventas.router)
 app.include_router(cobros.router) 
 app.include_router(servicios_hospitalarios.router)
 app.include_router(catalogo.router)
+app.include_router(citas.router)
+
 
 @app.get("/")
 def read_root():

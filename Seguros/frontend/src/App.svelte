@@ -16,7 +16,6 @@
   import CatalogoHospitales from "./routes/Publico/CatalogoHospitales.svelte";
   import Ventas from './routes/Publico/Ventas.svelte';
   import Cobros from './routes/Publico/Cobros.svelte';
-
   import EditarPaginas from "./routes/Empleado/EditarPaginas.svelte";
   import Registro from './routes/Publico/Registro.svelte';
   import Login from './routes/Publico/Login.svelte';
@@ -24,6 +23,9 @@
   import EditarPerfil from './routes/Publico/EditarPerfil.svelte';
   import AdministrarUsuarios from './routes/Admin/AdministrarUsuarios.svelte';
   import ServiciosHospitalarios from './routes/Publico/ServiciosHospitalarios.svelte';
+  import Citas from './routes/Empleado/Citas.svelte';
+
+
 
   let currentPage = "Inicio";
   let menuOpen = false;
@@ -161,7 +163,14 @@
       {:else}
         <p>Acceso denegado. Solo administradores o empleados pueden acceder al módulo de cobros.</p>
       {/if}
+    {:else if currentPage === "Citas"}
+      {#if $userRol === 'admin' || $userRol === 'empleado'}
+        <Citas />
+      {:else}
+        <p>Acceso denegado. Solo empleados o administradores pueden gestionar citas.</p>
+      {/if}
     {/if}
+
   </main>
 
   {#if $userRol === 'admin' || $userRol === 'empleado'}

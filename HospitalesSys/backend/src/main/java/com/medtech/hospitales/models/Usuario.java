@@ -42,7 +42,7 @@ public class Usuario {
 
     // Getters y Setters
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    //public void setId(Long id) { this.id = id; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
@@ -68,6 +68,21 @@ public class Usuario {
     public Timestamp getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(Timestamp fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
+    public void setCorreo(String correo) {
+        this.email = correo;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.password = contrasena;
+    }
+
+    public void setEstadoCuenta(int estado) {}  
+
+    public void setRol(Rol rol) {}
+
+
+
+
     @Override
     public String toString() {
         return "Usuario{" +
@@ -80,4 +95,12 @@ public class Usuario {
                 ", habilitado=" + habilitado +
                 '}';
     }
+    public Integer getRol() {
+    return idRol;
+}
+
+public String getContrasena() {
+    return password;
+}
+
 }

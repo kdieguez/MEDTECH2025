@@ -95,6 +95,18 @@
         Cobros
       </a>
     </li>
+
+    {#if $userRol === 'admin' || $userRol === 'empleado'}
+  <li class:active={currentPage === "Citas"}>
+    <a
+      href="/Citas"
+      on:click|preventDefault={() => selectSection("Citas")}
+    >
+      Citas
+    </a>
+  </li>
+{/if}
+
   </ul>
 {/if}
 

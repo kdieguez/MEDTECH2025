@@ -1,6 +1,8 @@
 package com.medtech.hospitales.models;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
+
 
 /**
  * Entidad que representa el perfil de un paciente en el sistema hospitalario.
@@ -75,4 +77,12 @@ public class PerfilPaciente {
 
     public Usuario getUsuario() { return usuario; }
     public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+
+    public void setCodigoAfiliado(String codigo) {
+    this.numeroAfiliacion = codigo; // si lo usas como númeroAfiliacion
+    }
+
+    public void setNumeroCarnet(String carnet) {this.carnet = carnet;}
+    public void setFechaNacimiento(LocalDate fecha) {}
+
 }

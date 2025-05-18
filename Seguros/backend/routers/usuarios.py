@@ -235,3 +235,14 @@ async def editar_perfil(
     return {
         "message": "Perfil actualizado correctamente"
     }
+
+@router.get("/paciente/por-afiliado/{codigo}")
+def obtener_paciente_por_afiliado(codigo: str):
+    paciente = usuarios_coll.find_one(  # <-- corrección aquí
+        { "num_afiliacion": codigo },
+        { "_id": 0, "nombre": 1, "apellido": 1, "correo": 1, "dpi": 1, "fecha_nacimiento": 1, "num_afiliacion": 1, "num_carnet": 1, "fotografia": 1 }
+    )
+    if not paciente:
+        raise HTTPException(status_code=404, detail="Paciente no encontrado")
+    return paciente
+

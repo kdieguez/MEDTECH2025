@@ -17,3 +17,9 @@ class ServicioCatalogo(BaseModel):
     disponible: bool = True
     tipos_poliza: List[str] = Field(default_factory=list)
     fecha_agregado: datetime = Field(default_factory=datetime.utcnow)
+
+class CitaRequest(BaseModel):
+    fecha_hora: str
+    hospital: str
+    servicio: str
+    id_afiliado: str

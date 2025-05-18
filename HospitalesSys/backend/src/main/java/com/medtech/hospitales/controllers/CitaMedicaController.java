@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medtech.hospitales.dtos.CitaRegistroDTO;
 import com.medtech.hospitales.dtos.FormularioCitaDTO;
 import com.medtech.hospitales.dtos.CitaDTO;
+import com.medtech.hospitales.dtos.CitaExternaDTO;
 import com.medtech.hospitales.services.CitaMedicaService;
 import com.medtech.hospitales.services.FormularioCitaService;
 import com.medtech.hospitales.services.RecetaMedicaCompletaService;
@@ -18,6 +19,7 @@ import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.sql.Timestamp;
 
 public class CitaMedicaController {
 
@@ -31,8 +33,8 @@ public class CitaMedicaController {
 
     public void registrarCita(Context ctx) {
         try {
-            CitaRegistroDTO dto = objectMapper.readValue(ctx.body(), CitaRegistroDTO.class);
-            service.registrarCita(dto);
+            CitaExternaDTO dto = objectMapper.readValue(ctx.body(), CitaExternaDTO.class);
+            service.registrarCitaExterna(dto);
             ctx.status(201).json("Cita registrada correctamente");
         } catch (RuntimeException ex) {
             ctx.status(400).json(Map.of("error", ex.getMessage()));
@@ -223,4 +225,24 @@ public class CitaMedicaController {
             ctx.status(500).json(Map.of("error", "Error al obtener datos del formulario"));
         }
     }
+
+public void registrarCitaExterna(Context ctx) {
+    try {
+        CitaExternaDTO dto = objectMapper.readValue(ctx.body(), CitaExternaDTO.class);
+
+        // Agrega esta línea para depurar
+        System.out.println("Subcategoría recibida desde seguros: [" + dto.getNombreSubcategoria() + "]");
+
+        service.registrarCitaExterna(dto);
+        ctx.status(201).json(Map.of("mensaje", "Cita registrada correctamente desde seguros"));
+    } catch (RuntimeException ex) {
+        ctx.status(409).json(Map.of("error", ex.getMessage()));
+    } catch (Exception e) {
+        e.printStackTrace();
+        ctx.status(500).json(Map.of("error", "Error interno al registrar la cita externa"));
+    }
 }
+
+
+}
+
