@@ -63,10 +63,11 @@ def crear_cita(cita: CitaRequest):
         try:
             print(f"➡ Enviando al hospital la subcategoría: [{cita.servicio.nombre_subcategoria}]")
             response = requests.post(
-                f"{hospital['url_backend'].rstrip('/')}/citas",
-                json=datos_cita_para_hospital,
-                timeout=5
-            )
+    f"{hospital['url_backend'].rstrip('/')}/citas/externa",
+    json=datos_cita_para_hospital,
+    timeout=5
+)
+
             if response.status_code >= 400:
                 raise HTTPException(status_code=502, detail=f"Error al crear cita en hospital: {response.text}")
         except requests.exceptions.RequestException:
