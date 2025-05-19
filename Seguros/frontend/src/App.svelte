@@ -7,8 +7,8 @@
   import Footer from "./components/Footer.svelte";
 
   import Home from "./routes/Publico/Home.svelte";
-  import Subhome1 from "./routes/Publico/Subhome1.svelte";
-  import Subhome2 from "./routes/Publico/Subhome2.svelte";
+  import SubHome1 from "./routes/Publico/SubHome1.svelte";
+  import SubHome2 from "./routes/Publico/SubHome2.svelte";
   import NuestraHistoria from "./routes/Publico/NuestraHistoria.svelte";
   import PreguntasFrecuentes from "./routes/Publico/PreguntasFrecuentes.svelte";
   import Contacto from "./routes/Publico/Contacto.svelte";
