@@ -2,7 +2,7 @@
   import VerCitas from './VerCitas.svelte';
   import CrearCita from './CrearCita.svelte';
 
-  let modo = "ver"; // "ver" o "crear"
+  let modo = "ver";
 </script>
 
 <div class="citas-contenedor">

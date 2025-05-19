@@ -79,6 +79,8 @@ public class App {
     app.get("/formulario-cita/imagenes/{id}", citaController.obtenerImagenesResultados);
     app.get("/formulario-cita/{id}", citaController::obtenerFormularioCita);
     app.post("/citas/externa", citaController::registrarCitaExterna);
+    app.delete("/citas/{id}", citaController::eliminarCita);
+    app.put("/citas/{id}", citaController::actualizarCitaExterna);
 
     RecetaCorreoController recetaCorreoController = new RecetaCorreoController();
     app.post("/receta/enviar-correo", recetaCorreoController::enviarCorreoConPdf);

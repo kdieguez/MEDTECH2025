@@ -76,8 +76,8 @@ const cita = {
   id_afiliado: idAfiliado
 };
 
-console.log("🔎 Servicio seleccionado:", servicioSeleccionado);
-console.log("🔗 Subcategoría enviada:", servicioSeleccionado?.nombre_subcategoria);
+console.log("Servicio seleccionado:", servicioSeleccionado);
+console.log("Subcategoría enviada:", servicioSeleccionado?.nombre_subcategoria);
 
 
     const res = await fetch('http://localhost:8000/citas', {

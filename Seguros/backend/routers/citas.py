@@ -4,6 +4,7 @@ from typing import List
 from datetime import datetime
 import requests
 from database import obtener_coleccion
+from bson import ObjectId
 
 router = APIRouter()
 
@@ -25,12 +26,21 @@ class CitaRequest(BaseModel):
     servicio: ServicioData
     id_afiliado: str  # Código de afiliación
 
+class CitaUpdate(BaseModel):
+    nuevaFechaHora: str
+    nuevaSubcategoria: str
+    nuevoServicio: str
+
 # ---------- Endpoints ----------
 
 @router.get("/citas", response_model=List[dict])
 def obtener_citas():
     try:
-        return list(citas.find({}, {"_id": 0}))
+        lista = []
+        for c in citas.find():
+            c["_id"] = str(c["_id"]) 
+            lista.append(c)
+        return lista
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -63,22 +73,40 @@ def crear_cita(cita: CitaRequest):
         try:
             print(f"➡ Enviando al hospital la subcategoría: [{cita.servicio.nombre_subcategoria}]")
             response = requests.post(
-    f"{hospital['url_backend'].rstrip('/')}/citas/externa",
-    json=datos_cita_para_hospital,
-    timeout=5
-)
+                f"{hospital['url_backend'].rstrip('/')}/citas/externa",
+                json=datos_cita_para_hospital,
+                timeout=5
+            )
+
+            data = response.json()
+            id_hospital = data.get("idCita")
 
             if response.status_code >= 400:
                 raise HTTPException(status_code=502, detail=f"Error al crear cita en hospital: {response.text}")
         except requests.exceptions.RequestException:
             raise HTTPException(status_code=502, detail="No se pudo contactar al hospital")
 
+        # Obtener nombre completo del paciente desde backend hospital
+        try:
+            info_paciente = requests.get(
+                f"http://localhost:8000/usuarios/paciente/por-afiliado/{cita.id_afiliado}",
+                timeout=5
+            ).json()
+
+            nombre_paciente = f"{info_paciente.get('nombre', '')} {info_paciente.get('apellido', '')}".strip()
+        except Exception:
+            nombre_paciente = cita.id_afiliado  # fallback si no responde
+
         # Guardar en Mongo local
         cita_data = {
             "fechaHora": datetime.fromisoformat(cita.fechaHora),
             "idPaciente": cita.id_afiliado,
+            "nombrePaciente": nombre_paciente,
+            "hospital": cita.hospital,
+            "servicio": cita.servicio.nombre_servicio,
+            "subcategoria": cita.servicio.nombre_subcategoria,
             "idSubcategoria": cita.servicio.id_subcategoria,
-            "hospital": cita.hospital
+            "idCitaHospital": id_hospital
         }
         citas.insert_one(cita_data)
 
@@ -104,3 +132,90 @@ def obtener_servicios():
         return list(servicios.find({}, {"_id": 0}))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/citas/{id}")
+def eliminar_cita(id: str):
+    try:
+        # Obtener la cita por su _id de Mongo
+        cita = citas.find_one({"_id": ObjectId(id)})
+        if not cita:
+            raise HTTPException(status_code=404, detail="Cita no encontrada")
+
+        # Obtener URL del backend del hospital
+        hospital = hospitales.find_one({"nombre": cita["hospital"]})
+        if not hospital or "url_backend" not in hospital:
+            raise HTTPException(status_code=404, detail="Hospital no encontrado o sin backend")
+
+        # Enviar solicitud DELETE al backend del hospital
+        id_hospital = cita.get("idCitaHospital")
+        if id_hospital:
+            try:
+                response = requests.delete(
+                    f"{hospital['url_backend'].rstrip('/')}/citas/{id_hospital}",
+                    timeout=5
+                )
+                if response.status_code >= 400:
+                    raise HTTPException(status_code=502, detail=f"No se pudo eliminar en hospital: {response.text}")
+            except requests.exceptions.RequestException:
+                raise HTTPException(status_code=502, detail="No se pudo contactar al hospital")
+        else:
+            print("No hay idCitaHospital en Mongo. Solo se eliminará localmente.")
+
+        # Eliminar de Mongo
+        citas.delete_one({"_id": ObjectId(id)})
+
+        return {"mensaje": "Cita eliminada correctamente en seguros y hospital"}
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/citas/{id}")
+def actualizar_cita(id: str, datos: CitaUpdate):
+    try:
+        cita = citas.find_one({"_id": ObjectId(id)})
+        if not cita:
+            raise HTTPException(status_code=404, detail="Cita no encontrada")
+
+        hospital = hospitales.find_one({"nombre": cita["hospital"]})
+        if not hospital or "url_backend" not in hospital:
+            raise HTTPException(status_code=404, detail="Hospital no encontrado o sin backend")
+
+        id_cita_hospital = cita.get("idCitaHospital")
+        if not id_cita_hospital:
+            raise HTTPException(status_code=400, detail="Cita no tiene id en hospital")
+
+        # Actualizar en hospital
+        try:
+            response = requests.put(
+                f"{hospital['url_backend'].rstrip('/')}/citas/{id_cita_hospital}",
+                json={
+                    "nuevaFechaHora": datos.nuevaFechaHora,
+                    "nuevaSubcategoria": datos.nuevaSubcategoria
+                },
+                timeout=5
+            )
+            if response.status_code >= 400:
+                raise HTTPException(status_code=502, detail=f"Error al actualizar en hospital: {response.text}")
+        except requests.exceptions.RequestException:
+            raise HTTPException(status_code=502, detail="No se pudo contactar al hospital")
+
+        # Actualizar también el servicio en Mongo
+        citas.update_one(
+            {"_id": ObjectId(id)},
+            {
+                "$set": {
+                    "fechaHora": datetime.fromisoformat(datos.nuevaFechaHora),
+                    "subcategoria": datos.nuevaSubcategoria,
+                    "servicio": datos.nuevoServicio 
+                }
+            }
+        )
+
+        return {"mensaje": "Cita actualizada en seguros y hospital"}
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error inesperado: {str(e)}")

@@ -9,7 +9,7 @@ router = APIRouter(
 )
 
 catalogo_coll = obtener_coleccion("catalogo_servicios")
-servicios_coll = obtener_coleccion("servicios")  # ✅ aseguramos colección correcta
+servicios_coll = obtener_coleccion("servicios")
 
 
 @router.post("/")
@@ -18,14 +18,14 @@ async def agregar_servicio_al_catalogo(servicio: ServicioCatalogo):
         nuevo_servicio = servicio.dict()
         id_sub = nuevo_servicio["servicio"]["id_subcategoria"]
 
-        # 🔍 Validar que no esté ya en el catálogo
+        # Validar que no esté ya en el catálogo
         if catalogo_coll.find_one({"servicio.id_subcategoria": id_sub}):
             raise HTTPException(status_code=400, detail="El servicio ya está en el catálogo.")
 
-        # ✅ Insertar en catálogo
+        #Insertar en catálogo
         catalogo_coll.insert_one(nuevo_servicio)
 
-        # 🔍 Verificar si ya existe en `servicios`
+        #Verificar si ya existe en `servicios`
         if not servicios_coll.find_one({"id_subcategoria": id_sub}):
             datos_servicio = nuevo_servicio["servicio"]
 

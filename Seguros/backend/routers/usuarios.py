@@ -238,7 +238,7 @@ async def editar_perfil(
 
 @router.get("/paciente/por-afiliado/{codigo}")
 def obtener_paciente_por_afiliado(codigo: str):
-    paciente = usuarios_coll.find_one(  # <-- corrección aquí
+    paciente = usuarios_coll.find_one( 
         { "num_afiliacion": codigo },
         { "_id": 0, "nombre": 1, "apellido": 1, "correo": 1, "dpi": 1, "fecha_nacimiento": 1, "num_afiliacion": 1, "num_carnet": 1, "fotografia": 1 }
     )

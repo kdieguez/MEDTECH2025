@@ -18,7 +18,7 @@ onMount(async () => {
 
     idsCatalogo = catalogo.map(item => item.servicio.id_subcategoria);
 
-    // 🔁 Actualizar el precio del servicio si está en el catálogo
+    //Actualizar el precio del servicio si está en el catálogo
     for (let i = 0; i < servicios.length; i++) {
       const sub = servicios[i].id_subcategoria;
       const encontrado = catalogo.find(item => item.servicio.id_subcategoria === sub);

@@ -238,7 +238,8 @@ public class CitaMedicaService {
             em.close();
         }
     }
-    public void registrarCitaExterna(CitaExternaDTO dto) {
+    
+    public Long registrarCitaExterna(CitaExternaDTO dto) {
     EntityManager em = JPAUtil.getEntityManager();
     try {
         em.getTransaction().begin();
@@ -296,7 +297,7 @@ public class CitaMedicaService {
             em.persist(paciente);
         }
 
-        // 1. Buscar la subcategoría por nombre
+        //Buscar la subcategoría por nombre
         Object[] resultado = em.createQuery("""
             SELECT s.id, s.servicio.id FROM SubcategoriaServicio s
             WHERE s.nombre = :nombre
@@ -308,7 +309,7 @@ public class CitaMedicaService {
         Long idSub = (Long) resultado[0];
         Long idServicio = (Long) resultado[1];
 
-        // 2. Buscar InfoDoctor desde la tabla de unión SERVICIO_X_DOCTOR
+        //Buscar InfoDoctor desde la tabla de unión SERVICIO_X_DOCTOR
         List<Long> idsDoctores = em.createQuery("""
             SELECT sx.doctor.id FROM ServicioXDoctor sx
             WHERE sx.servicio.id = :idServicio
@@ -316,7 +317,7 @@ public class CitaMedicaService {
         .setParameter("idServicio", idServicio)
         .getResultList();
 
-        // 3. Filtrar doctores disponibles
+        //Filtrar doctores disponibles
         InfoDoctor doctorDisponible = null;
         for (Long idDoctor : idsDoctores) {
             Long count = em.createQuery("""
@@ -337,7 +338,7 @@ public class CitaMedicaService {
             throw new RuntimeException("No hay doctores disponibles para ese servicio y horario");
         }
 
-        // 4. Crear y guardar la cita
+        //Crear y guardar la cita
         CitaMedica cita = new CitaMedica();
         cita.setPaciente(paciente);
         cita.setInfoDoctor(doctorDisponible);
@@ -346,6 +347,7 @@ public class CitaMedicaService {
 
         em.persist(cita);
         em.getTransaction().commit();
+        return cita.getId();
 
     } catch (Exception e) {
         if (em.getTransaction().isActive()) em.getTransaction().rollback();
@@ -365,6 +367,38 @@ private String generarContrasenaSegura(int longitud) {
     }
     return sb.toString();
 }
+
+public void actualizarCitaExterna(Long idCita, String nuevaFechaHora, String nuevaSubcategoria) {
+    EntityManager em = JPAUtil.getEntityManager();
+    try {
+        em.getTransaction().begin();
+
+        CitaMedica cita = em.find(CitaMedica.class, idCita);
+        if (cita == null) {
+            throw new RuntimeException("La cita no existe");
+        }
+
+        cita.setFechaHora(LocalDateTime.parse(nuevaFechaHora));
+
+        SubcategoriaServicio nuevaSub = em.createQuery("""
+            SELECT s FROM SubcategoriaServicio s
+            WHERE s.nombre = :nombre
+        """, SubcategoriaServicio.class)
+        .setParameter("nombre", nuevaSubcategoria)
+        .setMaxResults(1)
+        .getSingleResult();
+
+        cita.setSubcategoria(nuevaSub);
+
+        em.getTransaction().commit();
+    } catch (Exception e) {
+        if (em.getTransaction().isActive()) em.getTransaction().rollback();
+        throw new RuntimeException("Error al actualizar la cita: " + e.getMessage(), e);
+    } finally {
+        em.close();
+    }
+}
+
 
 
 }
