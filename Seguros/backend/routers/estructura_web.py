@@ -65,12 +65,19 @@ async def actualizar_contenido(id_pagina: str, request: Request):
 
     data = await request.json()
 
-    if "contenido" not in data:
-        raise HTTPException(status_code=400, detail="El contenido es obligatorio en esta página.")
+    campos_permitidos = {
+        "contenido", "secciones", "banner", "titulo", "carrusel",
+        "porcentaje", "descripcion", "servicios"
+    }
+
+    datos_filtrados = {k: v for k, v in data.items() if k in campos_permitidos}
+
+    if not datos_filtrados:
+        raise HTTPException(status_code=400, detail="No se recibió ningún dato válido para actualizar.")
 
     resultado = coleccion.update_one(
         {"_id": obj_id},
-        {"$set": {"contenido": data["contenido"]}}
+        {"$set": datos_filtrados}
     )
 
     if resultado.modified_count == 0:
