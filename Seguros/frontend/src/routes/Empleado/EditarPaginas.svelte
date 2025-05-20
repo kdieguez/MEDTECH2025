@@ -31,7 +31,7 @@
   });
 
   function obtenerPaginas() {
-    axios.get(`{API_BASE_URL}/estructura_web`)
+    axios.get(`${API_BASE_URL}/estructura_web`)
       .then(res => paginas = res.data)
       .catch(() => Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudieron cargar las páginas.' }));
   }
@@ -39,7 +39,7 @@
   function cargarPaginaSeleccionada() {
     if (!paginaSeleccionadaId) return resetearCampos();
 
-    axios.get(`{API_BASE_URL}/estructura_web/por-id/${paginaSeleccionadaId}`)
+    axios.get(`${API_BASE_URL}/estructura_web/por-id/${paginaSeleccionadaId}`)
       .then(res => {
         const data = res.data;
         resetearCampos();
@@ -126,7 +126,7 @@ function guardarCambios() {
     body = { secciones, autor };
   }
 
-  axios.post(`{API_BASE_URL}/estructura_web/guardar-draft/${paginaSeleccionadaId}`, body, {
+  axios.post(`${API_BASE_URL}/estructura_web/guardar-draft/${paginaSeleccionadaId}`, body, {
     headers: { 'Content-Type': 'application/json' }
   })
     .then(res => {
