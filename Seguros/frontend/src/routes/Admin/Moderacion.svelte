@@ -54,7 +54,11 @@
       <ul>
         {#each drafts as draft}
           <li>
-            <strong>{draft.contenido?.titulo || 'Sin título'}</strong> – Página ID: {draft.id_pagina}
+            <div>
+              <strong>{draft.contenido?.titulo || 'Sin título'}</strong> – Página ID: {draft.id_pagina}
+              <br />
+              <small>Autor: {draft.autor || 'desconocido'}</small>
+            </div>
             <button on:click={() => seleccionarDraft(draft._id)}>Ver</button>
           </li>
         {/each}
@@ -67,6 +71,7 @@
       <h2>Vista Previa del Draft</h2>
       <p><strong>ID Página:</strong> {draftSeleccionado.id_pagina}</p>
       <p><strong>Fecha:</strong> {new Date(draftSeleccionado.fecha).toLocaleString()}</p>
+      <p><strong>Autor del cambio:</strong> {draftSeleccionado.autor || 'desconocido'}</p>
 
       <div class="contenido-preview">
         <pre>{JSON.stringify(draftSeleccionado.contenido, null, 2)}</pre>
