@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { accessToken, userRol, userCorreo, userEstado } from '../../store.js';
   import axios from 'axios';
-  import { API_BASE_URL } from "$lib/api";
+  import { API_BASE_URL } from '../../lib/api';
 
   const dispatch = createEventDispatcher();
 
