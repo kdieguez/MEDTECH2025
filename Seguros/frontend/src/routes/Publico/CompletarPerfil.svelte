@@ -1,6 +1,7 @@
 <script>
   import axios from 'axios';
   import { onMount } from 'svelte';
+  import { API_BASE_URL } from "$lib/api";
 
   let correo = '';
   let nombre = '';
@@ -13,7 +14,7 @@
 
     // Consultar el nombre
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/usuarios/perfil/${correo}`);
+      const response = await axios.get(`${API_BASE_URL}/usuarios/perfil/${correo}`);
       nombre = response.data.usuario.nombre;
     } catch (error) {
       console.error('Error al cargar datos de perfil:', error);
@@ -34,7 +35,7 @@
     formData.append('fotoUrl', fotoUrl);
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/usuarios/perfil/completar', formData);
+      const response = await axios.post(`${API_BASE_URL}/usuarios/perfil/completar`, formData);
 
       alert('Perfil completado correctamente');
 

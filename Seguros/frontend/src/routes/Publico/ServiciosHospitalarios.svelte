@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import axios from 'axios';
   import Swal from 'sweetalert2';
+  import { API_BASE_URL } from "$lib/api";
 
   let servicios = [];
   let idsCatalogo = [];
@@ -10,10 +11,10 @@
 
 onMount(async () => {
   try {
-    const resServicios = await axios.get('http://localhost:8000/servicios-hospitalarios');
+    const resServicios = await axios.get(`${API_BASE_URL}/servicios-hospitalarios`);
     servicios = resServicios.data || [];
 
-    const resCatalogo = await axios.get('http://localhost:8000/catalogo');
+    const resCatalogo = await axios.get(`${API_BASE_URL}/catalogo`);
     const catalogo = resCatalogo.data || [];
 
     idsCatalogo = catalogo.map(item => item.servicio.id_subcategoria);
@@ -23,7 +24,7 @@ onMount(async () => {
       const sub = servicios[i].id_subcategoria;
       const encontrado = catalogo.find(item => item.servicio.id_subcategoria === sub);
       if (encontrado) {
-        servicios[i].precio = encontrado.servicio.precio; // Sobrescribe el precio con el de Mongo
+        servicios[i].precio = encontrado.servicio.precio;
       }
     }
   } catch (e) {
@@ -57,7 +58,7 @@ onMount(async () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:8000/catalogo', payload);
+      const response = await axios.post(`${API_BASE_URL}/catalogo`, payload);
       idsCatalogo.push(servicio.id_subcategoria);
       Swal.fire("Éxito", response.data.message, "success");
     } catch (e) {
@@ -68,7 +69,7 @@ onMount(async () => {
 
   async function eliminarDelCatalogo(id_subcategoria) {
     const confirmacion = await Swal.fire({
-      title: "¿Estás segura?",
+      title: "¿Estás seguro?",
       text: "El servicio será eliminado del catálogo",
       icon: "warning",
       showCancelButton: true,
@@ -79,7 +80,7 @@ onMount(async () => {
     if (!confirmacion.isConfirmed) return;
 
     try {
-      const response = await axios.delete(`http://localhost:8000/catalogo/${id_subcategoria}`);
+      const response = await axios.delete(`${API_BASE_URL}/catalogo/${id_subcategoria}`);
       idsCatalogo = idsCatalogo.filter(id => id !== id_subcategoria);
       Swal.fire("Eliminado", response.data.message, "success");
     } catch (e) {

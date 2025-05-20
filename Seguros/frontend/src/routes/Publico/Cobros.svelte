@@ -1,13 +1,14 @@
 <script>
   import { onMount } from 'svelte';
   import axios from 'axios';
+  import {API_BASE_URL} from "$lib/api"
 
   let usuarios = [];
   let nombreBusqueda = '';
 
 async function cargarUsuarios() {
   try {
-    const response = await axios.get('http://127.0.0.1:8000/cobros/listar');
+    const response = await axios.get(`${API_BASE_URL}/cobros/listar`);
     usuarios = response.data.sort((a, b) => new Date(a.fecha_vencimiento) - new Date(b.fecha_vencimiento));
   } catch (error) {
     console.error('Error al cargar usuarios:', error);
@@ -26,7 +27,7 @@ async function renovar(usuarioId) {
   if (!cvv) return;
 
   try {
-    await axios.put(`http://127.0.0.1:8000/cobros/renovar/${usuarioId}`, {
+    await axios.put(`${API_BASE_URL}/cobros/renovar/${usuarioId}`, {
       nueva_fecha: nuevaFecha,
       numero_tarjeta: numeroTarjeta,
       cvv: cvv
@@ -44,7 +45,7 @@ async function renovar(usuarioId) {
     if (!confirmar) return;
 
     try {
-      await axios.put(`http://127.0.0.1:8000/cobros/deshabilitar/${usuarioId}`);
+      await axios.put(`${API_BASE_URL}/cobros/deshabilitar/${usuarioId}`);
       alert('Usuario deshabilitado.');
       cargarUsuarios();
     } catch (error) {
