@@ -2,7 +2,6 @@
   import { createEventDispatcher } from 'svelte';
   import { accessToken, userRol, userCorreo, userEstado } from '../../store.js';
   import axios from 'axios';
-  import { API_BASE_URL } from "$lib/api";
 
   const dispatch = createEventDispatcher();
 
@@ -18,7 +17,7 @@
       return;
     }
 
-    axios.post(`{API_BASE_URL}/autenticacion/login`, {
+    axios.post('http://127.0.0.1:8000/autenticacion/login', {
       correo,
       contrasena
     })
@@ -50,7 +49,7 @@
   }
 
   function verificarPerfil() {
-    axios.get(`{API_BASE_URL}/usuarios/perfil/${correo}`)
+    axios.get(`http://127.0.0.1:8000/usuarios/perfil/${correo}`)
       .then(response => {
         const { perfilCompleto } = response.data;
 

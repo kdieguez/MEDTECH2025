@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import axios from 'axios';
   import Swal from 'sweetalert2';
-  import { API_BASE_URL } from "$lib/api";
 
   let drafts = [];
   let draftSeleccionado = null;
@@ -13,13 +12,13 @@
   });
 
   function cargarDrafts() {
-    axios.get(`{API_BASE_URL}/estructura_web/drafts-pendientes`)
+    axios.get('http://127.0.0.1:8000/estructura_web/drafts-pendientes')
       .then(res => drafts = res.data)
       .catch(() => Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudieron cargar los drafts' }));
   }
 
   function seleccionarDraft(id) {
-    axios.get(`{API_BASE_URL}/estructura_web/draft/${id}`)
+    axios.get(`http://127.0.0.1:8000/estructura_web/draft/${id}`)
       .then(res => {
         draftSeleccionado = res.data;
         comentario = '';
@@ -30,7 +29,7 @@
   function moderarDraft(accion) {
     if (!draftSeleccionado) return;
 
-    axios.post(`{API_BASE_URL}/estructura_web/moderar/${draftSeleccionado._id}`, {
+    axios.post(`http://127.0.0.1:8000/estructura_web/moderar/${draftSeleccionado._id}`, {
       accion,
       comentario
     })
