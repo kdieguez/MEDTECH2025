@@ -3,7 +3,7 @@
   import "flatpickr/dist/flatpickr.css";
   import Swal from "sweetalert2";
   import { onMount } from "svelte";
-  import { API_BASE_URL } from '../../lib/api';
+  import { API_BASE_URL } from "$lib/api";
   
   let citas = [];
   let fechaSeleccionada = "";

@@ -2,7 +2,7 @@
   import axios from 'axios';
   import { onMount } from 'svelte';
   import Swal from 'sweetalert2';
-  import { API_BASE_URL } from '../../lib/api';
+  import { API_BASE_URL } from "$lib/api";
 
   let paginas = [];
   let paginaSeleccionada = '';
