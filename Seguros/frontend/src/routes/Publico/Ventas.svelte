@@ -1,6 +1,4 @@
 <script>
-  import { API_BASE_URL } from "$lib/api";
-
   let nombre = "";
   let apellido = "";
   let email = "";
@@ -13,7 +11,7 @@
     error = "";
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/ventas`, {
+      const res = await fetch("http://localhost:8000/api/ventas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre, apellido, email, tipoPoliza }),

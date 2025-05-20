@@ -5,11 +5,6 @@ from datetime import datetime
 import requests
 from database import obtener_coleccion
 from bson import ObjectId
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
 
 router = APIRouter()
 
@@ -94,7 +89,7 @@ def crear_cita(cita: CitaRequest):
         # Obtener nombre completo del paciente desde backend hospital
         try:
             info_paciente = requests.get(
-                f"{BASE_URL}/usuarios/paciente/por-afiliado/{cita.id_afiliado}",
+                f"http://localhost:8000/usuarios/paciente/por-afiliado/{cita.id_afiliado}",
                 timeout=5
             ).json()
 

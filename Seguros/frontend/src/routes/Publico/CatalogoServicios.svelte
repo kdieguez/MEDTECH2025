@@ -1,14 +1,13 @@
 <script>
   import { onMount } from 'svelte';
   import axios from 'axios';
-  import { API_BASE_URL } from "$lib/api";
 
   let serviciosCatalogo = [];
   let error = '';
 
   onMount(async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/catalogo`);
+      const res = await axios.get('http://localhost:8000/catalogo');
       serviciosCatalogo = res.data || [];
     } catch (e) {
       error = 'Error al cargar el catálogo de servicios.';

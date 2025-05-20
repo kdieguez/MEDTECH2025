@@ -1,7 +1,6 @@
 <script>
   import axios from 'axios';
   import { onMount } from 'svelte';
-  import { API_BASE_URL } from "$lib/api";
 
   let correo = '';
   let nombre = '';
@@ -20,7 +19,7 @@
 
     try {
       cargando = true;
-      const response = await axios.get(`${API_BASE_URL}/usuarios/perfil/${correo}`);
+      const response = await axios.get(`http://127.0.0.1:8000/usuarios/perfil/${correo}`);
       const userData = response.data.usuario;
 
       nombre = userData.nombre;
@@ -58,7 +57,7 @@
     try {
       cargando = true;
 
-      const response = await axios.post(`${API_BASE_URL}/usuarios/perfil/editar`, formData);
+      const response = await axios.post('http://127.0.0.1:8000/usuarios/perfil/editar', formData);
       mensaje = 'Perfil actualizado correctamente';
 
     } catch (error) {

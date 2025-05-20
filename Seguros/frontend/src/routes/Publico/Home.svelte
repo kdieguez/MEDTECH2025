@@ -1,7 +1,6 @@
 <script>
   import { onMount } from 'svelte';
   import axios from 'axios';
-  import { API_BASE_URL } from "$lib/api";
 
   let data = {
     titulo: '',
@@ -18,7 +17,7 @@
   };
 
   onMount(() => {
-    axios.get(`${API_BASE_URL}/estructura_web/por-id/67d0ce0fa6c3ae083f71b75f`)
+    axios.get('http://127.0.0.1:8000/estructura_web/por-id/67d0ce0fa6c3ae083f71b75f')
       .then(res => data = res.data)
       .catch(error => {
         console.error('Error al obtener la página Inicio:', error);

@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import axios from "axios";
   import Swal from "sweetalert2";
-  import { API_BASE_URL } from "$lib/api";
 
   let usuarios = [];
   let mostrarModal = false;
@@ -13,7 +12,7 @@
   });
 
   function obtenerUsuarios() {
-    axios.get(`${API_BASE_URL}/usuarios/listar`)
+    axios.get("http://127.0.0.1:8000/usuarios/listar")
       .then(res => {
         usuarios = res.data.usuarios;
       })
@@ -47,7 +46,7 @@
   function guardarCambios() {
     const { _id, nombre, apellido, correo, rol, estado, permiso_editar_paginas } = usuarioSeleccionado;
 
-    axios.put(`${API_BASE_URL}/usuarios/editar/${_id}`, {
+    axios.put(`http://127.0.0.1:8000/usuarios/editar/${_id}`, {
       nombre,
       apellido,
       correo,
