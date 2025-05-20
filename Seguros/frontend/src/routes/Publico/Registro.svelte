@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import axios from 'axios';
   import Swal from 'sweetalert2';
-  import { API_BASE_URL } from "$lib/api";
+  import { API_BASE_URL } from '../../lib/api';
 
   const dispatch = createEventDispatcher();
 
