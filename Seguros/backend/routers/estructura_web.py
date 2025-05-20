@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 from database import obtener_coleccion
 from bson import ObjectId
+from datetime import datetime
 
 router = APIRouter(
     prefix="/estructura_web",
@@ -8,12 +9,13 @@ router = APIRouter(
 )
 
 coleccion = obtener_coleccion("estructura_web")
+coleccion_drafts = obtener_coleccion("estructura_drafts")
 
 @router.get("/")
 def obtener_paginas():
     paginas = list(coleccion.find())
     for p in paginas:
-        p["_id"] = str(p["_id"]) 
+        p["_id"] = str(p["_id"])
     return paginas
 
 @router.get("/por-id/{id_pagina}")
@@ -24,7 +26,6 @@ def obtener_pagina_por_id(id_pagina: str):
         raise HTTPException(status_code=400, detail="ID inválido")
 
     pagina = coleccion.find_one({"_id": obj_id})
-
     if not pagina:
         raise HTTPException(status_code=404, detail="Página no encontrada")
 
@@ -39,7 +40,6 @@ async def actualizar_header_footer(id_pagina: str, request: Request):
         raise HTTPException(status_code=400, detail="ID inválido")
 
     data = await request.json()
-
     campos_validos = {"nombre_seguro", "logo", "footer"}
     datos_filtrados = {k: v for k, v in data.items() if k in campos_validos}
 
@@ -64,12 +64,10 @@ async def actualizar_contenido(id_pagina: str, request: Request):
         raise HTTPException(status_code=400, detail="ID inválido")
 
     data = await request.json()
-
     campos_permitidos = {
         "contenido", "secciones", "banner", "titulo", "carrusel",
         "porcentaje", "descripcion", "servicios"
     }
-
     datos_filtrados = {k: v for k, v in data.items() if k in campos_permitidos}
 
     if not datos_filtrados:
@@ -84,3 +82,86 @@ async def actualizar_contenido(id_pagina: str, request: Request):
         raise HTTPException(status_code=400, detail="No se actualizó la página")
 
     return {"message": "Contenido actualizado correctamente"}
+
+@router.post("/guardar-draft/{id_pagina}")
+async def guardar_draft(id_pagina: str, request: Request):
+    try:
+        obj_id = ObjectId(id_pagina)
+    except Exception:
+        raise HTTPException(status_code=400, detail="ID inválido")
+
+    data = await request.json()
+    campos_permitidos = {
+        "contenido", "secciones", "banner", "titulo", "carrusel",
+        "porcentaje", "descripcion", "servicios"
+    }
+    draft_data = {k: v for k, v in data.items() if k in campos_permitidos}
+
+    if not draft_data:
+        raise HTTPException(status_code=400, detail="No se recibió contenido válido para el draft.")
+
+    nuevo_draft = {
+        "id_pagina": str(obj_id),
+        "contenido": draft_data,
+        "estado": "pendiente",
+        "fecha": datetime.utcnow(),
+        "comentario_admin": "",
+        "autor": data.get("autor", "sistema")
+    }
+
+    coleccion_drafts.insert_one(nuevo_draft)
+
+    return {"message": "Cambios guardados como borrador para revisión"}
+
+@router.get("/drafts-pendientes")
+def obtener_drafts_pendientes():
+    drafts = list(coleccion_drafts.find({"estado": "pendiente"}))
+    for d in drafts:
+        d["_id"] = str(d["_id"])
+    return drafts
+
+@router.get("/draft/{id_draft}")
+def obtener_draft(id_draft: str):
+    try:
+        draft_id = ObjectId(id_draft)
+    except Exception:
+        raise HTTPException(status_code=400, detail="ID inválido")
+
+    draft = coleccion_drafts.find_one({"_id": draft_id})
+    if not draft:
+        raise HTTPException(status_code=404, detail="Draft no encontrado")
+
+    draft["_id"] = str(draft["_id"])
+    return draft
+
+@router.post("/moderar/{id_draft}")
+async def moderar_draft(id_draft: str, request: Request):
+    try:
+        draft_id = ObjectId(id_draft)
+    except Exception:
+        raise HTTPException(status_code=400, detail="ID inválido")
+
+    data = await request.json()
+    accion = data.get("accion")
+    comentario = data.get("comentario", "")
+
+    draft = coleccion_drafts.find_one({"_id": draft_id})
+    if not draft:
+        raise HTTPException(status_code=404, detail="Draft no encontrado")
+
+    id_pagina = draft["id_pagina"]
+    contenido = draft["contenido"]
+
+    if accion == "aprobar":
+        coleccion.update_one({"_id": ObjectId(id_pagina)}, {"$set": contenido})
+        coleccion_drafts.update_one({"_id": draft_id}, {"$set": {"estado": "aprobado"}})
+        return {"message": "Cambios aprobados y aplicados correctamente."}
+
+    elif accion == "rechazar":
+        coleccion_drafts.update_one(
+            {"_id": draft_id},
+            {"$set": {"estado": "rechazado", "comentario_admin": comentario}}
+        )
+        return {"message": "Draft rechazado con comentario."}
+    else:
+        raise HTTPException(status_code=400, detail="Acción inválida: usar 'aprobar' o 'rechazar'")

@@ -24,8 +24,7 @@
   import AdministrarUsuarios from './routes/Admin/AdministrarUsuarios.svelte';
   import ServiciosHospitalarios from './routes/Publico/ServiciosHospitalarios.svelte';
   import Citas from './routes/Empleado/Citas.svelte';
-
-
+  import Moderacion from './routes/Admin/Moderacion.svelte';
 
   let currentPage = "Inicio";
   let menuOpen = false;
@@ -37,13 +36,8 @@
     const savedToken = localStorage.getItem('accessToken');
     const savedRol = localStorage.getItem('userRol');
 
-    if (savedToken) {
-      accessToken.set(savedToken);
-    }
-
-    if (savedRol) {
-      userRol.set(savedRol);
-    }
+    if (savedToken) accessToken.set(savedToken);
+    if (savedRol) userRol.set(savedRol);
 
     window.addEventListener("popstate", handlePopState);
   });
@@ -54,11 +48,7 @@
 
   function handlePopState() {
     let path = window.location.pathname.slice(1);
-    if (!path) {
-      currentPage = "Inicio";
-      return;
-    }
-    currentPage = path.replace(/_/g, " ");
+    currentPage = path ? path.replace(/_/g, " ") : "Inicio";
   }
 
   function changePage(page) {
@@ -91,6 +81,10 @@
   function irAEditarPaginas() {
     changePage('Editar Páginas');
   }
+
+  function irAModeracion() {
+    changePage('Moderación');
+  }
 </script>
 
 <div class="container">
@@ -111,9 +105,9 @@
     {#if currentPage === "Inicio"}
       <Home />
     {:else if currentPage === "Subhome 1"}
-      <Subhome1 />
+      <SubHome1 />
     {:else if currentPage === "Subhome 2"}
-      <Subhome2 />
+      <SubHome2 />
     {:else if currentPage === "Nuestra Historia"}
       <NuestraHistoria />
     {:else if currentPage === "Preguntas frecuentes"}
@@ -147,6 +141,12 @@
       {:else}
         <p>Acceso denegado. Solo administradores pueden administrar usuarios.</p>
       {/if}
+    {:else if currentPage === "Moderación"}
+      {#if $userRol === 'admin'}
+        <Moderacion />
+      {:else}
+        <p>Acceso denegado. Solo administradores pueden moderar contenido.</p>
+      {/if}
     {:else if currentPage === "Completar Perfil"}
       <CompletarPerfil />
     {:else if currentPage === "Editar Perfil"}
@@ -170,23 +170,16 @@
         <p>Acceso denegado. Solo empleados o administradores pueden gestionar citas.</p>
       {/if}
     {/if}
-
   </main>
 
   {#if $userRol === 'admin' || $userRol === 'empleado'}
-    <div 
-      class="tuerquita-flotante" 
-      on:click={toggleAdminMenu} 
-      title="Configuración"
-    >
-      ⚙️
-    </div>
-
+    <div class="tuerquita-flotante" on:click={toggleAdminMenu} title="Configuración">⚙️</div>
     {#if mostrarMenuAdmin}
       <div class="menu-admin-flotante">
         {#if $userRol === 'admin'}
           <button on:click={irAAdministrarUsuarios}>Administrar Usuarios</button>
           <button on:click={irAEditarPaginas}>Editar Páginas</button>
+          <button on:click={irAModeracion}>Moderar Cambios</button>
         {:else if $userRol === 'empleado'}
           <button on:click={irAEditarPaginas}>Editar Páginas</button>
         {/if}

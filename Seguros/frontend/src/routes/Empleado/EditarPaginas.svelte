@@ -69,73 +69,71 @@
       .catch(() => Swal.fire({ icon: 'error', title: 'Error', text: 'Error al cargar la página seleccionada.' }));
   }
 
-  function guardarCambios() {
-    if (!paginaSeleccionadaId) {
-      Swal.fire({ icon: 'warning', title: 'Atención', text: 'Debes seleccionar una página para editar.' });
+function guardarCambios() {
+  if (!paginaSeleccionadaId) {
+    Swal.fire({ icon: 'warning', title: 'Atención', text: 'Debes seleccionar una página para editar.' });
+    return;
+  }
+
+  const esHeaderFooter = paginaSeleccionada === "Header y Footer";
+  const esInicio = paginaSeleccionada === "Inicio";
+  const esSubhome = paginaSeleccionada.toLowerCase().includes("subhome");
+
+  let body = {};
+
+  if (esHeaderFooter) {
+    body = { nombre_seguro, logo, footer };
+  } else if (esInicio) {
+    if (!bannerFrase && !bannerSubtitulo && secciones.length === 0) {
+      Swal.fire({ icon: 'warning', title: 'Atención', text: 'Debes completar al menos una sección o el banner.' });
       return;
     }
 
-    const esHeaderFooter = paginaSeleccionada === "Header y Footer";
-    const esInicio = paginaSeleccionada === "Inicio";
-    const esSubhome = paginaSeleccionada.toLowerCase().includes("subhome");
-
-    let body = {};
-
-    if (esHeaderFooter) {
-      body = { nombre_seguro, logo, footer };
-    } else if (esInicio) {
-      if (!bannerFrase && !bannerSubtitulo && secciones.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Atención', text: 'Debes completar al menos una sección o el banner.' });
-        return;
-      }
-
-      body = {
-        titulo: "Inicio",
-        banner: {
-          titulo: bannerFrase,
-          subtitulo: bannerSubtitulo,
-          color_inicio: bannerColorInicio,
-          color_fin: bannerColorFin,
-          imagen: bannerImagen,
-          texto_boton: ctaTexto,
-          ruta_boton: ctaRuta
-        },
-        secciones
-      };
-    } else if (esSubhome) {
-      if (!porcentaje && !descripcion && servicios.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Atención', text: 'Completa el porcentaje, descripción o algún servicio.' });
-        return;
-      }
-
-      body = {
-        porcentaje,
-        descripcion,
-        servicios
-      };
-    } else {
-      if (secciones.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Atención', text: 'Agrega al menos una sección.' });
-        return;
-      }
-
-      body = { secciones };
+    body = {
+      titulo: "Inicio",
+      banner: {
+        titulo: bannerFrase,
+        subtitulo: bannerSubtitulo,
+        color_inicio: bannerColorInicio,
+        color_fin: bannerColorFin,
+        imagen: bannerImagen,
+        texto_boton: ctaTexto,
+        ruta_boton: ctaRuta
+      },
+      secciones
+    };
+  } else if (esSubhome) {
+    if (!porcentaje && !descripcion && servicios.length === 0) {
+      Swal.fire({ icon: 'warning', title: 'Atención', text: 'Completa el porcentaje, descripción o algún servicio.' });
+      return;
     }
 
-    const endpoint = esHeaderFooter
-      ? `http://127.0.0.1:8000/estructura_web/actualizar-header-footer/${paginaSeleccionadaId}`
-      : `http://127.0.0.1:8000/estructura_web/actualizar-contenido/${paginaSeleccionadaId}`;
+    body = {
+      porcentaje,
+      descripcion,
+      servicios
+    };
+  } else {
+    if (secciones.length === 0) {
+      Swal.fire({ icon: 'warning', title: 'Atención', text: 'Agrega al menos una sección.' });
+      return;
+    }
 
-    axios.put(endpoint, body, { headers: { 'Content-Type': 'application/json' } })
-      .then(res => {
-        Swal.fire({ icon: 'success', title: '¡Éxito!', text: res.data.message });
-        obtenerPaginas();
-      })
-      .catch(error => {
-        const mensaje = error.response?.data?.detail || 'Error inesperado al guardar cambios.';
-        Swal.fire({ icon: 'error', title: 'Error', text: mensaje });
-      });
+    body = { secciones };
   }
+
+  axios.post(`http://127.0.0.1:8000/estructura_web/guardar-draft/${paginaSeleccionadaId}`, body, {
+    headers: { 'Content-Type': 'application/json' }
+  })
+    .then(res => {
+      Swal.fire({ icon: 'success', title: '¡Guardado como borrador!', text: res.data.message || 'Tu contenido fue enviado a moderación.' });
+      obtenerPaginas();
+    })
+    .catch(error => {
+      const mensaje = error.response?.data?.detail || 'Error inesperado al guardar el borrador.';
+      Swal.fire({ icon: 'error', title: 'Error', text: mensaje });
+    });
+}
 
   function resetearCampos() {
     nombre_seguro = '';
@@ -230,8 +228,8 @@
         </div>
 
       {:else if paginaSeleccionada.toLowerCase().includes('subhome')}
-        <h3 class="subhome-subtitulo">Subhome de Póliza</h3>
-        <div class="campo"><label>Porcentaje de cobertura:</label><input type="number" bind:value={porcentaje} /></div>
+        <h3>Subhome de Póliza</h3>
+        <div class="campo"><label>Porcentaje:</label><input type="number" bind:value={porcentaje} /></div>
         <div class="campo"><label>Descripción:</label><textarea rows="3" bind:value={descripcion}></textarea></div>
 
         <h4>Servicios que ofrece</h4>
@@ -266,11 +264,11 @@
           </div>
         {/each}
         <div class="botones-secciones">
-          <button on:click={() => agregarSeccion('texto')}>+ Texto</button>
-          <button on:click={() => agregarSeccion('imagen')}>+ Imagen</button>
-          <button on:click={() => agregarSeccion('video')}>+ Video</button>
-          <button on:click={() => agregarSeccion('boton')}>+ Botón</button>
-          <button on:click={() => agregarSeccion('tarjeta')}>+ Tarjeta</button>
+          <button on:click={() => agregarSeccion('texto')}>+Texto</button>
+          <button on:click={() => agregarSeccion('imagen')}>+Imagen/carrusel</button>
+          <button on:click={() => agregarSeccion('video')}>+Video/Mapa</button>
+          <button on:click={() => agregarSeccion('boton')}>+Botón</button>
+          <button on:click={() => agregarSeccion('tarjeta')}>+Tarjeta</button>
         </div>
       {/if}
 
@@ -281,7 +279,6 @@
     </div>
   {/if}
 </main>
-
 <style>
   .editar-paginas {
     max-width: 850px;
