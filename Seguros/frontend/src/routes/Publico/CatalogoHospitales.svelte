@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import axios from 'axios';
+  import { API_BASE_URL } from "$lib/api";
 
   let hospitales = [];
   let showModal = false;
@@ -15,7 +16,7 @@
   });
 
   async function obtenerHospitales() {
-    const res = await axios.get('http://127.0.0.1:8000/hospitales/');
+    const res = await axios.get(`${API_BASE_URL}/hospitales/`);
     hospitales = res.data;
   }
 
@@ -43,9 +44,9 @@
     };
 
     if (editarHospital) {
-      await axios.put(`http://127.0.0.1:8000/hospitales/${editarHospital._id}`, data);
+      await axios.put(`${API_BASE_URL}/hospitales/${editarHospital._id}`, data);
     } else {
-      await axios.post("http://127.0.0.1:8000/hospitales/", data);
+      await axios.post(`${API_BASE_URL}/hospitales/`, data);
     }
 
     showModal = false;
@@ -53,7 +54,7 @@
   }
 
   async function eliminarHospital(id) {
-    await axios.delete(`http://127.0.0.1:8000/hospitales/${id}`);
+    await axios.delete(`${API_BASE_URL}/hospitales/${id}`);
     obtenerHospitales();
   }
 </script>

@@ -18,7 +18,6 @@
   {/if}
 </div>
 
-
 <style>
   .citas-nav {
     display: flex;

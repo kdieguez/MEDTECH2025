@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { createEventDispatcher, onMount } from 'svelte';
 import { userRol } from '../store.js';
+import { API_BASE_URL } from "$lib/api";
 
 let nombreSeguro;
 let logoUrl = '';
@@ -9,7 +10,7 @@ let logoUrl = '';
 const dispatch = createEventDispatcher();
 
 onMount(() => {
-  axios.get('http://localhost:8000/estructura_web/por-id/67d655a2f9a7d53085c7359d')
+  axios.get(`${API_BASE_URL}/estructura_web/por-id/67d655a2f9a7d53085c7359d`)
     .then(res => {
       const data = res.data;
       nombreSeguro = data.nombre_seguro;

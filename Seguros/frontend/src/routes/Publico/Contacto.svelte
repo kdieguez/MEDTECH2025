@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import axios from 'axios';
+  import { API_BASE_URL } from "$lib/api";
 
   let data = {
     titulo: '',
@@ -8,7 +9,7 @@
   };
 
   onMount(() => {
-    axios.get('http://127.0.0.1:8000/estructura_web/por-id/67d1359f061ce7f3df2dcc93')
+    axios.get(`${API_BASE_URL}/estructura_web/por-id/67d1359f061ce7f3df2dcc93`)
       .then(res => {
         data = res.data;
         if (!data.secciones) data.secciones = [];

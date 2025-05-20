@@ -2,6 +2,7 @@
   import flatpickr from "flatpickr";
   import "flatpickr/dist/flatpickr.css";
   import { onMount } from "svelte";
+  import { API_BASE_URL } from "$lib/api";
 
   let fechaSeleccionada = "";
   let hospitales = [];
@@ -29,10 +30,10 @@
       }
     });
 
-    const h = await fetch("http://localhost:8000/hospitales");
+    const h = await fetch(`${API_BASE_URL}/hospitales`);
     hospitales = await h.json();
 
-    const s = await fetch("http://localhost:8000/servicios");
+    const s = await fetch(`${API_BASE_URL}/servicios`);
     servicios = await s.json();
   });
 
@@ -80,7 +81,7 @@ console.log("Servicio seleccionado:", servicioSeleccionado);
 console.log("Subcategoría enviada:", servicioSeleccionado?.nombre_subcategoria);
 
 
-    const res = await fetch('http://localhost:8000/citas', {
+    const res = await fetch(`${API_BASE_URL}/citas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(cita)

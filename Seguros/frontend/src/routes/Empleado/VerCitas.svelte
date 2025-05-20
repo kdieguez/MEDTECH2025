@@ -3,7 +3,8 @@
   import "flatpickr/dist/flatpickr.css";
   import Swal from "sweetalert2";
   import { onMount } from "svelte";
-
+  import { API_BASE_URL } from "$lib/api";
+  
   let citas = [];
   let fechaSeleccionada = "";
   let citasDelDia = [];
@@ -17,7 +18,7 @@
   onMount(async () => {
     await cargarCitas();
 
-    const resSub = await fetch("http://localhost:8000/servicios");
+    const resSub = await fetch(`${API_BASE_URL}/servicios`);
     const datos = await resSub.json();
     subcategorias = datos.map(d => ({
       nombre_subcategoria: d.nombre_subcategoria,
@@ -44,7 +45,7 @@
   });
 
   async function cargarCitas() {
-    const res = await fetch("http://localhost:8000/citas");
+    const res = await fetch(`${API_BASE_URL}/citas`);
     citas = await res.json();
     fechasConCitas = new Set(citas.map(c => c.fechaHora.split("T")[0]));
     citasDelDia = fechaSeleccionada
@@ -64,7 +65,7 @@
 
     if (confirmacion.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:8000/citas/${cita._id}`, {
+        const res = await fetch(`${API_BASE_URL}/citas/${cita._id}`, {
           method: "DELETE"
         });
 
@@ -95,7 +96,7 @@
     }
 
     try {
-      const res = await fetch(`http://localhost:8000/citas/${citaEditando._id}`, {
+      const res = await fetch(`${API_BASE_URL}/citas/${citaEditando._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

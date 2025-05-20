@@ -1,11 +1,12 @@
 <script>
   import { onMount } from 'svelte';
   import axios from 'axios';
+  import { API_BASE_URL } from "$lib/api";
 
   let footerTexto = '';
 
   onMount(() => {
-    axios.get('http://127.0.0.1:8000/estructura_web/por-id/67d655a2f9a7d53085c7359d')
+    axios.get(`${API_BASE_URL}/estructura_web/por-id/67d655a2f9a7d53085c7359d`)
       .then(res => {
         const data = res.data;
         footerTexto = data.footer;
