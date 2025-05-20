@@ -63,31 +63,31 @@ public class App {
         app.post("/login", loginController.login);
 
         CitaMedicaController citaController = new CitaMedicaController(new ObjectMapper()
-        .registerModule(new JavaTimeModule())
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)    
-    );
-    app.post("/citas", citaController::registrarCita);
-    app.get("/citas", citaController::obtenerTodasLasCitas);
-    app.get("/citas/horarios-disponibles", citaController::obtenerHorasDisponibles);
-    app.get("/citas/mias", citaController::obtenerMisCitas);
-    app.post("/formulario-cita", citaController::guardarFormularioCita);
-    app.get("/receta/{idCita}", citaController::obtenerDatosReceta);
-    app.post("/receta/{id}/crear", citaController::crearRecetaYRetornarId);
-    app.post("/receta/{id}/guardar-medicamentos", citaController::guardarMedicamentosPorReceta);
-    app.post("/receta/{id}/comentario", citaController::guardarRecetaCompleta);
-    app.get("/formulario-cita/verificar/{id}", citaController::verificarFormularioLlenado);
-    app.get("/formulario-cita/imagenes/{id}", citaController.obtenerImagenesResultados);
-    app.get("/formulario-cita/{id}", citaController::obtenerFormularioCita);
-    app.post("/citas/externa", citaController::registrarCitaExterna);
-    app.delete("/citas/{id}", citaController::eliminarCita);
-    app.put("/citas/{id}", citaController::actualizarCitaExterna);
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        );
+        app.post("/citas", citaController::registrarCita);
+        app.get("/citas", citaController::obtenerTodasLasCitas);
+        app.get("/citas/horarios-disponibles", citaController::obtenerHorasDisponibles);
+        app.get("/citas/mias", citaController::obtenerMisCitas);
+        app.post("/formulario-cita", citaController::guardarFormularioCita);
+        app.get("/receta/{idCita}", citaController::obtenerDatosReceta);
+        app.post("/receta/{id}/crear", citaController::crearRecetaYRetornarId);
+        app.post("/receta/{id}/guardar-medicamentos", citaController::guardarMedicamentosPorReceta);
+        app.post("/receta/{id}/comentario", citaController::guardarRecetaCompleta);
+        app.get("/formulario-cita/verificar/{id}", citaController::verificarFormularioLlenado);
+        app.get("/formulario-cita/imagenes/{id}", citaController.obtenerImagenesResultados);
+        app.get("/formulario-cita/{id}", citaController::obtenerFormularioCita);
+        app.post("/citas/externa", citaController::registrarCitaExterna);
+        app.delete("/citas/{id}", citaController::eliminarCita);
+        app.put("/citas/{id}", citaController::actualizarCitaExterna);
 
-    RecetaCorreoController recetaCorreoController = new RecetaCorreoController();
-    app.post("/receta/enviar-correo", recetaCorreoController::enviarCorreoConPdf);
+        RecetaCorreoController recetaCorreoController = new RecetaCorreoController();
+        app.post("/receta/enviar-correo", recetaCorreoController::enviarCorreoConPdf);
 
-    MedicamentoController medicamentoController = new MedicamentoController(objectMapper);
-    app.post("/medicamentos", medicamentoController::guardarMedicamento);
-    app.get("/medicamentos", medicamentoController::obtenerMedicamentos);
+        MedicamentoController medicamentoController = new MedicamentoController(objectMapper);
+        app.post("/medicamentos", medicamentoController::guardarMedicamento);
+        app.get("/medicamentos", medicamentoController::obtenerMedicamentos);
 
         UsuarioController.addRoutes(app);
         RolController.addRoutes(app);
@@ -98,13 +98,18 @@ public class App {
         HeaderFooterController.register(app, headerFooterService);
 
         PaginaController paginaController = new PaginaController(objectMapper);
-
         app.get("/paginas", paginaController::obtenerTodasLasPaginas);
         app.get("/paginas/{idPagina}/secciones", paginaController::obtenerSeccionesDePagina);
         app.put("/secciones/{idSeccion}", paginaController::actualizarSeccion);
         app.post("/paginas/{idPagina}/secciones", paginaController::agregarSeccion);
         app.delete("/secciones/{idSeccion}", paginaController::eliminarSeccion);
-        
+
+        // MODERACIÓN DE CAMBIOS (nueva funcionalidad)
+        app.post("/cambios", SeccionPendienteController::guardar);
+        app.get("/cambios/pendientes", SeccionPendienteController::listarPendientes);
+        app.get("/cambios/{id}", SeccionPendienteController::obtenerPorId);
+        app.put("/cambios/aprobar/{id}", SeccionPendienteController::aprobar);
+        app.put("/cambios/rechazar/{id}", SeccionPendienteController::rechazar);
 
         app.start(7000);
         System.out.println("Servidor corriendo en: http://localhost:7000");

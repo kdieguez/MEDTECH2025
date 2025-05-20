@@ -22,6 +22,8 @@ import ContactUs from './components/ContactUs';
 import AdministrarSecciones from './components/AdministrarSecciones';
 import FormularioCita from './components/FormularioCita';
 import RecetaMedica from './components/RecetaMedica';
+import ModeracionCambios from './components/ModeracionCambios';
+
 
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(null);
@@ -51,6 +53,7 @@ function App() {
           <Route path="/consultarCitas" element={<VerCitas/>} />
           <Route path="/formularioCita/:idCita" element={<FormularioCita/>} />
           <Route path="/crearReceta/:id" element={<RecetaMedica/>} />
+          <Route path="/moderacion" element={<ModeracionCambios />} />
         </Routes>
       </main>
       <Footer/>

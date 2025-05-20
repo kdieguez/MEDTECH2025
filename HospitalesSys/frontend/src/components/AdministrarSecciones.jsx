@@ -25,7 +25,6 @@ function AdministrarSecciones() {
     orden: 1,
   });
 
-
   useEffect(() => {
     const datosUsuario = localStorage.getItem('usuario');
     if (datosUsuario) {
@@ -35,7 +34,6 @@ function AdministrarSecciones() {
       setAutorizado(false);
     }
   }, []);
-
 
   useEffect(() => {
     if (autorizado) {
@@ -55,11 +53,9 @@ function AdministrarSecciones() {
     }
   }, [paginaSeleccionada]);
 
-
   useEffect(() => {
     cargarSecciones();
   }, [paginaSeleccionada, cargarSecciones]);
-
 
   const manejarCambioNuevaSeccion = (e) => {
     const { name, value } = e.target;
@@ -72,15 +68,26 @@ function AdministrarSecciones() {
   };
 
   const agregarSeccion = () => {
-    axios.post(`http://localhost:7000/paginas/${paginaSeleccionada}/secciones`, nuevaSeccion)
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+    const propuesta = {
+      titulo: nuevaSeccion.titulo,
+      contenido: nuevaSeccion.contenido,
+      imagenUrl: nuevaSeccion.imagenUrl,
+      orden: nuevaSeccion.orden,
+      tipo: "CREACION",
+      pagina: { id: parseInt(paginaSeleccionada) },
+      usuarioSolicitante: { id: usuario.id }
+    };
+
+    axios.post("http://localhost:7000/cambios", propuesta)
       .then(() => {
-        alert('Sección agregada exitosamente');
+        alert("Sección propuesta para aprobación");
         setNuevaSeccion({ titulo: '', contenido: '', imagenUrl: '', orden: 1 });
-        cargarSecciones();
       })
       .catch(error => {
-        console.error('Error al agregar sección:', error);
-        alert('Error al agregar sección.');
+        console.error("Error al proponer sección:", error);
+        alert("Error al proponer sección.");
       });
   };
 
@@ -108,15 +115,27 @@ function AdministrarSecciones() {
   };
 
   const guardarEdicion = (idSeccion) => {
-    axios.put(`http://localhost:7000/secciones/${idSeccion}`, seccionEditada)
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+    const propuesta = {
+      titulo: seccionEditada.titulo,
+      contenido: seccionEditada.contenido,
+      imagenUrl: seccionEditada.imagenUrl,
+      orden: seccionEditada.orden,
+      tipo: "EDICION",
+      pagina: { id: parseInt(paginaSeleccionada) },
+      usuarioSolicitante: { id: usuario.id }
+    };
+
+    axios.post("http://localhost:7000/cambios", propuesta)
       .then(() => {
-        alert('Sección actualizada exitosamente');
+        alert("Cambio enviado para aprobación");
         setModoEdicion(null);
         cargarSecciones();
       })
       .catch(error => {
-        console.error('Error al actualizar sección:', error);
-        alert('Error al actualizar sección.');
+        console.error("Error al enviar cambio:", error);
+        alert("Error al enviar cambio.");
       });
   };
 
@@ -207,7 +226,7 @@ function AdministrarSecciones() {
                       value={seccionEditada.orden}
                       onChange={manejarCambioEditarSeccion}
                     />
-                    <button onClick={() => guardarEdicion(seccion.id)}>Guardar</button>
+                    <button onClick={() => guardarEdicion(seccion.id)}>Enviar Cambio</button>
                     <button onClick={() => setModoEdicion(null)}>Cancelar</button>
                   </>
                 ) : (

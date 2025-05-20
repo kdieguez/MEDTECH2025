@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './css/editarHF.css'; // Si usarás CSS personalizado
+import './css/editarHF.css';
 
 const EditarHeaderFooter = () => {
   const [campos, setCampos] = useState([]);
