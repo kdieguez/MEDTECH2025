@@ -33,6 +33,7 @@
       localStorage.setItem('userRol', data.rol);
       localStorage.setItem('userCorreo', correo);
       localStorage.setItem('userEstado', data.estado);
+      localStorage.setItem('correo', correo);
 
       verificarPerfil();
     })

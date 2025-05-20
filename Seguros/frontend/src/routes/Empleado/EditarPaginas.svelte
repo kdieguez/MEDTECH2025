@@ -79,10 +79,11 @@ function guardarCambios() {
   const esInicio = paginaSeleccionada === "Inicio";
   const esSubhome = paginaSeleccionada.toLowerCase().includes("subhome");
 
+  const autor = localStorage.getItem("correo") || "autor_desconocido";
   let body = {};
 
   if (esHeaderFooter) {
-    body = { nombre_seguro, logo, footer };
+    body = { nombre_seguro, logo, footer, autor };
   } else if (esInicio) {
     if (!bannerFrase && !bannerSubtitulo && secciones.length === 0) {
       Swal.fire({ icon: 'warning', title: 'Atención', text: 'Debes completar al menos una sección o el banner.' });
@@ -100,7 +101,8 @@ function guardarCambios() {
         texto_boton: ctaTexto,
         ruta_boton: ctaRuta
       },
-      secciones
+      secciones,
+      autor
     };
   } else if (esSubhome) {
     if (!porcentaje && !descripcion && servicios.length === 0) {
@@ -111,7 +113,8 @@ function guardarCambios() {
     body = {
       porcentaje,
       descripcion,
-      servicios
+      servicios,
+      autor
     };
   } else {
     if (secciones.length === 0) {
@@ -119,7 +122,7 @@ function guardarCambios() {
       return;
     }
 
-    body = { secciones };
+    body = { secciones, autor };
   }
 
   axios.post(`http://127.0.0.1:8000/estructura_web/guardar-draft/${paginaSeleccionadaId}`, body, {

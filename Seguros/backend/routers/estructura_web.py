@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException, Request
 from database import obtener_coleccion
 from bson import ObjectId
 from datetime import datetime
+from services.envio_correos import enviar_email_rechazo
+
 
 router = APIRouter(
     prefix="/estructura_web",
@@ -162,6 +164,12 @@ async def moderar_draft(id_draft: str, request: Request):
             {"_id": draft_id},
             {"$set": {"estado": "rechazado", "comentario_admin": comentario}}
         )
-        return {"message": "Draft rechazado con comentario."}
+
+        autor = draft.get("autor", None)
+        if autor and autor != "sistema":
+            enviar_email_rechazo(autor, comentario)
+
+        return {"message": "Draft rechazado con comentario y notificación al autor."}
+
     else:
         raise HTTPException(status_code=400, detail="Acción inválida: usar 'aprobar' o 'rechazar'")

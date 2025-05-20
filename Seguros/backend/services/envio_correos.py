@@ -127,3 +127,27 @@ def enviar_email_bienvenida_con_password(destinatario, nombre_usuario, password)
     """)
 
     _enviar_email(msg)
+
+def enviar_email_rechazo(destinatario, comentario_admin):
+    nombre_seguro = obtener_nombre_seguro()
+
+    msg = EmailMessage()
+    msg["Subject"] = f"Tu cambio fue rechazado en {nombre_seguro}"
+    msg["From"] = EMAIL_FROM
+    msg["To"] = destinatario
+
+    msg.set_content(f"""
+    Hola,
+
+    El cambio que propusiste en el sitio de {nombre_seguro} ha sido rechazado por un administrador.
+
+    Comentario del administrador:
+    {comentario_admin or "Sin comentarios."}
+
+    Puedes ingresar de nuevo para editar el contenido y reenviarlo a revisión.
+
+    Saludos,
+    El equipo de {nombre_seguro}
+    """)
+
+    _enviar_email(msg)
