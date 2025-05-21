@@ -6,15 +6,33 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import java.util.List;
 
+/**
+ * Servicio que maneja la creación y gestión de recetas médicas,
+ * incluyendo la asociación con medicamentos recetados y cálculo del total.
+ */
 public class RecetaMedicaService {
 
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * Constructor que inyecta el EntityManager.
+     *
+     * @param entityManager instancia para manejo de persistencia
+     */
     public RecetaMedicaService(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
+    /**
+     * Crea una nueva receta médica asociada a una cita y lista de medicamentos,
+     * calcula el total basado en el precio de los medicamentos y guarda la receta.
+     *
+     * @param idCita       ID de la cita médica asociada
+     * @param medicamentos lista de medicamentos recetados con dosis, frecuencia, etc.
+     * @param anotaciones  anotaciones o comentarios para la receta médica
+     * @return RecetaMedica persistida con ID generado
+     */
     @Transactional
     public RecetaMedica crearReceta(Long idCita, List<MedicamentoRecetado> medicamentos, String anotaciones) {
         CitaMedica cita = entityManager.find(CitaMedica.class, idCita);
@@ -26,7 +44,6 @@ public class RecetaMedicaService {
         receta.setCitaMedica(cita);
         receta.setAnotaciones(anotaciones);
 
-        // Código temporal: HOS-SEG-ID_CITA
         String codigo = "HOS-SEG-" + cita.getId();
         receta.setCodigoReceta(codigo);
 
@@ -45,7 +62,6 @@ public class RecetaMedicaService {
         receta.setMedicamentos(medicamentos);
 
         entityManager.persist(receta);
-        // Medicamentos se guardan automáticamente por cascade
 
         return receta;
     }

@@ -10,18 +10,19 @@ import java.util.List;
 
 /**
  * DAO (Data Access Object) para la entidad {@link CitaMedica}.
- * 
- * Gestiona operaciones de persistencia relacionadas a las citas médicas en la base de datos.
+ * <p>
+ * Encargado de gestionar las operaciones de persistencia y consulta relacionadas a citas médicas.
+ * </p>
  */
 public class CitaMedicaDAO {
 
     /**
-     * EntityManager utilizado para realizar operaciones de persistencia.
+     * EntityManager utilizado para las operaciones de persistencia.
      */
     private final EntityManager em;
 
     /**
-     * Constructor del DAO que recibe un EntityManager.
+     * Constructor que inicializa el DAO con una instancia de EntityManager.
      *
      * @param em instancia de EntityManager
      */
@@ -30,9 +31,9 @@ public class CitaMedicaDAO {
     }
 
     /**
-     * Guarda una nueva cita médica en la base de datos.
+     * Persiste una nueva cita médica en la base de datos.
      *
-     * @param cita objeto {@link CitaMedica} a persistir
+     * @param cita objeto de tipo {@link CitaMedica} a guardar
      */
     public void guardar(CitaMedica cita) {
         em.getTransaction().begin();
@@ -41,12 +42,12 @@ public class CitaMedicaDAO {
     }
 
     /**
-     * Obtiene todas las citas médicas de un doctor para un día específico,
-     * en el horario comprendido entre las 08:00 y las 16:30 horas.
+     * Obtiene todas las citas médicas de un doctor en un día específico,
+     * dentro del horario de atención comprendido entre 08:00 y 16:30 horas.
      *
-     * @param idDoctor ID del doctor
-     * @param dia día para el cual se desean obtener las citas
-     * @return lista de citas médicas encontradas
+     * @param idDoctor ID del doctor a consultar
+     * @param dia fecha para la cual se desean obtener las citas
+     * @return lista de objetos {@link CitaMedica} correspondientes al doctor y fecha indicados
      */
     public List<CitaMedica> obtenerCitasDelDia(Long idDoctor, LocalDate dia) {
         LocalDateTime inicio = dia.atTime(8, 0);

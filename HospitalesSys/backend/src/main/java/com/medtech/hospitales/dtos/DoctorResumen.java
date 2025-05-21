@@ -1,33 +1,28 @@
 package com.medtech.hospitales.dtos;
 
 /**
- * DTO (Data Transfer Object) que representa un resumen de la información básica de un doctor,
- * utilizado principalmente para listados donde no se requiere detalle completo.
+ * DTO (Data Transfer Object) que representa un resumen de la información básica de un doctor.
+ * <p>
+ * Se utiliza principalmente en listados o vistas previas donde no se requiere detalle completo
+ * como especialidades, teléfonos u otros datos extendidos.
+ * </p>
  */
 public class DoctorResumen {
 
-    /**
-     * Identificador único del doctor.
-     */
+    /** Identificador único del doctor. */
     private Long id;
 
-    /**
-     * Nombre del doctor.
-     */
+    /** Nombre del doctor. */
     private String nombre;
 
-    /**
-     * Apellido del doctor.
-     */
+    /** Apellido del doctor. */
     private String apellido;
 
-    /**
-     * URL o referencia de la fotografía del doctor.
-     */
+    /** URL o referencia de la fotografía del doctor. */
     private String fotografia;
 
     /**
-     * Constructor para inicializar un objeto {@link DoctorResumen}.
+     * Constructor para inicializar los datos básicos del doctor.
      *
      * @param id ID del doctor
      * @param nombre nombre del doctor

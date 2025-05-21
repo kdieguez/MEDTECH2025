@@ -15,6 +15,7 @@ public class JWTUtil {
 
     /**
      * Llave secreta utilizada para firmar los tokens JWT.
+     * Generada automáticamente con algoritmo HS256.
      */
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 

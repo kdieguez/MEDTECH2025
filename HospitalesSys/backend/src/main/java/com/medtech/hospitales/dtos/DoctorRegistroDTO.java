@@ -3,38 +3,31 @@ package com.medtech.hospitales.dtos;
 import java.util.List;
 
 /**
- * DTO (Data Transfer Object) utilizado para registrar un nuevo perfil de doctor,
- * incluyendo fotografía, número de colegiado, usuario asociado, teléfonos y especialidades.
+ * DTO (Data Transfer Object) utilizado para registrar un nuevo perfil de doctor en el sistema.
+ * <p>
+ * Contiene información básica del doctor como número de colegiado, fotografía,
+ * usuario asociado, teléfonos de contacto y especialidades médicas.
+ * </p>
  */
 public class DoctorRegistroDTO {
 
-    /**
-     * URL o referencia de la fotografía del doctor.
-     */
+    /** URL o referencia a la fotografía del doctor. */
     private String fotografia;
 
-    /**
-     * Número de colegiado que acredita al doctor.
-     */
+    /** Número de colegiado profesional del doctor. */
     private String numColegiado;
 
-    /**
-     * Identificador del usuario asociado al doctor.
-     */
+    /** ID del usuario previamente creado al que se vincula este perfil de doctor. */
     private Long idUsuario;
 
-    /**
-     * Lista de números telefónicos del doctor.
-     */
+    /** Lista de números telefónicos del doctor. */
     private List<String> telefonos;
 
-    /**
-     * Lista de especialidades médicas asociadas al doctor.
-     */
+    /** Lista de especialidades médicas con detalles de cada una. */
     private List<EspecialidadDTO> especialidades;
 
     /**
-     * Obtiene la fotografía del doctor.
+     * Obtiene la URL de la fotografía del doctor.
      *
      * @return fotografía del doctor
      */
@@ -43,7 +36,7 @@ public class DoctorRegistroDTO {
     }
 
     /**
-     * Establece la fotografía del doctor.
+     * Establece la URL de la fotografía del doctor.
      *
      * @param fotografia fotografía del doctor
      */
@@ -70,7 +63,7 @@ public class DoctorRegistroDTO {
     }
 
     /**
-     * Obtiene el ID del usuario asociado.
+     * Obtiene el ID del usuario al que está vinculado el doctor.
      *
      * @return ID del usuario
      */
@@ -79,7 +72,7 @@ public class DoctorRegistroDTO {
     }
 
     /**
-     * Establece el ID del usuario asociado.
+     * Establece el ID del usuario al que está vinculado el doctor.
      *
      * @param idUsuario ID del usuario
      */
@@ -88,7 +81,7 @@ public class DoctorRegistroDTO {
     }
 
     /**
-     * Obtiene la lista de teléfonos del doctor.
+     * Obtiene la lista de teléfonos asociados al doctor.
      *
      * @return lista de teléfonos
      */
@@ -106,7 +99,7 @@ public class DoctorRegistroDTO {
     }
 
     /**
-     * Obtiene la lista de especialidades médicas del doctor.
+     * Obtiene la lista de especialidades médicas asociadas al doctor.
      *
      * @return lista de especialidades
      */

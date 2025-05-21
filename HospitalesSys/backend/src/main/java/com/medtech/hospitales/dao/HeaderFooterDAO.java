@@ -6,18 +6,19 @@ import java.util.List;
 
 /**
  * DAO (Data Access Object) para la entidad {@link HeaderFooter}.
- * 
- * Permite realizar operaciones de consulta sobre los datos de header y footer del sistema.
+ * <p>
+ * Encargado de gestionar las operaciones de consulta relacionadas con los elementos de encabezado y pie de página del sistema.
+ * </p>
  */
 public class HeaderFooterDAO {
 
     /**
-     * EntityManager utilizado para realizar operaciones de persistencia.
+     * EntityManager utilizado para las operaciones de base de datos.
      */
     private final EntityManager em;
 
     /**
-     * Constructor del DAO que recibe un EntityManager.
+     * Constructor que recibe una instancia de EntityManager para inicializar el DAO.
      *
      * @param em instancia de EntityManager
      */
@@ -28,7 +29,7 @@ public class HeaderFooterDAO {
     /**
      * Obtiene todos los registros de header y footer almacenados en la base de datos.
      *
-     * @return lista de objetos {@link HeaderFooter}
+     * @return lista de objetos {@link HeaderFooter} encontrados
      */
     public List<HeaderFooter> obtenerTodos() {
         return em.createQuery("SELECT hf FROM HeaderFooter hf", HeaderFooter.class)

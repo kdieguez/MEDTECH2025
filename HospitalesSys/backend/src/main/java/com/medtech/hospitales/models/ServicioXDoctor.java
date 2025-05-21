@@ -3,21 +3,24 @@ package com.medtech.hospitales.models;
 import jakarta.persistence.*;
 
 /**
- * Entidad que representa la relación entre un servicio hospitalario y un doctor.
- * Utiliza una clave compuesta {@link ServicioXDoctorId}.
+ * Entidad que representa la relación entre un {@link ServicioHospitalario} y un {@link InfoDoctor}.
+ * <p>
+ * Esta relación indica qué doctores están autorizados o habilitados para prestar un determinado servicio médico.
+ * Se implementa mediante una clave primaria compuesta definida por la clase {@link ServicioXDoctorId}.
+ * </p>
  */
 @Entity
 @Table(name = "SERVICIO_X_DOCTOR")
 public class ServicioXDoctor {
 
     /**
-     * Clave primaria compuesta para la relación servicio-doctor.
+     * Clave primaria compuesta (ID_SERVICIO + ID_INFO_DOCTOR).
      */
     @EmbeddedId
     private ServicioXDoctorId id;
 
     /**
-     * Servicio hospitalario asignado.
+     * Servicio hospitalario relacionado.
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("idServicio")
@@ -25,7 +28,7 @@ public class ServicioXDoctor {
     private ServicioHospitalario servicio;
 
     /**
-     * Doctor que presta el servicio.
+     * Doctor asignado para brindar el servicio.
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("idInfoDoctor")
@@ -38,10 +41,10 @@ public class ServicioXDoctor {
     public ServicioXDoctor() {}
 
     /**
-     * Constructor que asocia un servicio con un doctor.
+     * Constructor que inicializa la relación entre un servicio hospitalario y un doctor.
      *
-     * @param servicio servicio hospitalario
-     * @param doctor doctor asociado
+     * @param servicio el servicio hospitalario asociado
+     * @param doctor el doctor asignado al servicio
      */
     public ServicioXDoctor(ServicioHospitalario servicio, InfoDoctor doctor) {
         this.servicio = servicio;
@@ -49,13 +52,29 @@ public class ServicioXDoctor {
         this.id = new ServicioXDoctorId(servicio.getId(), doctor.getId());
     }
 
-    // Getters y Setters
-    public ServicioXDoctorId getId() { return id; }
-    public void setId(ServicioXDoctorId id) { this.id = id; }
+    // --- Getters y Setters ---
 
-    public ServicioHospitalario getServicio() { return servicio; }
-    public void setServicio(ServicioHospitalario servicio) { this.servicio = servicio; }
+    public ServicioXDoctorId getId() {
+        return id;
+    }
 
-    public InfoDoctor getDoctor() { return doctor; }
-    public void setDoctor(InfoDoctor doctor) { this.doctor = doctor; }
+    public void setId(ServicioXDoctorId id) {
+        this.id = id;
+    }
+
+    public ServicioHospitalario getServicio() {
+        return servicio;
+    }
+
+    public void setServicio(ServicioHospitalario servicio) {
+        this.servicio = servicio;
+    }
+
+    public InfoDoctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(InfoDoctor doctor) {
+        this.doctor = doctor;
+    }
 }

@@ -45,7 +45,6 @@ export default function AgendarCita() {
       .catch(err => console.error("Error al cargar pacientes", err));
   }, []);
 
-  // 🧾 Cargar doctores y servicios
   useEffect(() => {
     axios.get('http://localhost:7000/doctores')
       .then(res => setDoctores(res.data))
@@ -56,7 +55,6 @@ export default function AgendarCita() {
       .catch(err => console.error('Error al cargar servicios', err));
   }, []);
 
-  // 🕒 Cargar horas disponibles
   useEffect(() => {
     if (fechaSeleccionada && doctorSeleccionado) {
       const fecha = fechaSeleccionada.toISOString().split('T')[0];
@@ -76,7 +74,6 @@ export default function AgendarCita() {
     }
   }, [fechaSeleccionada, doctorSeleccionado]);
 
-  // 📂 Cargar subcategorías y doctores por servicio
   useEffect(() => {
     if (servicioSeleccionado) {
       axios.get(`http://localhost:7000/servicios/${servicioSeleccionado}/subcategorias`)
@@ -93,10 +90,8 @@ export default function AgendarCita() {
     }
   }, [servicioSeleccionado, modoSeleccion]);
 
-  // 🚫 Mostrar carga
   if (autorizado === null) return <p>Cargando...</p>;
 
-  // 🚫 Acceso denegado
   if (!autorizado) {
     return (
       <div className="denegado">

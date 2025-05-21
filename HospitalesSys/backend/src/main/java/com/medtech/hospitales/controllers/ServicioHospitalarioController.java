@@ -1,10 +1,7 @@
 package com.medtech.hospitales.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.medtech.hospitales.dtos.ServicioDTO;
-import com.medtech.hospitales.dtos.ServicioRegistroDTO;
-import com.medtech.hospitales.dtos.ServicioSimpleDTO;
-import com.medtech.hospitales.dtos.SubcategoriaDTO;
+import com.medtech.hospitales.dtos.*;
 import com.medtech.hospitales.models.ServicioHospitalario;
 import com.medtech.hospitales.models.ServicioXDoctor;
 import com.medtech.hospitales.models.SubcategoriaServicio;
@@ -15,17 +12,35 @@ import jakarta.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador encargado de gestionar los servicios hospitalarios del sistema,
+ * incluyendo su registro, actualización, listado general, detalles y relación con doctores y subcategorías.
+ */
 public class ServicioHospitalarioController {
 
+    /** Servicio que maneja la lógica de negocio de los servicios hospitalarios. */
     private ServicioHospitalarioService servicioService = null;
+
+    /** Mapper para convertir JSON en objetos Java. */
     private final ObjectMapper mapper = new ObjectMapper();
+
+    /** EntityManager para acceso a la base de datos. */
     private EntityManager entityManager = null;
 
+    /**
+     * Constructor que recibe una instancia de EntityManager para persistencia.
+     *
+     * @param entityManager instancia de EntityManager
+     */
     public ServicioHospitalarioController(EntityManager entityManager) {
         this.entityManager = entityManager;
         this.servicioService = new ServicioHospitalarioService(entityManager);
     }
 
+    /**
+     * Handler que registra un nuevo servicio hospitalario.
+     * <p>Endpoint: POST /servicios</p>
+     */
     public Handler registrarServicio = ctx -> {
         try {
             ServicioRegistroDTO dto = mapper.readValue(ctx.body(), ServicioRegistroDTO.class);
@@ -36,11 +51,19 @@ public class ServicioHospitalarioController {
         }
     };
 
+    /**
+     * Handler que lista todos los servicios hospitalarios registrados.
+     * <p>Endpoint: GET /servicios</p>
+     */
     public Handler listarServicios = ctx -> {
         List<ServicioHospitalario> servicios = servicioService.listarServicios();
         ctx.json(servicios);
     };
 
+    /**
+     * Handler que devuelve el detalle de un servicio hospitalario por su ID.
+     * <p>Endpoint: GET /servicios/{id}</p>
+     */
     public Handler detalleServicio = ctx -> {
         Long id = Long.parseLong(ctx.pathParam("id"));
 
@@ -54,6 +77,10 @@ public class ServicioHospitalarioController {
         ctx.json(servicio);
     };
 
+    /**
+     * Handler que actualiza un servicio hospitalario.
+     * <p>Endpoint: PUT /servicios/{id}</p>
+     */
     public Handler actualizarServicio = ctx -> {
         try {
             Long id = Long.parseLong(ctx.pathParam("id"));
@@ -65,6 +92,10 @@ public class ServicioHospitalarioController {
         }
     };
 
+    /**
+     * Handler que lista los servicios asociados a un doctor específico.
+     * <p>Endpoint: GET /servicios/doctor/{id}</p>
+     */
     public Handler serviciosPorDoctor = ctx -> {
         Long idDoctor = Long.parseLong(ctx.pathParam("id"));
         List<ServicioXDoctor> relaciones = entityManager.createQuery(
@@ -84,6 +115,10 @@ public class ServicioHospitalarioController {
         ctx.json(servicios);
     };
 
+    /**
+     * Handler que lista las subcategorías de un servicio hospitalario.
+     * <p>Endpoint: GET /servicios/{id}/subcategorias</p>
+     */
     public Handler subcategoriasPorServicio = ctx -> {
         Long idServicio = Long.parseLong(ctx.pathParam("id"));
 
@@ -106,6 +141,11 @@ public class ServicioHospitalarioController {
         ctx.json(dtos);
     };
 
+    /**
+     * Handler que devuelve un listado consolidado de servicios y subcategorías
+     * con IDs de doctores relacionados, para ser consumido por el sistema de seguros.
+     * <p>Endpoint: GET /servicios-seguros</p>
+     */
     public Handler serviciosParaSeguros = ctx -> {
         List<Object[]> resultados = entityManager.createNativeQuery(
             "SELECT sh.ID_SERVICIO, sh.NOMBRE_SERVICIO, sh.DESCRIPCION, " +

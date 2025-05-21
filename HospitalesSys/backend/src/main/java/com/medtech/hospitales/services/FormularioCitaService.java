@@ -7,13 +7,31 @@ import com.medtech.hospitales.models.*;
 import com.medtech.hospitales.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Servicio encargado de manejar las operaciones relacionadas con
+ * formularios médicos completados al finalizar una cita.
+ * 
+ * Esto incluye guardar resultados, historial clínico, recetas
+ * médicas y generar documentos detallados para visualización.
+ */
 public class FormularioCitaService {
 
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * Guarda el formulario de cita médica, incluyendo:
+     * - Resultados de exámenes
+     * - Historial clínico (diagnóstico y pasos siguientes)
+     * - Receta médica (si corresponde)
+     *
+     * @param dto Objeto con los datos del formulario a registrar
+     */
     public void guardarFormulario(FormularioCitaDTO dto) {
         EntityManager em = JPAUtil.getEntityManager();
 
@@ -82,6 +100,14 @@ public class FormularioCitaService {
         }
     }
 
+    /**
+     * Genera un objeto RecetaDTO con todos los datos de la receta
+     * asociada a una cita médica, incluyendo paciente, doctor,
+     * medicamentos, diagnóstico y recomendaciones.
+     *
+     * @param idCita ID de la cita médica
+     * @return objeto RecetaDTO con todos los datos detallados
+     */
     public RecetaDTO generarReceta(Long idCita) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -135,20 +161,19 @@ public class FormularioCitaService {
             
             receta.setTituloHospital(tituloTexto);
             // Extraer diagnóstico y siguientes pasos desde HISTORIAL_SERVICIOS
-List<Object[]> historial = em.createQuery("""
-    SELECT h.diagnostico, h.pasosSiguientes
-    FROM HistorialServicio h
-    WHERE h.cita.id = :idCita
-""", Object[].class)
-.setParameter("idCita", idCita)
-.getResultList();
+            List<Object[]> historial = em.createQuery("""
+                SELECT h.diagnostico, h.pasosSiguientes
+                FROM HistorialServicio h
+                WHERE h.cita.id = :idCita
+            """, Object[].class)
+            .setParameter("idCita", idCita)
+            .getResultList();
 
-if (!historial.isEmpty()) {
-    Object[] fila = historial.get(0);
-    receta.setDiagnostico((String) fila[0]);
-    receta.setPasosSiguientes((String) fila[1]);
-}
-
+            if (!historial.isEmpty()) {
+                Object[] fila = historial.get(0);
+                receta.setDiagnostico((String) fila[0]);
+                receta.setPasosSiguientes((String) fila[1]);
+            }
     
             // Datos de receta médica
             RecetaMedica recetaMedica = em.createQuery("""
@@ -189,6 +214,13 @@ if (!historial.isEmpty()) {
         }
     }
 
+    /**
+     * Verifica si ya existe un historial de cita médica guardado
+     * para una cita específica.
+     *
+     * @param idCita ID de la cita médica
+     * @return true si ya existe historial guardado, false si no
+     */
     public boolean existeFormularioParaCita(Long idCita) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -202,7 +234,14 @@ if (!historial.isEmpty()) {
             em.close();
         }
     }
-    
+
+    /**
+     * Obtiene los datos previamente guardados del formulario de una cita,
+     * incluyendo diagnóstico, pasos siguientes y resultados de exámenes.
+     *
+     * @param idCita ID de la cita médica
+     * @return DTO con la información del formulario recuperado
+     */
     public FormularioCitaDTO obtenerFormularioPorCita(Long idCita) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -212,13 +251,13 @@ if (!historial.isEmpty()) {
             .setParameter("idCita", idCita)
             .setMaxResults(1)
             .getSingleResult();
-    
+
             List<String> urls = em.createQuery("""
                 SELECT r.url FROM ResultadoExamen r WHERE r.cita.id = :idCita
             """, String.class)
             .setParameter("idCita", idCita)
             .getResultList();
-    
+
             FormularioCitaDTO dto = new FormularioCitaDTO();
             dto.setDiagnostico(historial.getDiagnostico());
             dto.setPasosSiguientes(historial.getPasosSiguientes());
@@ -228,5 +267,4 @@ if (!historial.isEmpty()) {
             em.close();
         }
     }
-     
 }

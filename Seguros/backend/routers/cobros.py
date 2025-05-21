@@ -1,3 +1,10 @@
+"""
+Módulo de Cobros para el sistema de seguros.
+
+Permite listar usuarios con pólizas activas, renovar pólizas con validación de tarjeta,
+y deshabilitar usuarios manualmente si no han renovado.
+"""
+
 from fastapi import APIRouter, HTTPException, Request
 from database import obtener_coleccion
 from bson import ObjectId
@@ -10,9 +17,14 @@ router = APIRouter(
 
 usuarios_coll = obtener_coleccion("usuarios")
 
-# Obtener usuarios por fecha de vencimiento
 @router.get("/listar")
 async def listar_para_cobros():
+    """
+    Lista usuarios activos con rol 'paciente' ordenados por fecha de vencimiento de póliza.
+
+    Returns:
+        list: Usuarios con nombre, apellido y fecha de vencimiento.
+    """
     usuarios = list(
         usuarios_coll.find(
             {"rol": "paciente", "estado": True},
@@ -23,8 +35,16 @@ async def listar_para_cobros():
         usuario["_id"] = str(usuario["_id"])
     return usuarios
 
-# Renovar póliza
-def validar_tarjeta_luhn(numero):
+def validar_tarjeta_luhn(numero: str) -> bool:
+    """
+    Valida un número de tarjeta usando el algoritmo de Luhn.
+
+    Args:
+        numero (str): Número de tarjeta como string.
+
+    Returns:
+        bool: True si el número es válido, False en caso contrario.
+    """
     total = 0
     reverso = numero[::-1]
 
@@ -40,6 +60,20 @@ def validar_tarjeta_luhn(numero):
 
 @router.put("/renovar/{usuario_id}")
 async def renovar_poliza(usuario_id: str, request: Request):
+    """
+    Renueva la póliza de un usuario, actualizando la fecha de vencimiento
+    y guardando el número de tarjeta si pasa la validación Luhn.
+
+    Args:
+        usuario_id (str): ID del usuario en MongoDB.
+        request (Request): Cuerpo de la solicitud con los campos `nueva_fecha`, `numero_tarjeta`, `cvv`.
+
+    Returns:
+        dict: Mensaje de confirmación.
+
+    Raises:
+        HTTPException: Si faltan datos, la tarjeta es inválida o no se encuentra el usuario.
+    """
     data = await request.json()
     nueva_fecha = data.get("nueva_fecha")
     numero_tarjeta = data.get("numero_tarjeta")
@@ -59,7 +93,7 @@ async def renovar_poliza(usuario_id: str, request: Request):
         {
             "$set": {
                 "fecha_vencimiento": nueva_fecha,
-                "numero_tarjeta": numero_tarjeta  # Se guarda no enmascarado
+                "numero_tarjeta": numero_tarjeta
             }
         }
     )
@@ -69,9 +103,20 @@ async def renovar_poliza(usuario_id: str, request: Request):
 
     return {"message": "Póliza renovada exitosamente."}
 
-# Deshabilitar usuario
 @router.put("/deshabilitar/{usuario_id}")
 async def deshabilitar_usuario(usuario_id: str):
+    """
+    Deshabilita manualmente un usuario, marcando su campo `estado` como `False`.
+
+    Args:
+        usuario_id (str): ID del usuario en MongoDB.
+
+    Returns:
+        dict: Mensaje de éxito.
+
+    Raises:
+        HTTPException: Si el usuario no se encuentra.
+    """
     resultado = usuarios_coll.update_one(
         {"_id": ObjectId(usuario_id)},
         {"$set": {"estado": False}}

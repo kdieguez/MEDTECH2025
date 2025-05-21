@@ -5,29 +5,22 @@ import java.time.LocalDateTime;
 
 /**
  * DTO (Data Transfer Object) utilizado para registrar una nueva cita médica en el sistema.
- * 
- * Contiene la información necesaria como el paciente, doctor, subcategoría y la fecha/hora de la cita.
+ * <p>
+ * Contiene la información mínima requerida: paciente, doctor, subcategoría del servicio y fecha/hora de la cita.
+ * </p>
  */
 public class CitaRegistroDTO {
 
-    /**
-     * Identificador del paciente que solicita la cita.
-     */
+    /** Identificador del paciente que solicita la cita médica. */
     private Long idPaciente;
 
-    /**
-     * Identificador del doctor asignado a la cita.
-     */
+    /** Identificador del doctor asignado a atender la cita. */
     private Long idDoctor;
 
-    /**
-     * Identificador de la subcategoría del servicio solicitado.
-     */
+    /** Identificador de la subcategoría del servicio solicitado. */
     private Long idSubcategoria;
 
-    /**
-     * Fecha y hora programada para la cita médica.
-     */
+    /** Fecha y hora programadas para la cita. */
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime fechaHora;
 
@@ -36,8 +29,8 @@ public class CitaRegistroDTO {
      *
      * @return ID del paciente
      */
-    public Long getIdPaciente() { 
-        return idPaciente; 
+    public Long getIdPaciente() {
+        return idPaciente;
     }
 
     /**
@@ -45,8 +38,8 @@ public class CitaRegistroDTO {
      *
      * @param idPaciente ID del paciente
      */
-    public void setIdPaciente(Long idPaciente) { 
-        this.idPaciente = idPaciente; 
+    public void setIdPaciente(Long idPaciente) {
+        this.idPaciente = idPaciente;
     }
 
     /**
@@ -54,8 +47,8 @@ public class CitaRegistroDTO {
      *
      * @return ID del doctor
      */
-    public Long getIdDoctor() { 
-        return idDoctor; 
+    public Long getIdDoctor() {
+        return idDoctor;
     }
 
     /**
@@ -63,26 +56,26 @@ public class CitaRegistroDTO {
      *
      * @param idDoctor ID del doctor
      */
-    public void setIdDoctor(Long idDoctor) { 
-        this.idDoctor = idDoctor; 
+    public void setIdDoctor(Long idDoctor) {
+        this.idDoctor = idDoctor;
     }
 
     /**
-     * Obtiene el ID de la subcategoría de servicio.
+     * Obtiene el ID de la subcategoría del servicio.
      *
      * @return ID de la subcategoría
      */
-    public Long getIdSubcategoria() { 
-        return idSubcategoria; 
+    public Long getIdSubcategoria() {
+        return idSubcategoria;
     }
 
     /**
-     * Establece el ID de la subcategoría de servicio.
+     * Establece el ID de la subcategoría del servicio.
      *
      * @param idSubcategoria ID de la subcategoría
      */
-    public void setIdSubcategoria(Long idSubcategoria) { 
-        this.idSubcategoria = idSubcategoria; 
+    public void setIdSubcategoria(Long idSubcategoria) {
+        this.idSubcategoria = idSubcategoria;
     }
 
     /**
@@ -90,8 +83,8 @@ public class CitaRegistroDTO {
      *
      * @return fecha y hora de la cita
      */
-    public LocalDateTime getFechaHora() { 
-        return fechaHora; 
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
     }
 
     /**
@@ -99,7 +92,7 @@ public class CitaRegistroDTO {
      *
      * @param fechaHora fecha y hora de la cita
      */
-    public void setFechaHora(LocalDateTime fechaHora) { 
-        this.fechaHora = fechaHora; 
+    public void setFechaHora(LocalDateTime fechaHora) {
+        this.fechaHora = fechaHora;
     }
 }

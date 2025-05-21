@@ -1,23 +1,31 @@
-from fastapi import APIRouter, HTTPException, Query
+"""
+Módulo de proxy para obtener los servicios hospitalarios desde el sistema de hospitales.
+
+Este endpoint actúa como intermediario para consultar servicios médicos ofrecidos por hospitales
+desde el sistema de seguros.
+"""
+
+from fastapi import APIRouter, HTTPException
 import httpx
-from database import obtener_coleccion  # asegúrate de tener esto
 
 router = APIRouter()
 
-hospitales = obtener_coleccion("hospitales")
+URL_BACKEND_HOSPITAL = "http://localhost:7000"
 
 @router.get("/servicios-hospitalarios")
-async def obtener_servicios_hospitalarios(hospital: str = Query(..., description="Nombre del hospital")):
+async def obtener_servicios_hospitalarios():
+    """
+    Consulta los servicios hospitalarios disponibles en el sistema de hospitales.
+
+    Returns:
+        list: Lista de servicios hospitalarios disponibles.
+
+    Raises:
+        HTTPException: Si hay un error HTTP desde el hospital o falla general de conexión.
+    """
     try:
-        # Buscar la URL del hospital en Mongo
-        info_hospital = hospitales.find_one({"nombre": hospital})
-        if not info_hospital or "url_backend" not in info_hospital:
-            raise HTTPException(status_code=404, detail="Hospital no encontrado o sin backend configurado")
-
-        url = info_hospital["url_backend"].rstrip("/")
-
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{url}/servicios-hospitalarios")
+            response = await client.get(f"{URL_BACKEND_HOSPITAL}/servicios-hospitalarios")
             response.raise_for_status()
             return response.json()
     except httpx.HTTPStatusError as e:

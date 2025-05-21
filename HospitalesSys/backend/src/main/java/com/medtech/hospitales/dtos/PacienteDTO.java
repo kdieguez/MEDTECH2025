@@ -1,29 +1,24 @@
 package com.medtech.hospitales.dtos;
 
 /**
- * DTO (Data Transfer Object) que representa la información básica de un paciente,
- * incluyendo su nombre, apellido y documento de identificación.
+ * DTO (Data Transfer Object) que representa la información básica de un paciente.
+ * <p>
+ * Contiene datos esenciales como nombre, apellido, documento de identificación
+ * e identificador único, útil para listados o formularios donde no se requiere el perfil completo.
+ * </p>
  */
 public class PacienteDTO {
 
-    /**
-     * Identificador único del paciente.
-     */
+    /** Identificador único del paciente. */
     private Long idPaciente;
 
-    /**
-     * Nombre del paciente.
-     */
+    /** Nombre del paciente. */
     private String nombre;
 
-    /**
-     * Apellido del paciente.
-     */
+    /** Apellido del paciente. */
     private String apellido;
 
-    /**
-     * Documento de identificación del paciente (por ejemplo, DPI o pasaporte).
-     */
+    /** Documento de identificación del paciente (ej. DPI, pasaporte). */
     private String documentoIdentificacion;
 
     /**

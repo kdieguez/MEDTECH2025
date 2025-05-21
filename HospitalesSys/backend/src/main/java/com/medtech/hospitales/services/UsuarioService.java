@@ -280,37 +280,37 @@ public class UsuarioService {
      * @param id ID del usuario.
      * @throws MessagingException en caso de error de correo.
      */
-public void activarUsuario(Long id) throws MessagingException {
-    EntityManager em = emf.createEntityManager();
-    try {
-        Usuario u = em.find(Usuario.class, id);
-        if (u != null && u.getHabilitado() == 0) {
-            em.getTransaction().begin();
-            u.setHabilitado(1);
-            em.merge(u);
-            em.getTransaction().commit();
+    public void activarUsuario(Long id) throws MessagingException {
+        EntityManager em = emf.createEntityManager();
+        try {
+            Usuario u = em.find(Usuario.class, id);
+            if (u != null && u.getHabilitado() == 0) {
+                em.getTransaction().begin();
+                u.setHabilitado(1);
+                em.merge(u);
+                em.getTransaction().commit();
 
-            // Buscar nombre del rol desde la tabla de roles
-            String nombreRol = em.createQuery(
-                "SELECT r.nombre FROM Rol r WHERE r.id = :idRol", String.class)
-                .setParameter("idRol", u.getIdRol())
-                .getSingleResult();
+                // Buscar nombre del rol desde la tabla de roles
+                String nombreRol = em.createQuery(
+                    "SELECT r.nombreRol FROM Rol r WHERE r.id = :idRol", String.class)
+                    .setParameter("idRol", u.getIdRol())
+                    .getSingleResult();
 
-            if (nombreRol.equalsIgnoreCase("paciente")) {
-                CorreoUtils.enviarCorreoBienvenidaPacienteConContrasena(
-                    u.getEmail(),
-                    u.getNombre() + " " + u.getApellido(),
-                    u.getPassword() // asegúrate que aún no esté hasheado
-                );
-            } else {
-                String msg = "¡Hola " + u.getNombre() + "!\n\nTu cuenta ha sido activada y ya puedes ingresar al sistema.";
-                CorreoUtils.enviarCorreo(u.getEmail(), "Tu cuenta ha sido activada", msg);
+                if ("paciente".equalsIgnoreCase(nombreRol)) {
+                    CorreoUtils.enviarCorreoBienvenidaPacienteConContrasena(
+                        u.getEmail(),
+                        u.getNombre() + " " + u.getApellido(),
+                        u.getPassword() // asegúrate que aún no esté hasheado
+                    );
+                } else {
+                    String msg = "¡Hola " + u.getNombre() + "!\n\nTu cuenta ha sido activada y ya puedes ingresar al sistema.";
+                    CorreoUtils.enviarCorreo(u.getEmail(), "Tu cuenta ha sido activada", msg);
+                }
             }
+        } finally {
+            em.close();
         }
-    } finally {
-        em.close();
     }
-}
 
     /**
      * Desactiva un usuario y envía correo de notificación.
