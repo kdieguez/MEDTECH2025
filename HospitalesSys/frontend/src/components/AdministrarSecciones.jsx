@@ -124,7 +124,8 @@ function AdministrarSecciones() {
       orden: seccionEditada.orden,
       tipo: "EDICION",
       pagina: { id: parseInt(paginaSeleccionada) },
-      usuarioSolicitante: { id: usuario.id }
+      usuarioSolicitante: { id: usuario.id },
+      idSeccionOriginal: idSeccion
     };
 
     axios.post("http://localhost:7000/cambios", propuesta)
@@ -152,6 +153,18 @@ function AdministrarSecciones() {
       </div>
     );
   }
+
+  // 🔍 Filtro para mostrar solo secciones únicas
+  const seccionesUnicas = secciones.reduce((acc, actual) => {
+    const yaExiste = acc.find(sec =>
+      sec.titulo === actual.titulo &&
+      sec.contenido === actual.contenido &&
+      sec.imagenUrl === actual.imagenUrl &&
+      sec.orden === actual.orden
+    );
+    if (!yaExiste) acc.push(actual);
+    return acc;
+  }, []);
 
   return (
     <div className="admin-secciones-container">
@@ -200,8 +213,8 @@ function AdministrarSecciones() {
           <button onClick={agregarSeccion}>Agregar Sección</button>
 
           <h3>Secciones Actuales</h3>
-          {secciones.length > 0 ? (
-            secciones.map(seccion => (
+          {seccionesUnicas.length > 0 ? (
+            seccionesUnicas.map(seccion => (
               <div key={seccion.id} className="seccion-item">
                 {modoEdicion === seccion.id ? (
                   <>

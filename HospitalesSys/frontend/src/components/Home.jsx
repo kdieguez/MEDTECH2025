@@ -18,14 +18,25 @@ function Home() {
       });
   }, []);
 
+  const seccionesUnicas = secciones.reduce((acc, actual) => {
+    const yaExiste = acc.find(sec =>
+      sec.titulo === actual.titulo &&
+      sec.contenido === actual.contenido &&
+      sec.imagenUrl === actual.imagenUrl &&
+      sec.orden === actual.orden
+    );
+    if (!yaExiste) acc.push(actual);
+    return acc;
+  }, []);
+
   if (loading) {
     return <p>Cargando contenido...</p>;
   }
 
   return (
     <div className="home-container">
-      {secciones.length > 0 ? (
-        secciones.map(seccion => (
+      {seccionesUnicas.length > 0 ? (
+        seccionesUnicas.map(seccion => (
           <div key={seccion.id} className="seccion-home">
             <h2>{seccion.titulo}</h2>
             <div dangerouslySetInnerHTML={{ __html: seccion.contenido }} />

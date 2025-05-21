@@ -52,6 +52,9 @@ public class SeccionPendiente {
     @Column(name = "COMENTARIO_RECHAZO", length = 500)
     private String comentarioRechazo;
 
+    @Column(name = "ID_SECCION_ORIGINAL")
+    private Long idSeccionOriginal;
+
     // Getters y Setters
 
     public Long getId() {
@@ -152,5 +155,13 @@ public class SeccionPendiente {
 
     public void setComentarioRechazo(String comentarioRechazo) {
         this.comentarioRechazo = comentarioRechazo;
+    }
+
+    public Long getIdSeccionOriginal() {
+        return idSeccionOriginal;
+    }
+
+    public void setIdSeccionOriginal(Long idSeccionOriginal) {
+        this.idSeccionOriginal = idSeccionOriginal;
     }
 }

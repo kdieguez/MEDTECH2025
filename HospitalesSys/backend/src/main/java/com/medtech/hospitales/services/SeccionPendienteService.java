@@ -43,11 +43,39 @@ public class SeccionPendienteService {
         try {
             em.getTransaction().begin();
             SeccionPendiente sp = em.find(SeccionPendiente.class, id);
+
             if (sp != null) {
                 sp.setEstadoAprobacion("APROBADO");
                 sp.setFechaAprobacion(new java.sql.Timestamp(System.currentTimeMillis()));
                 sp.setUsuarioAprobador(em.getReference(com.medtech.hospitales.models.Usuario.class, idAprobador));
+
+                if ("EDICION".equalsIgnoreCase(sp.getTipo()) && sp.getIdSeccionOriginal() != null) {
+                    com.medtech.hospitales.models.SeccionPagina original = em.find(
+                        com.medtech.hospitales.models.SeccionPagina.class,
+                        sp.getIdSeccionOriginal()
+                    );
+                    if (original != null) {
+                        em.remove(original);
+                    }
+
+                    com.medtech.hospitales.models.SeccionPagina nueva = new com.medtech.hospitales.models.SeccionPagina();
+                    nueva.setPagina(sp.getPagina());
+                    nueva.setTitulo(sp.getTitulo());
+                    nueva.setContenido(sp.getContenido());
+                    nueva.setImagenUrl(sp.getImagenUrl());
+                    nueva.setOrden(sp.getOrden());
+                    em.persist(nueva);
+                } else {
+                    com.medtech.hospitales.models.SeccionPagina nueva = new com.medtech.hospitales.models.SeccionPagina();
+                    nueva.setPagina(sp.getPagina());
+                    nueva.setTitulo(sp.getTitulo());
+                    nueva.setContenido(sp.getContenido());
+                    nueva.setImagenUrl(sp.getImagenUrl());
+                    nueva.setOrden(sp.getOrden());
+                    em.persist(nueva);
+                }
             }
+
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -65,7 +93,7 @@ public class SeccionPendienteService {
                 sp.setUsuarioAprobador(em.getReference(com.medtech.hospitales.models.Usuario.class, idAprobador));
                 sp.setComentarioRechazo(comentario);
 
-                // Enviar correo al solicitante
+                // Enviar correo
                 String correoDestino = sp.getUsuarioSolicitante().getEmail();
                 String nombreUsuario = sp.getUsuarioSolicitante().getNombre();
                 String nombrePagina = sp.getPagina().getNombre();
@@ -78,7 +106,7 @@ public class SeccionPendienteService {
                     <p>Tu propuesta para la sección <strong>%s</strong> en la página <strong>%s</strong> ha sido <span style='color:red;'>rechazada</span>.</p>
                     <p><strong>Motivo del rechazo:</strong> %s</p>
                     <p>Puedes corregir tu propuesta y volver a enviarla desde el sistema.</p>
-                    <p>Saludos,<br>Equipo MEDTECH</p>
+                    <p>Saludos,<br>Equipo Hospitales La Paz</p>
                     """.formatted(nombreUsuario, titulo, nombrePagina, comentario);
 
                 CorreoUtils.enviarCorreoHtml(correoDestino, asunto, cuerpo);
