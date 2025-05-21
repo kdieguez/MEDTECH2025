@@ -16,16 +16,14 @@ export default function VerCitas() {
     const { id, rol, cargo } = datosUsuario;
 
     if (rol === 2 && cargo === 1) {
-      // Doctor
       axios.get(`http://localhost:7000/citas/mias?idUsuario=${id}`)
         .then(res => {
           setCitas(res.data);
           setMostrarDoctor(false);
-          setEsDoctor(true); // 💬 Marcar que es doctor
+          setEsDoctor(true);
         })
         .catch(err => console.error('Error al cargar citas del doctor', err));
     } else {
-      // Admin o secretaria
       axios.get('http://localhost:7000/citas')
         .then(res => {
           setCitas(res.data);

@@ -4,13 +4,15 @@ import com.medtech.hospitales.models.Usuario;
 
 /**
  * DTO (Data Transfer Object) que extiende {@link Usuario} para incluir
- * el identificador del cargo asociado al usuario.
+ * el identificador del cargo asignado al usuario dentro del hospital.
+ * <p>
+ * Se utiliza en contextos donde es necesario representar tanto los datos del usuario
+ * como el cargo que ocupa en la institución (ej. doctor, administrativo, etc.).
+ * </p>
  */
 public class UsuarioConCargo extends Usuario {
 
-    /**
-     * Identificador del cargo asignado al usuario.
-     */
+    /** Identificador del cargo asignado al usuario. */
     private Integer idCargo;
 
     /**

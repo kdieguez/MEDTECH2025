@@ -2,12 +2,13 @@ package com.medtech.hospitales.dtos;
 
 /**
  * DTO (Data Transfer Object) utilizado para la creación de una nueva especialidad médica en el sistema.
+ * <p>
+ * Contiene únicamente el nombre de la especialidad a registrar.
+ * </p>
  */
 public class NuevaEspecialidadDTO {
 
-    /**
-     * Nombre de la nueva especialidad.
-     */
+    /** Nombre de la nueva especialidad médica. */
     private String nombre;
 
     /**

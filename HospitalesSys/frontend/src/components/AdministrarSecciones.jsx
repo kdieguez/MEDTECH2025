@@ -154,7 +154,7 @@ function AdministrarSecciones() {
     );
   }
 
-  // 🔍 Filtro para mostrar solo secciones únicas
+  //Filtro para mostrar solo secciones únicas
   const seccionesUnicas = secciones.reduce((acc, actual) => {
     const yaExiste = acc.find(sec =>
       sec.titulo === actual.titulo &&

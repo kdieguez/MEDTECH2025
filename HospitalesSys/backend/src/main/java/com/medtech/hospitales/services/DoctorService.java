@@ -10,28 +10,37 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Servicio que maneja las operaciones relacionadas con el registro de información profesional de doctores.
+ * Servicio encargado de gestionar las operaciones relacionadas con
+ * el registro y manejo de la información profesional de doctores en el sistema hospitalario.
+ * 
+ * Incluye la creación del perfil del doctor, sus teléfonos y especialidades médicas.
  */
 public class DoctorService {
 
     /**
-     * EntityManager para operaciones de persistencia.
+     * EntityManager utilizado para realizar las operaciones de persistencia.
      */
     private final EntityManager entityManager;
 
     /**
-     * Constructor del servicio de doctores.
+     * Constructor del servicio, recibe el EntityManager para conexión a la base de datos.
      *
-     * @param entityManager EntityManager para la conexión a la base de datos
+     * @param entityManager instancia de EntityManager para persistencia
      */
     public DoctorService(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
     /**
-     * Registra el perfil profesional de un doctor, incluyendo teléfonos y especialidades.
+     * Registra el perfil profesional de un doctor, incluyendo:
+     * - Fotografía y número de colegiado.
+     * - Asociación con un usuario existente.
+     * - Lista de teléfonos de contacto.
+     * - Lista de especialidades médicas, permitiendo crear nuevas si es necesario.
      *
-     * @param dto Objeto DTO con los datos del doctor a registrar.
+     * @param dto Objeto DTO con los datos del doctor para registro.
+     * @throws IllegalArgumentException si el usuario no existe o alguna especialidad es inválida.
+     * @throws RuntimeException en caso de errores en la persistencia.
      */
     public void registrarPerfilDoctor(DoctorRegistroDTO dto) {
         EntityTransaction transaction = entityManager.getTransaction();

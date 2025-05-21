@@ -12,7 +12,6 @@
   onMount(async () => {
     correo = localStorage.getItem('userCorreo');
 
-    // Consultar el nombre
     try {
       const response = await axios.get(`${API_BASE_URL}/usuarios/perfil/${correo}`);
       nombre = response.data.usuario.nombre;

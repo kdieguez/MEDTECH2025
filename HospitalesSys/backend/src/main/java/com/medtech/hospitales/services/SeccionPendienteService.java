@@ -8,8 +8,17 @@ import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
+/**
+ * Servicio que gestiona los cambios pendientes en las secciones de páginas,
+ * incluyendo guardado, listado, aprobación, rechazo y notificaciones por correo.
+ */
 public class SeccionPendienteService {
 
+    /**
+     * Guarda un cambio pendiente en la base de datos.
+     *
+     * @param seccion Objeto SeccionPendiente con los datos a guardar.
+     */
     public void guardarCambio(SeccionPendiente seccion) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -21,6 +30,11 @@ public class SeccionPendienteService {
         }
     }
 
+    /**
+     * Lista todos los cambios pendientes que están en estado "PENDIENTE".
+     *
+     * @return Lista de SeccionPendiente pendientes.
+     */
     public List<SeccionPendiente> listarPendientes() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -37,7 +51,13 @@ public class SeccionPendienteService {
         }
     }
 
-
+    /**
+     * Aprueba un cambio pendiente, actualizando o creando la sección correspondiente.
+     * También asigna la fecha y usuario aprobador.
+     *
+     * @param id ID del cambio pendiente a aprobar.
+     * @param idAprobador ID del usuario que aprueba el cambio.
+     */
     public void aprobarCambio(Long id, Long idAprobador) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -57,23 +77,14 @@ public class SeccionPendienteService {
                     if (original != null) {
                         em.remove(original);
                     }
-
-                    com.medtech.hospitales.models.SeccionPagina nueva = new com.medtech.hospitales.models.SeccionPagina();
-                    nueva.setPagina(sp.getPagina());
-                    nueva.setTitulo(sp.getTitulo());
-                    nueva.setContenido(sp.getContenido());
-                    nueva.setImagenUrl(sp.getImagenUrl());
-                    nueva.setOrden(sp.getOrden());
-                    em.persist(nueva);
-                } else {
-                    com.medtech.hospitales.models.SeccionPagina nueva = new com.medtech.hospitales.models.SeccionPagina();
-                    nueva.setPagina(sp.getPagina());
-                    nueva.setTitulo(sp.getTitulo());
-                    nueva.setContenido(sp.getContenido());
-                    nueva.setImagenUrl(sp.getImagenUrl());
-                    nueva.setOrden(sp.getOrden());
-                    em.persist(nueva);
                 }
+                com.medtech.hospitales.models.SeccionPagina nueva = new com.medtech.hospitales.models.SeccionPagina();
+                nueva.setPagina(sp.getPagina());
+                nueva.setTitulo(sp.getTitulo());
+                nueva.setContenido(sp.getContenido());
+                nueva.setImagenUrl(sp.getImagenUrl());
+                nueva.setOrden(sp.getOrden());
+                em.persist(nueva);
             }
 
             em.getTransaction().commit();
@@ -82,6 +93,13 @@ public class SeccionPendienteService {
         }
     }
 
+    /**
+     * Rechaza un cambio pendiente y envía un correo al solicitante con el motivo.
+     *
+     * @param id ID del cambio pendiente a rechazar.
+     * @param idAprobador ID del usuario que rechaza el cambio.
+     * @param comentario Comentario que indica el motivo del rechazo.
+     */
     public void rechazarCambio(Long id, Long idAprobador, String comentario) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -93,7 +111,6 @@ public class SeccionPendienteService {
                 sp.setUsuarioAprobador(em.getReference(com.medtech.hospitales.models.Usuario.class, idAprobador));
                 sp.setComentarioRechazo(comentario);
 
-                // Enviar correo
                 String correoDestino = sp.getUsuarioSolicitante().getEmail();
                 String nombreUsuario = sp.getUsuarioSolicitante().getNombre();
                 String nombrePagina = sp.getPagina().getNombre();
@@ -120,6 +137,12 @@ public class SeccionPendienteService {
         }
     }
 
+    /**
+     * Obtiene un cambio pendiente por su ID.
+     *
+     * @param id ID del cambio pendiente
+     * @return Objeto SeccionPendiente o null si no existe.
+     */
     public SeccionPendiente obtenerPorId(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

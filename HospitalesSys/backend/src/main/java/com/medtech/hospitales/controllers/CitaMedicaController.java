@@ -1,42 +1,51 @@
 package com.medtech.hospitales.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.medtech.hospitales.dtos.CitaRegistroDTO;
-import com.medtech.hospitales.dtos.FormularioCitaDTO;
-import com.medtech.hospitales.dtos.CitaDTO;
-import com.medtech.hospitales.dtos.CitaExternaDTO;
-import com.medtech.hospitales.dtos.CitaUpdateDTO;
+import com.medtech.hospitales.dtos.*;
+import com.medtech.hospitales.models.CitaMedica;
+import com.medtech.hospitales.models.RecetaMedica;
 import com.medtech.hospitales.services.CitaMedicaService;
 import com.medtech.hospitales.services.FormularioCitaService;
 import com.medtech.hospitales.services.RecetaMedicaCompletaService;
 import com.medtech.hospitales.utils.JPAUtil;
-import com.medtech.hospitales.dtos.MedicamentoRecetadoDTO;
-import com.medtech.hospitales.models.CitaMedica;
-import com.medtech.hospitales.models.RecetaMedica;
-import io.javalin.http.Handler;
 import io.javalin.http.Context;
+import io.javalin.http.Handler;
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.sql.Timestamp;
 
+/**
+ * Controlador encargado de gestionar todas las operaciones relacionadas con las citas médicas del hospital.
+ * Incluye registro, consulta, eliminación, y generación de formularios y recetas.
+ * Utiliza servicios para la lógica de negocio y Javalin para el manejo de peticiones HTTP.
+ */
 public class CitaMedicaController {
 
     private final CitaMedicaService service = new CitaMedicaService();
     private final ObjectMapper objectMapper;
     private final RecetaMedicaCompletaService recetaService = new RecetaMedicaCompletaService();
 
+    /**
+     * Constructor del controlador.
+     *
+     * @param objectMapper instancia para mapear JSON a objetos Java.
+     */
     public CitaMedicaController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Registra una nueva cita médica desde una petición externa (como seguros).
+     *
+     * @param ctx Contexto HTTP con el body JSON de tipo CitaExternaDTO.
+     */
     public void registrarCita(Context ctx) {
         try {
             CitaExternaDTO dto = objectMapper.readValue(ctx.body(), CitaExternaDTO.class);
-Long idCita = service.registrarCitaExterna(dto);
-ctx.status(201).json(Map.of("idCita", idCita));
+            Long idCita = service.registrarCitaExterna(dto);
+            ctx.status(201).json(Map.of("idCita", idCita));
         } catch (RuntimeException ex) {
             ctx.status(400).json(Map.of("error", ex.getMessage()));
         } catch (Exception e) {
@@ -45,6 +54,12 @@ ctx.status(201).json(Map.of("idCita", idCita));
         }
     }
 
+    /**
+     * Obtiene las horas disponibles para un doctor en una fecha dada.
+     * Requiere parámetros idDoctor y fecha.
+     *
+     * @param ctx Contexto HTTP.
+     */
     public void obtenerHorasDisponibles(Context ctx) {
         try {
             Long idDoctor = Long.parseLong(ctx.queryParam("idDoctor"));
@@ -57,6 +72,11 @@ ctx.status(201).json(Map.of("idCita", idCita));
         }
     }
 
+    /**
+     * Devuelve todas las citas médicas registradas.
+     *
+     * @param ctx Contexto HTTP.
+     */
     public void obtenerTodasLasCitas(Context ctx) {
         try {
             List<CitaDTO> citas = service.obtenerTodasLasCitas();
@@ -67,6 +87,12 @@ ctx.status(201).json(Map.of("idCita", idCita));
         }
     }
 
+    /**
+     * Devuelve todas las citas de un doctor.
+     * Requiere parámetro idUsuario.
+     *
+     * @param ctx Contexto HTTP.
+     */
     public void obtenerMisCitas(Context ctx) {
         try {
             Long idUsuario = Long.parseLong(ctx.queryParam("idUsuario"));
@@ -78,6 +104,11 @@ ctx.status(201).json(Map.of("idCita", idCita));
         }
     }
 
+    /**
+     * Guarda el formulario médico para una cita, incluyendo diagnóstico y pasos a seguir.
+     *
+     * @param ctx Contexto HTTP con el cuerpo JSON de FormularioCitaDTO.
+     */
     public void guardarFormularioCita(Context ctx) {
         try {
             FormularioCitaDTO dto = objectMapper.readValue(ctx.body(), FormularioCitaDTO.class);
@@ -89,6 +120,11 @@ ctx.status(201).json(Map.of("idCita", idCita));
         }
     }
 
+    /**
+     * Genera y retorna los datos para la receta médica de una cita.
+     *
+     * @param ctx Contexto HTTP con path param idCita.
+     */
     public void obtenerDatosReceta(Context ctx) {
         try {
             Long idCita = Long.parseLong(ctx.pathParam("idCita"));
@@ -100,6 +136,11 @@ ctx.status(201).json(Map.of("idCita", idCita));
         }
     }
 
+    /**
+     * Guarda medicamentos recetados en una receta médica.
+     *
+     * @param ctx Contexto HTTP con path param id y arreglo JSON de MedicamentoRecetadoDTO.
+     */
     public void guardarMedicamentosPorReceta(Context ctx) {
         try {
             Long idRM = Long.parseLong(ctx.pathParam("id"));
@@ -112,6 +153,11 @@ ctx.status(201).json(Map.of("idCita", idCita));
         }
     }
 
+    /**
+     * Guarda una receta médica completa para una cita con comentario.
+     *
+     * @param ctx Contexto HTTP con path param id y query param comentario.
+     */
     public void guardarRecetaCompleta(Context ctx) {
         try {
             Long idCita = Long.parseLong(ctx.pathParam("id"));
@@ -129,12 +175,15 @@ ctx.status(201).json(Map.of("idCita", idCita));
         }
     }
 
+    /**
+     * Crea una receta médica vacía si no existe y retorna su ID.
+     *
+     * @param ctx Contexto HTTP con path param id.
+     */
     public void crearRecetaYRetornarId(Context ctx) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             Long idCita = Long.parseLong(ctx.pathParam("id"));
-
-            // Verificar si ya existe receta
             RecetaMedica existente = em.createQuery("""
                 SELECT r FROM RecetaMedica r
                 WHERE r.citaMedica.id = :idCita
@@ -150,10 +199,7 @@ ctx.status(201).json(Map.of("idCita", idCita));
                 return;
             }
 
-
-            // Crear nueva receta vacía
             em.getTransaction().begin();
-
             CitaMedica cita = em.find(CitaMedica.class, idCita);
             if (cita == null) {
                 ctx.status(404).json(Map.of("error", "Cita médica no encontrada"));
@@ -170,7 +216,6 @@ ctx.status(201).json(Map.of("idCita", idCita));
             em.getTransaction().commit();
 
             ctx.status(201).json(Map.of("idRM", nueva.getId()));
-
         } catch (Exception e) {
             if (em.getTransaction().isActive()) em.getTransaction().rollback();
             e.printStackTrace();
@@ -180,6 +225,11 @@ ctx.status(201).json(Map.of("idCita", idCita));
         }
     }
 
+    /**
+     * Verifica si ya existe un formulario médico asociado a la cita.
+     *
+     * @param ctx Contexto HTTP con path param id.
+     */
     public void verificarFormularioLlenado(Context ctx) {
         try {
             Long idCita = Long.parseLong(ctx.pathParam("id"));
@@ -191,6 +241,9 @@ ctx.status(201).json(Map.of("idCita", idCita));
         }
     }
 
+    /**
+     * Handler que obtiene las imágenes de resultados de examen de una cita médica.
+     */
     public Handler obtenerImagenesResultados = ctx -> {
         Long idCita = Long.parseLong(ctx.pathParam("id"));
         EntityManager em = JPAUtil.getEntityManager();
@@ -209,13 +262,18 @@ ctx.status(201).json(Map.of("idCita", idCita));
 
             ctx.json(json);
         } catch (Exception e) {
-            e.printStackTrace(); // esto imprimirá el error real
+            e.printStackTrace();
             ctx.status(500).json(Map.of("error", "Error al obtener imágenes"));
         } finally {
             em.close();
         }
     };
 
+    /**
+     * Obtiene el formulario médico asociado a una cita.
+     *
+     * @param ctx Contexto HTTP con path param id.
+     */
     public void obtenerFormularioCita(Context ctx) {
         try {
             Long idCita = Long.parseLong(ctx.pathParam("id"));
@@ -227,63 +285,73 @@ ctx.status(201).json(Map.of("idCita", idCita));
         }
     }
 
-public void registrarCitaExterna(Context ctx) {
-    try {
-        CitaExternaDTO dto = objectMapper.readValue(ctx.body(), CitaExternaDTO.class);
-
-        System.out.println("Subcategoría recibida desde seguros: [" + dto.getNombreSubcategoria() + "]");
-
-        Long idCita = service.registrarCitaExterna(dto);
-        ctx.status(201).json(Map.of("idCita", idCita)); 
-    } catch (RuntimeException ex) {
-        ctx.status(409).json(Map.of("error", ex.getMessage()));
-    } catch (Exception e) {
-        e.printStackTrace();
-        ctx.status(500).json(Map.of("error", "Error interno al registrar la cita externa"));
-    }
-}
-
-
-public void eliminarCita(Context ctx) {
-    Long id = Long.parseLong(ctx.pathParam("id"));
-    EntityManager em = JPAUtil.getEntityManager();
-    try {
-        em.getTransaction().begin();
-        CitaMedica cita = em.find(CitaMedica.class, id);
-        if (cita == null) {
-            ctx.status(404).json(Map.of("error", "Cita no encontrada"));
-            return;
+    /**
+     * Registra una cita médica externa desde seguros, imprimiendo subcategoría recibida.
+     *
+     * @param ctx Contexto HTTP con body JSON de CitaExternaDTO.
+     */
+    public void registrarCitaExterna(Context ctx) {
+        try {
+            CitaExternaDTO dto = objectMapper.readValue(ctx.body(), CitaExternaDTO.class);
+            System.out.println("Subcategoría recibida desde seguros: [" + dto.getNombreSubcategoria() + "]");
+            Long idCita = service.registrarCitaExterna(dto);
+            ctx.status(201).json(Map.of("idCita", idCita));
+        } catch (RuntimeException ex) {
+            ctx.status(409).json(Map.of("error", ex.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            ctx.status(500).json(Map.of("error", "Error interno al registrar la cita externa"));
         }
-        em.remove(cita);
-        em.getTransaction().commit();
-        ctx.status(200).json(Map.of("mensaje", "Cita eliminada correctamente"));
-    } catch (Exception e) {
-        if (em.getTransaction().isActive()) em.getTransaction().rollback();
-        e.printStackTrace();
-        ctx.status(500).json(Map.of("error", "Error al eliminar la cita"));
-    } finally {
-        em.close();
+    }
+
+    /**
+     * Elimina una cita médica por su ID.
+     *
+     * @param ctx Contexto HTTP con path param id.
+     */
+    public void eliminarCita(Context ctx) {
+        Long id = Long.parseLong(ctx.pathParam("id"));
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            CitaMedica cita = em.find(CitaMedica.class, id);
+            if (cita == null) {
+                ctx.status(404).json(Map.of("error", "Cita no encontrada"));
+                return;
+            }
+            em.remove(cita);
+            em.getTransaction().commit();
+            ctx.status(200).json(Map.of("mensaje", "Cita eliminada correctamente"));
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            e.printStackTrace();
+            ctx.status(500).json(Map.of("error", "Error al eliminar la cita"));
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Actualiza los datos de una cita externa (fecha y subcategoría).
+     *
+     * @param ctx Contexto HTTP con path param id y body JSON con nuevaFechaHora y nuevaSubcategoria.
+     */
+    public void actualizarCitaExterna(Context ctx) {
+        try {
+            Long idCita = Long.parseLong(ctx.pathParam("id"));
+            Map<String, String> json = new ObjectMapper().readValue(ctx.body(), Map.class);
+
+            String nuevaFechaHora = json.get("nuevaFechaHora");
+            String nuevaSubcategoria = json.get("nuevaSubcategoria");
+
+            service.actualizarCitaExterna(idCita, nuevaFechaHora, nuevaSubcategoria);
+
+            ctx.status(200).json(Map.of("mensaje", "Cita actualizada correctamente"));
+        } catch (RuntimeException ex) {
+            ctx.status(400).json(Map.of("error", ex.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            ctx.status(500).json(Map.of("error", "Error interno al actualizar la cita externa"));
+        }
     }
 }
-
-public void actualizarCitaExterna(Context ctx) {
-    try {
-        Long idCita = Long.parseLong(ctx.pathParam("id"));
-        Map<String, String> json = new ObjectMapper().readValue(ctx.body(), Map.class);
-
-        String nuevaFechaHora = json.get("nuevaFechaHora");
-        String nuevaSubcategoria = json.get("nuevaSubcategoria");
-
-        service.actualizarCitaExterna(idCita, nuevaFechaHora, nuevaSubcategoria);
-
-        ctx.status(200).json(Map.of("mensaje", "Cita actualizada correctamente"));
-    } catch (RuntimeException ex) {
-        ctx.status(400).json(Map.of("error", ex.getMessage()));
-    } catch (Exception e) {
-        e.printStackTrace();
-        ctx.status(500).json(Map.of("error", "Error interno al actualizar la cita externa"));
-    }
-}
-
-}
-

@@ -4,21 +4,21 @@ import jakarta.persistence.*;
 
 /**
  * Entidad que representa una especialidad médica dentro del sistema hospitalario.
+ * <p>
+ * Las especialidades médicas son áreas de conocimiento y práctica clínica que pueden ser asociadas
+ * a doctores (por ejemplo: Cardiología, Pediatría, Dermatología).
+ * </p>
  */
 @Entity
 @Table(name = "ESPECIALIDADES")
 public class Especialidad {
 
-    /**
-     * Identificador único de la especialidad médica.
-     */
+    /** Identificador único de la especialidad médica. */
     @Id
     @Column(name = "ID_ESPECIALIDAD")
     private Long id;
 
-    /**
-     * Nombre de la especialidad médica.
-     */
+    /** Nombre descriptivo de la especialidad médica. */
     @Column(name = "NOMBRE_ESPECIALIDAD")
     private String nombre;
 

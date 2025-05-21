@@ -10,13 +10,23 @@ import jakarta.persistence.EntityManager;
 
 import java.util.List;
 
+/**
+ * Servicio que maneja las operaciones completas relacionadas con recetas médicas,
+ * incluyendo creación, actualización y gestión de medicamentos recetados.
+ */
 public class RecetaMedicaCompletaService {
 
+    /**
+     * Actualiza las anotaciones de una receta médica existente.
+     *
+     * @param idRM        ID de la receta médica
+     * @param anotaciones Comentarios o anotaciones a guardar en la receta
+     */
     public void guardarReceta(Long idRM, String anotaciones) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-    
+
             RecetaMedica receta = em.find(RecetaMedica.class, idRM);
             if (receta == null) {
                 throw new RuntimeException("No se encontró receta con ID: " + idRM);
@@ -32,20 +42,27 @@ public class RecetaMedicaCompletaService {
         }
     }
 
+    /**
+     * Guarda la lista de medicamentos recetados para una receta médica,
+     * evitando duplicados y actualizando el total de la receta con un procedimiento almacenado.
+     *
+     * @param idRM  ID de la receta médica
+     * @param lista Lista de medicamentos recetados DTO a guardar
+     */
     public void guardarMedicamentosPorReceta(Long idRM, List<MedicamentoRecetadoDTO> lista) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-    
+
             RecetaMedica receta = em.find(RecetaMedica.class, idRM);
             if (receta == null) {
                 throw new RuntimeException("No se encontró receta con ID: " + idRM);
             }
-    
+
             for (MedicamentoRecetadoDTO dto : lista) {
                 Medicamento medicamento = em.find(Medicamento.class, dto.getIdMedicamento());
                 if (medicamento == null) continue;
-    
+
                 // Validar si ya existe este medicamento para esta receta
                 Long existe = em.createQuery("""
                     SELECT COUNT(mr) FROM MedicamentoRecetado mr
@@ -54,23 +71,24 @@ public class RecetaMedicaCompletaService {
                 .setParameter("idRM", idRM)
                 .setParameter("idMed", dto.getIdMedicamento())
                 .getSingleResult();
-    
+
                 if (existe > 0) continue;
-    
+
                 MedicamentoRecetado nuevo = new MedicamentoRecetado();
                 nuevo.setReceta(receta);
                 nuevo.setMedicamento(medicamento);
                 nuevo.setDosis(dto.getDosis());
                 nuevo.setFrecuencia(dto.getFrecuencia());
                 nuevo.setDuracion(dto.getDuracion());
-    
+
                 em.persist(nuevo);
             }
-    
+
+            // Llamar procedimiento almacenado para calcular total
             em.createNativeQuery("BEGIN CALCULAR_TOTAL_RECETA(:idRM); END;")
               .setParameter("idRM", idRM)
               .executeUpdate();
-    
+
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em.getTransaction().isActive()) em.getTransaction().rollback();
@@ -79,7 +97,14 @@ public class RecetaMedicaCompletaService {
             em.close();
         }
     }
-    
+
+    /**
+     * Crea una receta médica vacía asociada a una cita médica,
+     * verificando que no exista previamente para la misma cita.
+     *
+     * @param idCita ID de la cita médica
+     * @return ID de la receta médica creada
+     */
     public Long crearRecetaPorCita(Long idCita) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -106,7 +131,7 @@ public class RecetaMedicaCompletaService {
             RecetaMedica nueva = new RecetaMedica();
             nueva.setCitaMedica(cita);
             nueva.setAnotaciones(null);
-            nueva.setCodigoReceta("TEMP"); // evita null
+            nueva.setCodigoReceta("TEMP"); // Evita null temporalmente
 
             em.persist(nueva);
             em.flush();

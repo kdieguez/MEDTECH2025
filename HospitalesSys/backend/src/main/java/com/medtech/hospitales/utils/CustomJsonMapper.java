@@ -41,7 +41,7 @@ public class CustomJsonMapper implements JsonMapper {
         try {
             return objectMapper.readValue(inputStream, objectMapper.constructType(type));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error al deserializar JSON", e);
         }
     }
 
@@ -58,7 +58,7 @@ public class CustomJsonMapper implements JsonMapper {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error al serializar a JSON", e);
         }
     }
 }

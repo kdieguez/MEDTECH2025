@@ -10,12 +10,19 @@ import java.io.IOException;
 
 /**
  * Clase utilitaria para enviar correos electrónicos usando SMTP de Gmail.
+ * Permite enviar correos en texto plano, HTML y con archivos adjuntos.
  */
 public class CorreoUtils {
 
+    // Correo y clave para autenticación SMTP (usar con precaución, evitar hardcodear en producción)
     private static final String REMITENTE = "kds2games@gmail.com";
     private static final String CLAVE = "ncsa noau lkcd gics";
 
+    /**
+     * Inicializa la sesión SMTP con Gmail, configurando host, puerto y autenticación TLS.
+     *
+     * @return Sesión SMTP configurada para enviar correos.
+     */
     private static Session iniciarSesionCorreo() {
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -32,7 +39,12 @@ public class CorreoUtils {
     }
 
     /**
-     * Envía un correo en texto plano.
+     * Envía un correo en texto plano a un destinatario específico.
+     *
+     * @param destinatario Dirección de correo del destinatario.
+     * @param asunto       Asunto del correo.
+     * @param mensaje      Mensaje en texto plano.
+     * @throws MessagingException si ocurre error en el envío.
      */
     public static void enviarCorreo(String destinatario, String asunto, String mensaje) throws MessagingException {
         Session session = iniciarSesionCorreo();
@@ -47,7 +59,12 @@ public class CorreoUtils {
     }
 
     /**
-     * Envía un correo con contenido HTML.
+     * Envía un correo con contenido HTML a un destinatario.
+     *
+     * @param destinatario Dirección de correo del destinatario.
+     * @param asunto       Asunto del correo.
+     * @param htmlMensaje  Mensaje en formato HTML.
+     * @throws MessagingException si ocurre error en el envío.
      */
     public static void enviarCorreoHtml(String destinatario, String asunto, String htmlMensaje) throws MessagingException {
         Session session = iniciarSesionCorreo();
@@ -61,6 +78,13 @@ public class CorreoUtils {
         Transport.send(message);
     }
 
+    /**
+     * Lee los bytes desde un InputStream y los devuelve en un arreglo de bytes.
+     *
+     * @param input InputStream del archivo adjunto.
+     * @return Array de bytes con el contenido del archivo.
+     * @throws RuntimeException si ocurre un error de lectura.
+     */
     private static byte[] leerBytes(InputStream input) {
         try {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -76,6 +100,16 @@ public class CorreoUtils {
         }
     }
 
+    /**
+     * Envía un correo con un archivo adjunto en formato PDF.
+     *
+     * @param destinatario Dirección de correo del destinatario.
+     * @param asunto       Asunto del correo.
+     * @param mensaje      Mensaje en texto plano.
+     * @param adjunto      InputStream del archivo PDF adjunto.
+     * @param nombreArchivo Nombre del archivo adjunto.
+     * @throws MessagingException si ocurre error en el envío.
+     */
     public static void enviarCorreoConAdjunto(String destinatario, String asunto, String mensaje, InputStream adjunto, String nombreArchivo) throws MessagingException {
         Session session = iniciarSesionCorreo();
 
@@ -100,7 +134,13 @@ public class CorreoUtils {
     }
 
     /**
-     * Envía un correo de bienvenida al paciente recién activado en el sistema hospitalario.
+     * Envía un correo de bienvenida a un paciente recién activado,
+     * incluyendo la contraseña temporal para el primer ingreso.
+     *
+     * @param destinatario Dirección de correo del paciente.
+     * @param nombre       Nombre completo del paciente.
+     * @param contrasena   Contraseña temporal generada para el paciente.
+     * @throws MessagingException si ocurre error en el envío.
      */
     public static void enviarCorreoBienvenidaPacienteConContrasena(String destinatario, String nombre, String contrasena) throws MessagingException {
         String asunto = "Bienvenido al sistema de hospitales MEDTECH";

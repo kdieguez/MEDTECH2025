@@ -1,3 +1,11 @@
+"""
+Módulo de registro de ventas para el sistema de seguros.
+
+Permite registrar un nuevo cliente desde la venta telefónica o presencial,
+generando su usuario con contraseña aleatoria, enviando correos de bienvenida
+y notificando a los administradores.
+"""
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
@@ -14,6 +22,15 @@ from services.envio_correos import (
 router = APIRouter()
 
 class VentaInput(BaseModel):
+    """
+    Modelo de entrada para registrar una venta.
+
+    Attributes:
+        nombre (str): Nombre del cliente.
+        apellido (str): Apellido del cliente.
+        email (EmailStr): Correo electrónico válido.
+        tipoPoliza (str): Tipo de póliza seleccionada (ej. "90%", "70%").
+    """
     nombre: str
     apellido: str
     email: EmailStr
@@ -21,6 +38,18 @@ class VentaInput(BaseModel):
 
 @router.post("/api/ventas")
 async def registrar_venta(data: VentaInput):
+    """
+    Registra un nuevo usuario cliente desde la venta de pólizas.
+
+    Args:
+        data (VentaInput): Datos del cliente capturados en la venta.
+
+    Returns:
+        dict: Mensaje de confirmación.
+
+    Raises:
+        HTTPException: Si el correo ya está registrado.
+    """
     contrasena = generar_contrasena()
     fecha_creacion = datetime.utcnow()
 
@@ -42,8 +71,10 @@ async def registrar_venta(data: VentaInput):
 
     usuarios.insert_one(nuevo_usuario)
 
+    # Enviar correo de bienvenida con contraseña
     enviar_email_bienvenida_con_password(data.email, data.nombre, contrasena)
 
+    # Notificar a todos los administradores
     for admin_email in obtener_admin_emails():
         enviar_email_admin(admin_email, {
             "nombre": data.nombre,

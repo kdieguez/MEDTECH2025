@@ -104,7 +104,6 @@ public class App {
         app.post("/paginas/{idPagina}/secciones", paginaController::agregarSeccion);
         app.delete("/secciones/{idSeccion}", paginaController::eliminarSeccion);
 
-        // MODERACIÓN DE CAMBIOS (nueva funcionalidad)
         app.post("/cambios", SeccionPendienteController::guardar);
         app.get("/cambios/pendientes", SeccionPendienteController::listarPendientes);
         app.get("/cambios/{id}", SeccionPendienteController::obtenerPorId);

@@ -4,40 +4,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medtech.hospitales.models.Medicamento;
 import com.medtech.hospitales.services.MedicamentoService;
 import com.medtech.hospitales.utils.JPAUtil;
-
 import io.javalin.http.Context;
 
 import java.util.Map;
 
 /**
- * Controlador encargado de gestionar las operaciones relacionadas con medicamentos,
- * como el registro de nuevos medicamentos en el sistema.
+ * Controlador encargado de gestionar las operaciones relacionadas con los medicamentos,
+ * incluyendo su registro y obtención desde la base de datos.
  */
 public class MedicamentoController {
 
     /**
-     * Servicio encargado de la lógica de negocio para medicamentos.
+     * Servicio que contiene la lógica de negocio para manejar medicamentos.
      */
     private final MedicamentoService service = new MedicamentoService();
 
     /**
-     * Mapper utilizado para la conversión entre objetos JSON y clases Java.
+     * Mapper utilizado para la conversión entre JSON y objetos Java.
      */
     private final ObjectMapper objectMapper;
 
     /**
-     * Constructor del controlador que recibe un ObjectMapper para deserialización de JSON.
+     * Constructor del controlador.
      *
-     * @param objectMapper instancia de ObjectMapper
+     * @param objectMapper instancia de ObjectMapper para deserialización JSON.
      */
     public MedicamentoController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     /**
-     * Guarda un nuevo medicamento en el sistema utilizando los datos enviados en el cuerpo de la solicitud.
-     * 
-     * @param ctx contexto de Javalin que contiene la solicitud y la respuesta
+     * Registra un nuevo medicamento en el sistema a partir del JSON recibido.
+     *
+     * @param ctx contexto HTTP que contiene el cuerpo con datos del medicamento.
      */
     public void guardarMedicamento(Context ctx) {
         try {
@@ -50,17 +49,21 @@ public class MedicamentoController {
         }
     }
 
+    /**
+     * Obtiene todos los medicamentos registrados en el sistema y los retorna como JSON.
+     *
+     * @param ctx contexto HTTP.
+     */
     public void obtenerMedicamentos(Context ctx) {
-    try {
-        var em = JPAUtil.getEntityManager();
-        var medicamentos = em.createQuery("SELECT m FROM Medicamento m", Medicamento.class)
-                             .getResultList();
-        em.close();
-        ctx.json(medicamentos);
-    } catch (Exception e) {
-        e.printStackTrace();
-        ctx.status(500).json(Map.of("error", "Error al obtener medicamentos"));
+        try {
+            var em = JPAUtil.getEntityManager();
+            var medicamentos = em.createQuery("SELECT m FROM Medicamento m", Medicamento.class)
+                                 .getResultList();
+            em.close();
+            ctx.json(medicamentos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ctx.status(500).json(Map.of("error", "Error al obtener medicamentos"));
+        }
     }
-}
-
 }

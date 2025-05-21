@@ -3,23 +3,55 @@ package com.medtech.hospitales.dtos;
 import java.util.List;
 
 /**
- * DTO completo que representa un servicio hospitalario
- * con todos los datos necesarios para ser consumido por el sistema de seguros.
+ * DTO (Data Transfer Object) que representa un servicio hospitalario completo,
+ * utilizado principalmente para integraciones con el sistema de seguros.
+ * <p>
+ * Incluye información del servicio, subcategoría asociada, precio y doctores disponibles.
+ * </p>
  */
 public class ServicioDTO {
 
+    /** Identificador único del servicio hospitalario. */
     private Long id_servicio;
+
+    /** Nombre del servicio (ej. Consulta general, Laboratorio). */
     private String nombre_servicio;
+
+    /** Descripción general del servicio. */
     private String descripcion_servicio;
+
+    /** Identificador único de la subcategoría del servicio. */
     private Long id_subcategoria;
+
+    /** Nombre de la subcategoría (ej. Cardiología, Pediatría). */
     private String nombre_subcategoria;
+
+    /** Descripción detallada de la subcategoría. */
     private String descripcion_subcategoria;
+
+    /** Precio asociado a la subcategoría del servicio. */
     private Double precio;
+
+    /** Lista de IDs de doctores que brindan este servicio. */
     private List<Long> id_info_doctor;
 
-    public ServicioDTO() {
-    }
+    /**
+     * Constructor vacío requerido para serialización/deserialización automática.
+     */
+    public ServicioDTO() {}
 
+    /**
+     * Constructor completo para inicializar todos los campos del servicio.
+     *
+     * @param id_servicio ID del servicio
+     * @param nombre_servicio nombre del servicio
+     * @param descripcion_servicio descripción del servicio
+     * @param id_subcategoria ID de la subcategoría
+     * @param nombre_subcategoria nombre de la subcategoría
+     * @param descripcion_subcategoria descripción de la subcategoría
+     * @param precio precio del servicio
+     * @param id_info_doctor lista de IDs de doctores asociados
+     */
     public ServicioDTO(Long id_servicio, String nombre_servicio, String descripcion_servicio,
                        Long id_subcategoria, String nombre_subcategoria, String descripcion_subcategoria,
                        Double precio, List<Long> id_info_doctor) {

@@ -16,20 +16,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Controlador encargado de gestionar las operaciones relacionadas con los usuarios,
- * incluyendo administración de pacientes, roles, cargos y filtros de búsqueda.
+ * Controlador encargado de gestionar las operaciones relacionadas con los usuarios
+ * del sistema hospitalario, incluyendo pacientes, roles, cargos, activación y filtrado.
  */
 public class UsuarioController {
 
     /**
-     * Servicio encargado de la lógica de negocio para usuarios.
+     * Servicio que contiene la lógica de negocio para usuarios.
      */
     private final UsuarioService usuarioService = new UsuarioService();
 
     /**
-     * Registra las rutas de usuario en la aplicación Javalin.
+     * Registra todas las rutas relacionadas a usuarios en la instancia de Javalin.
      *
-     * @param app instancia de Javalin donde se registrarán las rutas
+     * @param app instancia de Javalin.
      */
     public static void addRoutes(Javalin app) {
         UsuarioController controller = new UsuarioController();
@@ -49,9 +49,9 @@ public class UsuarioController {
     }
 
     /**
-     * Obtiene todos los usuarios registrados en el sistema.
+     * Devuelve todos los usuarios del sistema.
      *
-     * @param ctx contexto de Javalin
+     * @param ctx contexto HTTP
      */
     public void obtenerUsuarios(Context ctx) {
         List<Usuario> usuarios = usuarioService.obtenerUsuarios();
@@ -59,9 +59,9 @@ public class UsuarioController {
     }
 
     /**
-     * Obtiene un usuario por su ID.
+     * Devuelve los datos de un usuario específico por ID.
      *
-     * @param ctx contexto de Javalin que contiene el ID
+     * @param ctx contexto HTTP con el ID del usuario en la ruta
      */
     public void obtenerUsuarioPorId(Context ctx) {
         Long id = Long.valueOf(ctx.pathParam("id"));
@@ -74,9 +74,9 @@ public class UsuarioController {
     }
 
     /**
-     * Crea un nuevo usuario en el sistema.
+     * Crea un nuevo usuario en la base de datos.
      *
-     * @param ctx contexto de Javalin que contiene los datos del usuario
+     * @param ctx contexto HTTP con el cuerpo del usuario a registrar
      */
     public void crearUsuario(Context ctx) {
         try {
@@ -91,9 +91,9 @@ public class UsuarioController {
     }
 
     /**
-     * Actualiza los datos de un usuario existente.
+     * Actualiza los datos de un usuario.
      *
-     * @param ctx contexto de Javalin con el ID del usuario y los nuevos datos
+     * @param ctx contexto HTTP con el ID y cuerpo del usuario actualizado
      */
     public void actualizarUsuario(Context ctx) {
         Long id = Long.valueOf(ctx.pathParam("id"));
@@ -108,9 +108,9 @@ public class UsuarioController {
     }
 
     /**
-     * Elimina un usuario del sistema.
+     * Elimina un usuario por su ID.
      *
-     * @param ctx contexto de Javalin con el ID del usuario
+     * @param ctx contexto HTTP
      */
     public void eliminarUsuario(Context ctx) {
         Long id = Long.valueOf(ctx.pathParam("id"));
@@ -119,9 +119,9 @@ public class UsuarioController {
     }
 
     /**
-     * Filtra usuarios por correo, rol y rangos de fechas de creación.
+     * Filtra los usuarios por correo, rol, y/o rango de fechas de creación.
      *
-     * @param ctx contexto de Javalin con parámetros de filtro
+     * @param ctx contexto HTTP con parámetros de búsqueda
      */
     public void filtrarUsuarios(Context ctx) {
         String correo = ctx.queryParam("correo");
@@ -138,9 +138,9 @@ public class UsuarioController {
     }
 
     /**
-     * Obtiene usuarios en forma paginada, mostrando 10 usuarios por página.
+     * Devuelve la lista de usuarios en modo paginado (10 por página).
      *
-     * @param ctx contexto de Javalin que contiene el número de página
+     * @param ctx contexto HTTP con query param "pagina"
      */
     public void obtenerUsuariosPaginados(Context ctx) {
         String paginaParam = ctx.queryParam("pagina");
@@ -157,9 +157,9 @@ public class UsuarioController {
     }
 
     /**
-     * Activa un usuario en el sistema.
+     * Activa un usuario en el sistema y envía notificación correspondiente.
      *
-     * @param ctx contexto de Javalin con el ID del usuario
+     * @param ctx contexto HTTP con ID del usuario
      */
     public void activarUsuario(Context ctx) {
         Long id = Long.valueOf(ctx.pathParam("id"));
@@ -175,9 +175,9 @@ public class UsuarioController {
     }
 
     /**
-     * Desactiva un usuario en el sistema.
+     * Desactiva un usuario del sistema.
      *
-     * @param ctx contexto de Javalin con el ID del usuario
+     * @param ctx contexto HTTP con ID del usuario
      */
     public void desactivarUsuario(Context ctx) {
         Long id = Long.valueOf(ctx.pathParam("id"));
@@ -191,9 +191,9 @@ public class UsuarioController {
     }
 
     /**
-     * Obtiene los pacientes habilitados del sistema.
+     * Devuelve la lista de pacientes habilitados con su información relevante.
      *
-     * @param ctx contexto de Javalin
+     * @param ctx contexto HTTP
      */
     public void obtenerPacientesHabilitados(Context ctx) {
         try {
@@ -206,9 +206,9 @@ public class UsuarioController {
     }
 
     /**
-     * Obtiene todos los roles disponibles en el sistema.
+     * Devuelve la lista de roles existentes en el sistema.
      *
-     * @param ctx contexto de Javalin
+     * @param ctx contexto HTTP
      */
     public void obtenerRoles(Context ctx) {
         EntityManager em = JPAUtil.getEntityManager();
@@ -218,9 +218,9 @@ public class UsuarioController {
     }
 
     /**
-     * Obtiene todos los cargos disponibles en el sistema.
+     * Devuelve la lista de cargos existentes en el sistema.
      *
-     * @param ctx contexto de Javalin
+     * @param ctx contexto HTTP
      */
     public void obtenerCargos(Context ctx) {
         EntityManager em = JPAUtil.getEntityManager();
@@ -230,7 +230,7 @@ public class UsuarioController {
     }
 
     /**
-     * Clase interna para representar errores como respuesta JSON.
+     * Clase interna usada para retornar errores en formato JSON.
      *
      * @param details descripción del error
      */

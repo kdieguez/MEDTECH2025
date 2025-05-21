@@ -1,3 +1,10 @@
+"""
+Módulo de gestión de hospitales afiliados al sistema de seguros.
+
+Permite listar, crear, actualizar y desactivar hospitales. Los hospitales activos
+pueden ser utilizados para registrar citas y mostrar información al usuario.
+"""
+
 from fastapi import APIRouter, HTTPException, Request
 from database import obtener_coleccion
 from bson import ObjectId
@@ -12,6 +19,12 @@ hospitales_coll = obtener_coleccion("hospitales")
 
 @router.get("/")
 async def listar_hospitales():
+    """
+    Lista todos los hospitales que están marcados como activos.
+
+    Returns:
+        list: Lista de hospitales con campos completos y `_id` serializado.
+    """
     hospitales = []
     for hospital in hospitales_coll.find({"estado": "activo"}):
         hospital["_id"] = str(hospital["_id"])
@@ -20,6 +33,24 @@ async def listar_hospitales():
 
 @router.post("/")
 async def crear_hospital(request: Request):
+    """
+    Crea un nuevo hospital afiliado.
+
+    Args:
+        request (Request): Cuerpo de la solicitud con los campos:
+            - nombre
+            - direccion
+            - telefono
+            - email (opcional)
+            - imagen (opcional)
+            - servicios (opcional)
+
+    Returns:
+        dict: Mensaje de confirmación y ID del hospital creado.
+
+    Raises:
+        HTTPException: Si faltan campos obligatorios o hay error en la base de datos.
+    """
     data = await request.json()
 
     nombre = data.get("nombre")
@@ -50,6 +81,19 @@ async def crear_hospital(request: Request):
 
 @router.put("/{id}")
 async def actualizar_hospital(id: str, request: Request):
+    """
+    Actualiza los datos de un hospital existente.
+
+    Args:
+        id (str): ID del hospital a actualizar.
+        request (Request): JSON con los campos que se desean actualizar.
+
+    Returns:
+        dict: Mensaje de éxito.
+
+    Raises:
+        HTTPException: Si el hospital no se encuentra o ocurre un error en la base de datos.
+    """
     data = await request.json()
 
     try:
@@ -68,6 +112,18 @@ async def actualizar_hospital(id: str, request: Request):
 
 @router.delete("/{id}")
 async def eliminar_hospital(id: str):
+    """
+    Desactiva lógicamente un hospital (sin eliminarlo físicamente).
+
+    Args:
+        id (str): ID del hospital a desactivar.
+
+    Returns:
+        dict: Mensaje de éxito.
+
+    Raises:
+        HTTPException: Si el hospital no existe o hay error en la base de datos.
+    """
     try:
         result = hospitales_coll.update_one(
             {"_id": ObjectId(id)},
